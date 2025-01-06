@@ -4,22 +4,39 @@
 
 package frc2025;
 
+import dev.doglog.DogLog;
+import dev.doglog.DogLogOptions;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc2025.constants.Constants;
 
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+  private Command autonomousCommand;
 
-  private final RobotContainer m_robotContainer;
+  private final RobotContainer robotContainer;
 
   public Robot() {
-    m_robotContainer = new RobotContainer();
+    robotContainer = new RobotContainer();
+
+    if (isSimulation()) {
+      addPeriodic(
+          RobotContainer.getSubsystems().drivetrain()::updateSimState, Constants.SIM_PERIOD_SEC);
+    }
+
+    DogLog.setOptions(
+        new DogLogOptions()
+            .withCaptureDs(true)
+            .withCaptureNt(true)
+            .withLogExtras(false)
+            .withNtPublish(true));
+    DogLog.setEnabled(true);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    RobotContainer.getRobotState().logTelemetry();
   }
 
   @Override
@@ -33,10 +50,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    autonomousCommand = robotContainer.getAutonomousCommand();
 
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+    if (autonomousCommand != null) {
+      autonomousCommand.schedule();
     }
   }
 
@@ -48,8 +65,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+    if (autonomousCommand != null) {
+      autonomousCommand.cancel();
     }
   }
 
