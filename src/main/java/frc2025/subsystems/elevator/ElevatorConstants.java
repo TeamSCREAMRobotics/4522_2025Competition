@@ -19,7 +19,7 @@ public final class ElevatorConstants {
 
   public static final double MIN_HEIGHT = 0.0;
   public static final Length MAX_HEIGHT = Length.fromFeet(6.0);
-  public static final double ENCODER_MAX = 10.37;
+  public static final double ENCODER_MAX = 10.365;
   public static final double ENCODER_MIN = 0.0;
   public static final Length PULLEY_DIAMETER = Length.fromInches(2.211);
   public static final Length PULLEY_CIRCUMFERENCE = Length.fromInches(6.946136755);
@@ -36,7 +36,7 @@ public final class ElevatorConstants {
           PULLEY_DIAMETER.div(2).getMeters(),
           MIN_HEIGHT,
           MAX_HEIGHT.getMeters(),
-          true,
+          false,
           0.0);
   public static final ScreamPIDConstants SIM_GAINS = new ScreamPIDConstants(10.0, 0.0, 0.0);
 

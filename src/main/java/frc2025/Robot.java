@@ -4,12 +4,12 @@
 
 package frc2025;
 
-import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc2025.constants.Constants;
+import frc2025.logging.Logger;
 
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
@@ -24,13 +24,13 @@ public class Robot extends TimedRobot {
           RobotContainer.getSubsystems().drivetrain()::updateSimState, Constants.SIM_PERIOD_SEC);
     }
 
-    DogLog.setOptions(
+    Logger.setOptions(
         new DogLogOptions()
             .withCaptureDs(true)
             .withCaptureNt(true)
             .withLogExtras(false)
             .withNtPublish(true));
-    DogLog.setEnabled(true);
+    Logger.setEnabled(true);
   }
 
   @Override

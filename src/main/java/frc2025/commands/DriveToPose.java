@@ -1,6 +1,5 @@
 package frc2025.commands;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -9,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.drivetrain.DrivetrainConstants;
 import java.util.Optional;
@@ -106,14 +106,14 @@ public class DriveToPose extends Command {
                     yOverride.isPresent() ? yOverride.get().getAsDouble() : velocity.getY(),
                     headingVelocity)));
 
-    DogLog.log("DriveToPose/MeasuredDistance", currentDistance);
-    DogLog.log("DriveToPose/DistanceSetpoint", driveController.getSetpoint().position);
-    DogLog.log("DriveToPose/MeasuredHeading", currentPose.getRotation().getDegrees());
-    DogLog.log("DriveToPose/SetpointHeading", targetPose.getRotation().getDegrees());
-    DogLog.log(
+    Logger.log("DriveToPose/MeasuredDistance", currentDistance);
+    Logger.log("DriveToPose/DistanceSetpoint", driveController.getSetpoint().position);
+    Logger.log("DriveToPose/MeasuredHeading", currentPose.getRotation().getDegrees());
+    Logger.log("DriveToPose/SetpointHeading", targetPose.getRotation().getDegrees());
+    Logger.log(
         "DriveToPose/Setpoint",
         new Pose2d(lastSetpointTranslation, new Rotation2d(headingController.getSetpoint())));
-    DogLog.log("DriveToPose/TargetPose", targetPose);
+    Logger.log("DriveToPose/TargetPose", targetPose);
   }
 
   public boolean atGoal() {

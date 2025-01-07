@@ -5,7 +5,6 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
-import dev.doglog.DogLog;
 import drivers.PhoenixSwerveHelper;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,6 +17,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.generated.TunerConstants.TunerSwerveDrivetrain;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -146,7 +146,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   public void periodic() {
     attemptToSetPerspective();
     if (getCurrentCommand() != null) {
-      DogLog.log("RobotState/Subsystems/Drivetrain/ActiveCommand", getCurrentCommand().getName());
+      Logger.log("RobotState/Subsystems/Drivetrain/ActiveCommand", getCurrentCommand().getName());
     }
   }
 

@@ -41,7 +41,7 @@ public class WristConstants {
             new SimWrapper(SIM), SIM_GAINS.getPIDController(), false, false, true);
 
     WRIST_CONFIG.masterConstants =
-        new TalonFXConstants(new CANDevice(14, ""), InvertedValue.Clockwise_Positive);
+        new TalonFXConstants(new CANDevice(14, ""), InvertedValue.CounterClockwise_Positive);
 
     CANcoderConfiguration config = new CANcoderConfiguration();
     config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
@@ -52,6 +52,7 @@ public class WristConstants {
     WRIST_CONFIG.neutralMode = NeutralModeValue.Brake;
     WRIST_CONFIG.rotorToSensorRatio = WRIST_REDUCTION;
     WRIST_CONFIG.feedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    WRIST_CONFIG.continuousWrap = true;
     WRIST_CONFIG.feedbackRemoteSensorId = 4;
     WRIST_CONFIG.enableSupplyCurrentLimit = true;
     WRIST_CONFIG.supplyCurrentLimit = 40;

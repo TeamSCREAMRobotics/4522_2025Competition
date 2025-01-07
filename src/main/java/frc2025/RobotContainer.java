@@ -5,16 +5,18 @@
 package frc2025;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
-import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.commands.DriveToPose;
 import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard;
 import frc2025.controlboard.Controlboard.ScoringSide;
+import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.drivetrain.generated.TunerConstants;
 import frc2025.subsystems.elevator.Elevator;
+import frc2025.subsystems.elevator.Elevator.ElevatorGoal;
 import frc2025.subsystems.elevator.ElevatorConstants;
 import frc2025.subsystems.intake.IntakeConstants;
 import frc2025.subsystems.intake.IntakeDeploy;
@@ -22,6 +24,7 @@ import frc2025.subsystems.intake.IntakeRollers;
 import frc2025.subsystems.wrist.Wrist;
 import frc2025.subsystems.wrist.WristConstants;
 import frc2025.subsystems.wrist.WristRollers;
+import java.util.function.Supplier;
 import lombok.Getter;
 import util.AllianceFlipUtil;
 
@@ -51,6 +54,25 @@ public class RobotContainer {
 
   private int selectedReefZone = -1;
 
+  private final Supplier<Command> reefAutoAlignFactory =
+      () ->
+          new DriveToPose(
+                  drivetrain,
+                  () -> {
+                    return Controlboard.getScoringSide().get() == ScoringSide.LEFT
+                        ? AllianceFlipUtil.get(
+                                FieldConstants.BLUE_REEF_LOCATIONS,
+                                FieldConstants.RED_REEF_LOCATIONS)
+                            .get(selectedReefZone)
+                            .getFirst()
+                        : AllianceFlipUtil.get(
+                                FieldConstants.BLUE_REEF_LOCATIONS,
+                                FieldConstants.RED_REEF_LOCATIONS)
+                            .get(selectedReefZone)
+                            .getSecond();
+                  })
+              .beforeStarting(() -> selectedReefZone = robotState.getReefZone().getAsInt());
+
   public RobotContainer() {
     configureBindings();
     configureDefaultCommands();
@@ -62,21 +84,7 @@ public class RobotContainer {
     Controlboard.driveController
         .a()
         .and(() -> robotState.getReefZone().isPresent())
-        .onTrue(Commands.runOnce(() -> selectedReefZone = robotState.getReefZone().getAsInt()))
-        .whileTrue(
-            new DriveToPose(
-                drivetrain,
-                () -> {
-                  return Controlboard.getScoringSide().get() == ScoringSide.LEFT
-                      ? AllianceFlipUtil.get(
-                              FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                          .get(selectedReefZone)
-                          .getFirst()
-                      : AllianceFlipUtil.get(
-                              FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                          .get(selectedReefZone)
-                          .getSecond();
-                }));
+        .toggleOnTrue(reefAutoAlignFactory.get());
 
     Controlboard.driveController
         .x()
@@ -87,6 +95,20 @@ public class RobotContainer {
                     AllianceFlipUtil.get(
                         FieldConstants.BLUE_BARGE_ALIGN, FieldConstants.RED_BARGE_ALIGN),
                 () -> Controlboard.getTranslation().get().getY()));
+
+    Controlboard.driveController.y().whileTrue(elevator.applyGoal(ElevatorGoal.MAX));
+
+    Controlboard.driveController
+        .b()
+        .toggleOnTrue(
+            Commands.parallel(
+                elevator.applyVoltage(
+                    () ->
+                        -MathUtil.applyDeadband(Controlboard.driveController.getLeftY(), 0.05) * 6),
+                wrist.applyVoltage(
+                    () ->
+                        MathUtil.applyDeadband(Controlboard.driveController.getRightY(), 0.05)
+                            * 12)));
   }
 
   private void configureDefaultCommands() {
@@ -111,8 +133,8 @@ public class RobotContainer {
   }
 
   public static void telemeterizeDrivetrain(SwerveDriveState state) {
-    DogLog.log("RobotState/RobotPose", state.Pose);
-    DogLog.log("RobotState/Subsystems/Drivetrain/MeasuredStates", state.ModuleStates);
-    DogLog.log("RobotState/Subsystems/Drivetrain/SetpointStates", state.ModuleTargets);
+    Logger.log("RobotState/RobotPose", state.Pose);
+    Logger.log("RobotState/Subsystems/Drivetrain/MeasuredStates", state.ModuleStates);
+    Logger.log("RobotState/Subsystems/Drivetrain/SetpointStates", state.ModuleTargets);
   }
 }

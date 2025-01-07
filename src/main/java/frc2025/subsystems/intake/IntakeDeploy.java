@@ -1,8 +1,8 @@
 package frc2025.subsystems.intake;
 
-import dev.doglog.DogLog;
 import drivers.TalonFXSubsystem;
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc2025.logging.Logger;
 import java.util.function.DoubleSupplier;
 
 public class IntakeDeploy extends TalonFXSubsystem {
@@ -36,6 +36,6 @@ public class IntakeDeploy extends TalonFXSubsystem {
   @Override
   public void periodic() {
     super.periodic();
-    DogLog.log(logPrefix + "Angle", getAngle());
+    Logger.log(logPrefix + "Angle", getAngle());
   }
 }

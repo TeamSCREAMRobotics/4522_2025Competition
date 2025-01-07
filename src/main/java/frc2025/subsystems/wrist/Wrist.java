@@ -1,31 +1,48 @@
 package frc2025.subsystems.wrist;
 
+import dashboard.Ligament;
+import data.Length;
 import drivers.TalonFXSubsystem;
+import edu.wpi.first.math.geometry.Rotation2d;
 import java.util.function.DoubleSupplier;
 
 public class Wrist extends TalonFXSubsystem {
 
+  private final Ligament wrist =
+      new Ligament()
+          .withStaticLength(Length.fromInches(17.5))
+          .withDynamicAngle(
+              () -> getAngle(), () -> Rotation2d.fromRotations(getGoal().target().getAsDouble()));
+
   public Wrist(TalonFXSubsystemConfiguration config) {
-    super(config, defaultGoal);
+    super(config, WristGoal.HOME);
   }
 
   public enum WristGoal implements TalonFXSubsystemGoal {
-    HOME(0.0);
+    HOME(Rotation2d.fromDegrees(180)),
+    SCORE_L1_L3(Rotation2d.fromDegrees(-90));
 
-    public double targetRotations;
+    public final DoubleSupplier target;
 
-    private WristGoal(double targetRotations) {
-      this.targetRotations = targetRotations;
+    public final Rotation2d angle;
+
+    private WristGoal(Rotation2d targetAngle) {
+      this.angle = targetAngle;
+      this.target = () -> targetAngle.getRotations();
+    }
+
+    @Override
+    public DoubleSupplier target() {
+      return target;
     }
 
     @Override
     public ControlType controlType() {
       return ControlType.MOTION_MAGIC_POSITION;
     }
+  }
 
-    @Override
-    public DoubleSupplier target() {
-      return () -> targetRotations;
-    }
+  public Ligament getLigament() {
+    return wrist;
   }
 }
