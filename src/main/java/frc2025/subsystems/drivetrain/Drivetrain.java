@@ -5,6 +5,7 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import dev.doglog.DogLog;
 import drivers.PhoenixSwerveHelper;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,7 +18,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc2025.constants.FieldConstants;
 import frc2025.subsystems.drivetrain.generated.TunerConstants.TunerSwerveDrivetrain;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -73,28 +73,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return run(() -> this.setControl(requestSupplier.get()));
   }
 
-  public Command driveToPose(Supplier<Pose2d> pose) {
-    return run(() -> {
-          var xSpeed =
-              DrivetrainConstants.X_ALIGNMENT_CONTROLLER.calculate(
-                  getPose().getTranslation().getX(), pose.get().getX());
-          var ySpeed =
-              DrivetrainConstants.Y_ALIGNMENT_CONTROLLER.calculate(
-                  getPose().getTranslation().getY(), pose.get().getY());
-          var headingSpeed =
-              DrivetrainConstants.HEADING_CONTROLLER.calculate(
-                  getPose().getRotation().getRadians(), pose.get().getRotation().getRadians());
-          setControl(helper.getApplyFieldSpeeds(new ChassisSpeeds(xSpeed, ySpeed, headingSpeed)));
-        })
-        .beforeStarting(
-            () -> {
-              DrivetrainConstants.X_ALIGNMENT_CONTROLLER.reset(getPose().getX());
-              DrivetrainConstants.Y_ALIGNMENT_CONTROLLER.reset(getPose().getY());
-              DrivetrainConstants.HEADING_CONTROLLER.reset();
-            });
-  }
-
-  public Command driveToBargeScoringZone(Supplier<Translation2d> translation) {
+  /* public Command driveToBargeScoringZone(Supplier<Translation2d> translation) {
     return applyRequest(
             () ->
                 helper.getFacingAngle(
@@ -112,7 +91,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
                 DrivetrainConstants.X_ALIGNMENT_CONTROLLER.reset(
                     getPose().getX(),
                     getLinearVelocity().getNorm() * AllianceFlipUtil.getDirectionCoefficient()));
-  }
+  } */
 
   public void updateSimState() {
     final double currentTime = Utils.getCurrentTimeSeconds();
@@ -166,6 +145,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   @Override
   public void periodic() {
     attemptToSetPerspective();
+    if (getCurrentCommand() != null) {
+      DogLog.log("RobotState/Subsystems/Drivetrain/ActiveCommand", getCurrentCommand().getName());
+    }
   }
 
   public void attemptToSetPerspective() {

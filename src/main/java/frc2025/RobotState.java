@@ -12,6 +12,13 @@ import util.AllianceFlipUtil;
 public class RobotState {
   private final Drivetrain drivetrain;
 
+  /* private final Ligament elevator;
+  private final Ligament pivot;
+
+  private final Mechanism elevatorPivot;
+
+  private final MechanismVisualizer visualizer; */
+
   public RobotState(Subsystems subsystems) {
     this.drivetrain = subsystems.drivetrain();
   }

@@ -25,13 +25,8 @@ public final class DrivetrainConstants {
   public static final ScreamPIDConstants HEADING_CORRECTION_CONSTANTS =
       new ScreamPIDConstants(8.0, 0.0, 0.0);
 
-  public static final ScreamPIDConstants XY_AUTO_ALIGNMENT_CONSTANTS =
-      new ScreamPIDConstants(10.0, 0.0, 0.0);
-
-  public static final ProfiledPIDController X_ALIGNMENT_CONTROLLER =
-      XY_AUTO_ALIGNMENT_CONSTANTS.getProfiledPIDController(new Constraints(4, 8));
-  public static final ProfiledPIDController Y_ALIGNMENT_CONTROLLER =
-      XY_AUTO_ALIGNMENT_CONSTANTS.getProfiledPIDController(new Constraints(4, 8));
+  public static final ProfiledPIDController DRIVE_ALIGNMENT_CONTROLLER =
+      new ProfiledPIDController(6.0, 0, 0, new Constraints(4, 8));
 
   public static final PIDController HEADING_CONTROLLER =
       HEADING_CORRECTION_CONSTANTS.getPIDController(true);

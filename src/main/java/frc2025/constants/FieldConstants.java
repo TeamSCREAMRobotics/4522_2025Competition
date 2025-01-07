@@ -13,8 +13,13 @@ public class FieldConstants {
 
   public static final Translation2d FIELD_DIMENSIONS = new Translation2d(17.548225, 8.0518);
 
-  public static final double BLUE_BARGE_ALIGN_X = 7.715;
-  public static final double RED_BARGE_ALIGN_X = FIELD_DIMENSIONS.getX() - 7.715;
+  public static final Pose2d BLUE_BARGE_ALIGN =
+      new Pose2d(7.715, FIELD_DIMENSIONS.getY() * 0.75, Rotation2d.fromDegrees(0));
+  public static final Pose2d RED_BARGE_ALIGN =
+      new Pose2d(
+          FIELD_DIMENSIONS.getX() - 7.715,
+          FIELD_DIMENSIONS.getY() * 0.25,
+          Rotation2d.fromDegrees(180));
 
   public static final Translation2d BLUE_REEF_CENTER = new Translation2d(4.489338, 4.034306);
   public static final Translation2d RED_REEF_CENTER = FIELD_DIMENSIONS.minus(BLUE_REEF_CENTER);
