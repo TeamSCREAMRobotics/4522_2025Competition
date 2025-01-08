@@ -1,0 +1,31 @@
+--- Driver Controller ---
+
+- Sticks
+  - Left Stick
+    - Y Axis: Translation on field X axis
+    - X Axis: Translation on field Y axis
+  - Right Stick
+    - Y Axis: None
+    - X Axis: Rotation
+
+- Triggers
+  - Left Trigger: Intake from coral station
+  - Right Trigger: Ground intake
+
+- Face Buttons
+  - A: Move to L1 setpoint (Trough)
+  - B: Move to L2 setpoint
+  - X: Move to L3 setpoint
+  - Y: Move to L4 setpoint
+  - Start: Engage climb sequence
+  - Back: Reset gyro
+
+- Bumpers
+  - Left Bumper: Auto-Align to reef
+  - Right Bumper: Score on reef & barge
+
+- Paddles (as viewed from front of controller)
+  - Top Left: Switch reef side
+  - Top Right: Auto-Align and move to Barge net setpoint
+  - Bottom Left: Handoff from intake -> wrist
+  - Bottom Right: Outtake to processor
