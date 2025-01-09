@@ -19,19 +19,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Mid_3_1"
+            "pathName": "Mid_2_1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Mid_3_2_Bottom"
+            "pathName": "Mid_2_2_Processor"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Mid_3_3_Bottom"
+            "pathName": "Mid_2_3_Processor"
           }
         }
       ]

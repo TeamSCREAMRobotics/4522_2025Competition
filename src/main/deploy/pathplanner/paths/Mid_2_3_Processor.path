@@ -3,29 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.800421937933924,
-        "y": 4.0167855664589
+        "x": 1.6063524590163931,
+        "y": 0.6864241803278684
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.393569089555878,
-        "y": 3.5141030832118845
+        "x": 2.2296952698370855,
+        "y": 0.9702431997245503
       },
       "isLocked": false,
-      "linkedName": "Mid_1_2-End"
+      "linkedName": "Mid_2_2_Processor-End"
     },
     {
       "anchor": {
-        "x": 6.336486547163094,
-        "y": 0.48996628524107566
+        "x": 5.93,
+        "y": 1.3145005611959197
       },
       "prevControl": {
-        "x": 6.336486547163094,
-        "y": 0.8616812016602031
+        "x": 4.973809421748673,
+        "y": 0.2861054492064128
+      },
+      "nextControl": {
+        "x": 6.507474528690841,
+        "y": 1.9355817516110907
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.8000570732244805,
+        "y": 3.848466208044096
+      },
+      "prevControl": {
+        "x": 6.747953012285503,
+        "y": 3.2418910150479916
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Mid_1_3-End"
+      "linkedName": "Mid_2_3_Processor-End"
     }
   ],
   "rotationTargets": [],
@@ -45,10 +61,10 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "Mid_H-4P_G",
+  "folder": "Mid_H-4N-G",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 144.0
   },
   "useDefaultConstraints": true
 }
