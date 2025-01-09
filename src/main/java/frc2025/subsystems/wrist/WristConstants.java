@@ -52,7 +52,7 @@ public class WristConstants {
     WRIST_CONFIG.neutralMode = NeutralModeValue.Brake;
     WRIST_CONFIG.rotorToSensorRatio = WRIST_REDUCTION;
     WRIST_CONFIG.feedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    WRIST_CONFIG.continuousWrap = true;
+    // WRIST_CONFIG.continuousWrap = true; //TODO commented due to not being a valid configuration?
     WRIST_CONFIG.feedbackRemoteSensorId = 4;
     WRIST_CONFIG.enableSupplyCurrentLimit = true;
     WRIST_CONFIG.supplyCurrentLimit = 40;
