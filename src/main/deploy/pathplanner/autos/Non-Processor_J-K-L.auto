@@ -7,37 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Mid_1_1"
+            "pathName": "Non-Processor_1_1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Mid_1_2"
+            "pathName": "Non-Processor_1_2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Mid_2_1"
+            "pathName": "Non-Processor_1_3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Mid_2_2_Non-Processor"
+            "pathName": "Non-Processor_1_4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Mid_2_3_Non-Processor"
+            "pathName": "Non-Processor_1_5"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Middle",
+  "folder": "Non-Processor",
   "choreoAuto": false
 }

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 1.6226001375660968,
+        "y": 0.6832187653598862
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 2.442644306871104,
+        "y": 1.0031953872757107
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Processor_1_6-End"
     },
     {
       "anchor": {
-        "x": 7.715,
-        "y": 1.1474837662337665
+        "x": 5.268130906019819,
+        "y": 2.960825607185533
       },
       "prevControl": {
-        "x": 6.715,
-        "y": 1.1474837662337667
+        "x": 5.187922297298302,
+        "y": 2.424155405403726
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Processor_1_7_F-End"
     }
   ],
   "rotationTargets": [],
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 5.5,
+    "maxAcceleration": 5.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -150.0
   },
   "reversed": false,
-  "folder": "Misc",
+  "folder": "Processor_E-D-C-B&F",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 144.0
   },
   "useDefaultConstraints": true
 }

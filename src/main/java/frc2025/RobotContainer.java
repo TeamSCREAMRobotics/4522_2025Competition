@@ -104,11 +104,12 @@ public class RobotContainer {
             Commands.parallel(
                 elevator.applyVoltage(
                     () ->
-                        -MathUtil.applyDeadband(Controlboard.driveController.getLeftY(), 0.05) * 6),
+                        -MathUtil.applyDeadband(Controlboard.driveController.getLeftY(), 0.05)
+                            * 6.0),
                 wrist.applyVoltage(
                     () ->
                         MathUtil.applyDeadband(Controlboard.driveController.getRightY(), 0.05)
-                            * 12)));
+                            * 12.0)));
   }
 
   private void configureDefaultCommands() {

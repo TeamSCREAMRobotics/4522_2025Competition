@@ -1,21 +1,22 @@
 {
   "robotWidth": 0.892,
-  "robotLength": 0.853,
+  "robotLength": 0.892,
   "holonomicMode": true,
   "pathFolders": [
-    "Misc",
-    "Bottom_F-D-C",
+    "Algae",
+    "Processor_E-D-C-B&F",
     "Mid_H-4N-G",
     "Mid_H-4P_G",
-    "Top_I-K-L"
+    "Non-Processor_J-K-L-A&I"
   ],
   "autoFolders": [
+    "Processor",
     "Middle",
-    "Bottom",
-    "Top"
+    "Random",
+    "Non-Processor"
   ],
-  "defaultMaxVel": 5.0,
-  "defaultMaxAccel": 5.0,
+  "defaultMaxVel": 5.5,
+  "defaultMaxAccel": 5.5,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,

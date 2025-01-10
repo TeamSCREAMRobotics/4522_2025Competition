@@ -68,7 +68,7 @@ public class WristConstants {
       new TalonFXSubsystemConfiguration();
 
   static {
-    ROLLERS_CONFIG.name = "IntakeRollers";
+    ROLLERS_CONFIG.name = "WristRollers";
 
     ROLLERS_CONFIG.codeEnabled = true;
     ROLLERS_CONFIG.logTelemetry = false;
