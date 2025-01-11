@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Mid_1_1"
+            "pathName": "Mid-Starting_To_H"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Mid_1_2"
+            "pathName": "H_To_4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Mid_1_3"
+            "pathName": "4_To_Processor"
           }
         }
       ]

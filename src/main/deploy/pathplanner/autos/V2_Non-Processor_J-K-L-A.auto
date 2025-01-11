@@ -7,43 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "V2_Non-Processor_1_1"
+            "pathName": "Non-Processor-Starting2_To_J"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Non-Processor_1_2"
+            "pathName": "J_To_Non-Processor-Station"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Non-Processor_1_3"
+            "pathName": "Non-Processor-Station_To_K"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Non-Processor_1_4"
+            "pathName": "K_To_Non-Processor-Station"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Non-Processor_1_5"
+            "pathName": "Non-Processor-Station_To_L"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Non-Processor_1_6"
+            "pathName": "L_To_Non-Processor-Station"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Non-Processor_1_7_A"
+            "pathName": "Non-Processor-Station_To_A"
           }
         }
       ]

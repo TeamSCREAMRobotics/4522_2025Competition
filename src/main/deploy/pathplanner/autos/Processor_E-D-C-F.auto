@@ -7,43 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Processor_1_1"
+            "pathName": "Processor-Starting1_To_E"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Processor_1_2"
+            "pathName": "E_To_Processor-Station"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Processor_1_3"
+            "pathName": "Processor-Station_To_D"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Processor_1_4"
+            "pathName": "D_To_Processor-Station"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Processor_1_5"
+            "pathName": "Processor-Station_To_C"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Processor_1_6"
+            "pathName": "C_To_Processor-Station"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Processor_1_7_F"
+            "pathName": "Processor-Station_To_F"
           }
         }
       ]

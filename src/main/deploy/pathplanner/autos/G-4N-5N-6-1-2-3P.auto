@@ -68,6 +68,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Random",
+  "folder": "Misc",
   "choreoAuto": false
 }
