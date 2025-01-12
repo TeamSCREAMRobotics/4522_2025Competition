@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.13722183079094,
-        "y": 2.886061939943903
+        "x": 1.615,
+        "y": 7.335
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.672128378378378,
-        "y": 2.2858108108108093
+        "x": 1.858406114320504,
+        "y": 6.751345694541771
       },
       "isLocked": false,
-      "linkedName": "Algae_3"
+      "linkedName": "Non-Processor-Station"
     },
     {
       "anchor": {
-        "x": 6.335,
-        "y": 0.51
+        "x": 3.175,
+        "y": 3.8499035575267975
       },
       "prevControl": {
-        "x": 6.335,
-        "y": 0.8828785261468808
+        "x": 2.649650264759663,
+        "y": 4.061714134494249
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Processor"
+      "linkedName": "Coral_B.2"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -90.0
   },
   "reversed": false,
-  "folder": "Processor",
+  "folder": "Non-Processor-Station_To_Reef",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -150.0
+    "rotation": -144.0
   },
   "useDefaultConstraints": true
 }

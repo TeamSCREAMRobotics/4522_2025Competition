@@ -3,10 +3,11 @@
   "robotLength": 0.892,
   "holonomicMode": true,
   "pathFolders": [
+    "Algae",
     "Coral_To_Algae",
     "Mid-Starting_To_Reef",
-    "Algae",
-    "Net, Processor",
+    "Processor",
+    "Net",
     "Non-Processor-Starting_To_Reef",
     "Non-Processor-Station_To_Reef",
     "Processor-Starting_To_Reef",

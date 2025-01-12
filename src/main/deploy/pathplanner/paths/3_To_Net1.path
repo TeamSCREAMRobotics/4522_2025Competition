@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.672128378378378,
-        "y": 2.2858108108108093
+        "x": 5.800591216216215,
+        "y": 2.779898648648648
       },
       "isLocked": false,
       "linkedName": "Algae_3"
     },
     {
       "anchor": {
-        "x": 6.335,
-        "y": 0.51
+        "x": 7.65,
+        "y": 4.805
       },
       "prevControl": {
-        "x": 6.335,
-        "y": 0.8828785261468808
+        "x": 7.11385986098983,
+        "y": 4.773641246690967
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Processor"
+      "linkedName": "Net1"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -90.0
   },
   "reversed": false,
-  "folder": "Processor",
+  "folder": "Net",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -150.0

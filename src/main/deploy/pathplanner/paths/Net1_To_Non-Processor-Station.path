@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 1.5550736154092257,
-        "y": 7.296492143296066
+        "x": 1.6129619485495608,
+        "y": 7.337160693744495
       },
       "prevControl": {
-        "x": 2.5547448025672352,
-        "y": 7.242824026299668
+        "x": 2.6126331357075694,
+        "y": 7.283492576748096
       },
       "nextControl": null,
       "isLocked": false,
@@ -61,7 +61,7 @@
     "rotation": -144.0
   },
   "reversed": false,
-  "folder": "Net, Processor",
+  "folder": "Net",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -90.0

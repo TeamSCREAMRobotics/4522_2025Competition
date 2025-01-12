@@ -1,0 +1,157 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Processor-Starting1_To_E"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "E_To_Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Processor-Station_To_D"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "D_To_Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Processor-Station_To_C"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C_To_Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Processor-Station_To_B"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B_To_Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Processor-Station_To_A"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A_To_Non-Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Non-Processor-Station_To_L"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L_To_Non-Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Non-Processor-Station_To_K"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "K_To_Non-Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Non-Processor-Station_To_J"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "J_To_Non-Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Non-Processor-Station_To_I"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "I_To_Non-Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Non-Processor-Station_To_H"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "H_To_Non-Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Non-Processor-Station_To_G"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "G_To_Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Processor-Station_To_F"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "F_To_Processor-Station"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

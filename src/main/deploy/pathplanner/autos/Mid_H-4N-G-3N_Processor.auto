@@ -19,13 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "4_To_Net"
+            "pathName": "4_To_Net1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Net_To_Processor-Station"
+            "pathName": "Net1_To_Processor-Station"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3_To_Net"
+            "pathName": "3_To_Net1"
           }
         }
       ]

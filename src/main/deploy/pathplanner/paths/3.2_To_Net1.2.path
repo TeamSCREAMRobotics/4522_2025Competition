@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.800421937933924,
-        "y": 4.0167855664589
+        "x": 5.13722183079094,
+        "y": 2.886061939943903
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.21971363751804,
-        "y": 4.439683018647286
+        "x": 5.85,
+        "y": 2.819425675675675
       },
       "isLocked": false,
-      "linkedName": "Algae_4"
+      "linkedName": "Algae_3.2"
     },
     {
       "anchor": {
@@ -25,7 +25,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Net1"
+      "linkedName": "Net1.2"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": "Net, Processor",
+  "folder": "Net",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 29.999999999999996
   },
   "useDefaultConstraints": true
 }

@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6279988493957924,
-        "y": 7.345416022891263
+        "x": 1.6129619485495608,
+        "y": 7.337160693744495
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8675351239130693,
-        "y": 6.937728656810098
+        "x": 2.8524982230668368,
+        "y": 6.929473327663329
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Non-Processor-Station"
     },
     {
       "anchor": {
@@ -32,16 +32,16 @@
     },
     {
       "anchor": {
-        "x": 5.800836093976052,
-        "y": 3.8512842108229735
+        "x": 5.8,
+        "y": 4.17
       },
       "prevControl": {
-        "x": 5.96639814395207,
-        "y": 4.156733735886475
+        "x": 5.965562049976017,
+        "y": 4.475449525063501
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Coral_H"
     }
   ],
   "rotationTargets": [],
@@ -49,8 +49,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 5.5,
+    "maxAcceleration": 5.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

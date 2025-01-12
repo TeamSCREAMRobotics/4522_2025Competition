@@ -3,32 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.65,
-        "y": 4.805
+        "x": 3.1736605460511473,
+        "y": 4.198577936546061
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.698333438860489,
-        "y": 5.0502832621438305
+        "x": 2.7294529083237946,
+        "y": 3.426646843874246
       },
       "isLocked": false,
-      "linkedName": "Net1"
-    },
-    {
-      "anchor": {
-        "x": 6.029815573770492,
-        "y": 1.3457479508196706
-      },
-      "prevControl": {
-        "x": 7.2321300450210035,
-        "y": 2.17422061232016
-      },
-      "nextControl": {
-        "x": 4.823730143573982,
-        "y": 0.5146768539937292
-      },
-      "isLocked": false,
-      "linkedName": null
+      "linkedName": "Coral_A.2"
     },
     {
       "anchor": {
@@ -36,8 +20,8 @@
         "y": 0.7021595584502802
       },
       "prevControl": {
-        "x": 3.148055901534887,
-        "y": 1.1196301474690178
+        "x": 1.782340787700142,
+        "y": 1.0661636963859125
       },
       "nextControl": null,
       "isLocked": false,
@@ -61,10 +45,10 @@
     "rotation": 144.0
   },
   "reversed": false,
-  "folder": "Net, Processor",
+  "folder": "Reef_To_Processor-Station",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }
