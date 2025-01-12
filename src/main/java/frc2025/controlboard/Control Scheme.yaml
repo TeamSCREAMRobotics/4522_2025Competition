@@ -15,9 +15,9 @@
 - Face Buttons
   - A: Move to L1 (Trough) setpoint
   - B: Move to L2 setpoint
-  - X: Move to L3 setpoint
-  - Y: Move to L4 setpoint
-  - Start: Engage climb sequence
+  - X: Move to L3 setpoint / Move to Algae clear L1 (alternate controls)
+  - Y: Move to L4 setpoint / Move to Algae clear L2 (alternate controls)
+  - Start: Climb sequence
   - Back: Reset gyro
 
 - Bumpers
@@ -25,13 +25,12 @@
   - Right Bumper: Score on reef & barge
 
 - Paddles (as viewed from front of controller)
-  - Top Left: Switch reef side
+  - Top Left: Alternate controls
   - Top Right: Auto-Align and move to Barge net setpoint
-  - Bottom Left: Handoff from intake -> wrist
+  - Bottom Left: Handoff from intake -> wrist / Handoff from wrist -> intake (alternate controls)
   - Bottom Right: Outtake to processor
 
--- To Do --
+- D-Pad
+  - Left: Switch to left reef side
+  - Right: Switch to right reef side
 
-- Algae clear L1
-- Algae clear L2
-- Handoff from wrist -> intake
