@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 6.335,
-        "y": 0.51
+        "y": 0.522
       },
       "prevControl": null,
       "nextControl": {
         "x": 5.694760273975307,
-        "y": 0.8669648972602723
+        "y": 0.8789648972602724
       },
       "isLocked": false,
       "linkedName": "Processor"
     },
     {
       "anchor": {
-        "x": 1.5971805942258521,
-        "y": 0.7021595584502802
+        "x": 1.632,
+        "y": 0.692
       },
       "prevControl": {
-        "x": 2.01489463532445,
-        "y": 1.0101860995461687
+        "x": 2.049710652614409,
+        "y": 1.000024042393519
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": 144.0
   },
   "reversed": false,
-  "folder": "Processor",
+  "folder": "To_Coral-Station",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

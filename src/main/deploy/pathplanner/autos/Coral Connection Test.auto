@@ -43,13 +43,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Processor-Station_To_B"
+            "pathName": "Processor-Station_To_B.2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "B_To_Processor-Station"
+            "pathName": "B.2_To_Processor-Station"
           }
         },
         {
@@ -61,7 +61,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "A_To_Non-Processor-Station"
+            "pathName": "A.2_To_Non-Processor-Station"
           }
         },
         {
@@ -115,13 +115,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Non-Processor-Station_To_H"
+            "pathName": "Non-Processor-Station_To_H.2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "H_To_Non-Processor-Station"
+            "pathName": "H.2_To_Non-Processor-Station"
           }
         },
         {
@@ -152,6 +152,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Misc",
   "choreoAuto": false
 }

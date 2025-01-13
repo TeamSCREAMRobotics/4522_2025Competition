@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5971805942258521,
-        "y": 0.7021595584502802
+        "x": 1.632,
+        "y": 0.692
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2205234050465448,
-        "y": 0.9859785778469621
+        "x": 2.2553428108206925,
+        "y": 0.9758190193966818
       },
       "isLocked": false,
       "linkedName": "Processor-Station"
@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 5.8,
-        "y": 4.17
+        "x": 5.812,
+        "y": 4.185
       },
       "prevControl": {
-        "x": 6.7478959390610225,
-        "y": 3.5634248070038956
+        "x": 6.759895939061023,
+        "y": 3.5784248070038953
       },
       "nextControl": null,
       "isLocked": false,
@@ -58,7 +58,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 90.0
   },
   "reversed": false,
   "folder": "Processor-Station_To_Reef",

@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 7.65,
-        "y": 4.805
+        "y": 4.825
       },
       "prevControl": null,
       "nextControl": {
         "x": 7.504303278688524,
-        "y": 5.961014344262295
+        "y": 5.981014344262295
       },
       "isLocked": false,
       "linkedName": "Net1"
@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 1.6129619485495608,
-        "y": 7.337160693744495
+        "x": 1.632,
+        "y": 7.33493819073778
       },
       "prevControl": {
-        "x": 2.6126331357075694,
-        "y": 7.283492576748096
+        "x": 2.6316711871580085,
+        "y": 7.281270073741382
       },
       "nextControl": null,
       "isLocked": false,
@@ -61,7 +61,7 @@
     "rotation": -144.0
   },
   "reversed": false,
-  "folder": "Net",
+  "folder": "To_Coral-Station",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -90.0

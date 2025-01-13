@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.835,
-        "y": 2.89
+        "x": 3.825,
+        "y": 2.875
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5771959459459457,
-        "y": 2.3648648648648645
+        "x": 3.567195945945946,
+        "y": 2.3498648648648643
       },
       "isLocked": false,
       "linkedName": "Algae_2"
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 6.335,
-        "y": 0.51
+        "y": 0.522
       },
       "prevControl": {
         "x": 6.168348366312619,
-        "y": 1.256593023443381
+        "y": 1.268593023443381
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Processor",
+  "folder": "Algae_To_Processor",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 150.0

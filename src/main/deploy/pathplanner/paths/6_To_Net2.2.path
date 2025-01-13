@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.83,
-        "y": 5.16
+        "x": 3.839792670657776,
+        "y": 5.17632525544168
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.219510135135136,
-        "y": 5.872888513513513
+        "x": 4.229302805792912,
+        "y": 5.889213768955193
       },
       "isLocked": false,
       "linkedName": "Algae_6"
@@ -45,7 +45,7 @@
     "rotation": 90.0
   },
   "reversed": false,
-  "folder": "Net",
+  "folder": "Algae_To_Net",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -150.0

@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid-Starting_To_G"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "G_To_4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4_To_Net1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Net1_To_5.2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "5.2_To_Net1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Net1_To_3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3_To_Processor"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Middle",
+  "choreoAuto": false
+}

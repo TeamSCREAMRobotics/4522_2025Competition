@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.615,
-        "y": 7.335
+        "x": 1.632,
+        "y": 7.33493819073778
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.858406114320504,
-        "y": 6.751345694541771
+        "x": 1.8752615475348215,
+        "y": 6.7516305365012155
       },
       "isLocked": false,
       "linkedName": "Non-Processor-Station"
     },
     {
       "anchor": {
-        "x": 3.175,
-        "y": 3.8499035575267975
+        "x": 3.162,
+        "y": 3.8646187988107874
       },
       "prevControl": {
-        "x": 2.649650264759663,
-        "y": 4.061714134494249
+        "x": 2.636650264759663,
+        "y": 4.076429375778243
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Coral_B.2"
+      "linkedName": "Coral_B"
     }
   ],
   "rotationTargets": [],

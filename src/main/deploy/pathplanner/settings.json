@@ -1,25 +1,28 @@
 {
-  "robotWidth": 0.892,
-  "robotLength": 0.892,
+  "robotWidth": 0.916432,
+  "robotLength": 0.891921,
   "holonomicMode": true,
   "pathFolders": [
-    "Algae",
+    "Algae_To_Algae",
+    "Algae_To_Net",
+    "Algae_To_Processor",
     "Coral_To_Algae",
     "Mid-Starting_To_Reef",
-    "Processor",
-    "Net",
+    "Net_To_Algae",
+    "Processor_To_Algae",
     "Non-Processor-Starting_To_Reef",
     "Non-Processor-Station_To_Reef",
     "Processor-Starting_To_Reef",
     "Processor-Station_To_Reef",
     "Reef_To_Non-Processor-Station",
-    "Reef_To_Processor-Station"
+    "Reef_To_Processor-Station",
+    "To_Coral-Station"
   ],
   "autoFolders": [
     "Middle",
-    "Non-Processor",
-    "Processor",
-    "Misc"
+    "Misc",
+    "Non-Processor Station",
+    "Processor Station"
   ],
   "defaultMaxVel": 5.5,
   "defaultMaxAccel": 5.5,

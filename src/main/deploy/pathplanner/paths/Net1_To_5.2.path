@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.65,
+        "y": 4.825
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.231289707922867,
+        "y": 4.959522157008625
+      },
+      "isLocked": false,
+      "linkedName": "Net1"
+    },
+    {
+      "anchor": {
+        "x": 5.14,
+        "y": 5.175
+      },
+      "prevControl": {
+        "x": 5.382425921053527,
+        "y": 5.2360710471610625
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Algae_5.2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.5,
+    "maxAcceleration": 5.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -29.999999999999996
+  },
+  "reversed": false,
+  "folder": "Net_To_Algae",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "useDefaultConstraints": true
+}
