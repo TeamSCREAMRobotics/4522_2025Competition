@@ -20,7 +20,7 @@ import util.SimUtil;
 public class WristConstants {
 
   public static final double WRIST_REDUCTION = 30.0;
-  public static final double ROLLERS_REDUCTION = 2.0;
+  public static final double ROLLERS_REDUCTION = 2.25;
 
   public static final DCMotorSim SIM =
       SimUtil.createDCMotorSim(DCMotor.getFalcon500(1), WRIST_REDUCTION, 0.01);
@@ -38,7 +38,7 @@ public class WristConstants {
 
     WRIST_CONFIG.simConstants =
         new TalonFXSubsystemSimConstants(
-            new SimWrapper(SIM), SIM_GAINS.getPIDController(), false, false, true);
+            new SimWrapper(SIM), SIM_GAINS.getPIDController(), false, false, false);
 
     WRIST_CONFIG.masterConstants =
         new TalonFXConstants(new CANDevice(14, ""), InvertedValue.CounterClockwise_Positive);

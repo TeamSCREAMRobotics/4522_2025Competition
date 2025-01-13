@@ -5,7 +5,6 @@
 package frc2025;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.commands.DriveToPose;
@@ -81,13 +80,15 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+
+    // Auto aligning controls
     Controlboard.driveController
-        .a()
+        .leftBumper()
         .and(() -> robotState.getReefZone().isPresent())
         .toggleOnTrue(reefAutoAlignFactory.get());
 
     Controlboard.driveController
-        .x()
+        .rightStick()
         .whileTrue(
             new DriveToPose(
                 drivetrain,
@@ -96,20 +97,20 @@ public class RobotContainer {
                         FieldConstants.BLUE_BARGE_ALIGN, FieldConstants.RED_BARGE_ALIGN),
                 () -> Controlboard.getTranslation().get().getY()));
 
-    Controlboard.driveController.y().whileTrue(elevator.applyGoal(ElevatorGoal.MAX));
+    // Reef scoring/clearing controls
+    Controlboard.driveController.y().whileTrue(elevator.applyGoal(ElevatorGoal.L4));
+    Controlboard.driveController.x().whileTrue(elevator.applyGoal(ElevatorGoal.L3));
+    Controlboard.driveController.b().whileTrue(elevator.applyGoal(ElevatorGoal.L2));
+    Controlboard.driveController.a().whileTrue(elevator.applyGoal(ElevatorGoal.TROUGH));
 
     Controlboard.driveController
-        .b()
-        .toggleOnTrue(
-            Commands.parallel(
-                elevator.applyVoltage(
-                    () ->
-                        -MathUtil.applyDeadband(Controlboard.driveController.getLeftY(), 0.05)
-                            * 6.0),
-                wrist.applyVoltage(
-                    () ->
-                        MathUtil.applyDeadband(Controlboard.driveController.getRightY(), 0.05)
-                            * 12.0)));
+        .leftStick()
+        .and(Controlboard.driveController.y())
+        .whileTrue(elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L2));
+    Controlboard.driveController
+        .leftStick()
+        .and(Controlboard.driveController.x())
+        .whileTrue(elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L1));
   }
 
   private void configureDefaultCommands() {

@@ -14,11 +14,11 @@ public class Elevator extends TalonFXSubsystem {
       new Ligament()
           .withStaticAngle(Rotation2d.fromDegrees(90))
           .withDynamicLength(
-              () -> getMeasuredHeight().plus(ElevatorConstants.HOME_HEIGHT_FROM_FLOOR),
+              () -> getMeasuredHeight().plus(ElevatorConstants.MIN_HEIGHT_FROM_FLOOR),
               () ->
                   Length.fromRotations(
                           getGoal().target().getAsDouble(), ElevatorConstants.PULLEY_CIRCUMFERENCE)
-                      .plus(ElevatorConstants.HOME_HEIGHT_FROM_FLOOR));
+                      .plus(ElevatorConstants.MIN_HEIGHT_FROM_FLOOR));
 
   public Elevator(TalonFXSubsystemConfiguration config) {
     super(config, ElevatorGoal.HOME);

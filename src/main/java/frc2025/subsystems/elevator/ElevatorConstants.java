@@ -17,16 +17,18 @@ import sim.SimWrapper;
 
 public final class ElevatorConstants {
 
+  // As measured from wrist pivot axis
+  public static final Length MIN_HEIGHT_FROM_FLOOR = Length.fromInches(8.5782);
+  public static final Length MAX_HEIGHT_FROM_FLOOR = Length.fromInches(91.1907);
+
   public static final double MIN_HEIGHT = 0.0;
-  public static final Length MAX_HEIGHT = Length.fromFeet(6.0);
-  public static final double ENCODER_MAX = 10.365;
+  public static final Length MAX_HEIGHT = Length.fromInches(82.6125);
+  public static final double ENCODER_MAX = 11.6561948;
   public static final double ENCODER_MIN = 0.0;
-  public static final Length PULLEY_DIAMETER = Length.fromInches(2.211);
-  public static final Length PULLEY_CIRCUMFERENCE = Length.fromInches(6.946136755);
+  public static final Length PULLEY_DIAMETER = Length.fromInches(2.256);
+  public static final Length PULLEY_CIRCUMFERENCE = PULLEY_DIAMETER.times(Math.PI);
 
-  public static final double GEAR_RATIO = 4 * (50.0 / 24.0);
-
-  public static final Length HOME_HEIGHT_FROM_FLOOR = Length.fromInches(11.713);
+  public static final double GEAR_RATIO = (40.0 / 14.0) * (50.0 / 40.0);
 
   public static final ElevatorSim SIM =
       new ElevatorSim(
