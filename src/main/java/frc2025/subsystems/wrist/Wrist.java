@@ -20,7 +20,10 @@ public class Wrist extends TalonFXSubsystem {
 
   public enum WristGoal implements TalonFXSubsystemGoal {
     HOME(Rotation2d.fromDegrees(180)),
-    SCORE_L1_L3(Rotation2d.fromDegrees(-90));
+    SCORE_L1_L3(Rotation2d.fromDegrees(-90)),
+    SCORE_L4(Rotation2d.kZero),
+    CORAL_STATION(Rotation2d.kZero),
+    ;
 
     public final DoubleSupplier target;
 

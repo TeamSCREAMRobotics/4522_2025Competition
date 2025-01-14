@@ -19,10 +19,14 @@ import frc2025.subsystems.elevator.Elevator.ElevatorGoal;
 import frc2025.subsystems.elevator.ElevatorConstants;
 import frc2025.subsystems.intake.IntakeConstants;
 import frc2025.subsystems.intake.IntakeDeploy;
+import frc2025.subsystems.intake.IntakeDeploy.IntakeDeployGoal;
 import frc2025.subsystems.intake.IntakeRollers;
+import frc2025.subsystems.intake.IntakeRollers.IntakeRollersGoal;
 import frc2025.subsystems.wrist.Wrist;
+import frc2025.subsystems.wrist.Wrist.WristGoal;
 import frc2025.subsystems.wrist.WristConstants;
 import frc2025.subsystems.wrist.WristRollers;
+import frc2025.subsystems.wrist.WristRollers.WristRollersGoal;
 import java.util.function.Supplier;
 import lombok.Getter;
 import util.AllianceFlipUtil;
@@ -98,19 +102,27 @@ public class RobotContainer {
                 () -> Controlboard.getTranslation().get().getY()));
 
     // Reef scoring/clearing controls
-    Controlboard.driveController.y().whileTrue(elevator.applyGoal(ElevatorGoal.L4));
-    Controlboard.driveController.x().whileTrue(elevator.applyGoal(ElevatorGoal.L3));
-    Controlboard.driveController.b().whileTrue(elevator.applyGoal(ElevatorGoal.L2));
-    Controlboard.driveController.a().whileTrue(elevator.applyGoal(ElevatorGoal.TROUGH));
+    Controlboard.goToLevel4().whileTrue(elevator.applyGoal(ElevatorGoal.L4));
+    Controlboard.goToLevel3().whileTrue(elevator.applyGoal(ElevatorGoal.L3));
+    Controlboard.goToLevel2().whileTrue(elevator.applyGoal(ElevatorGoal.L2));
+    Controlboard.goToTrough().whileTrue(elevator.applyGoal(ElevatorGoal.TROUGH));
 
-    Controlboard.driveController
-        .leftStick()
-        .and(Controlboard.driveController.y())
-        .whileTrue(elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L2));
-    Controlboard.driveController
-        .leftStick()
-        .and(Controlboard.driveController.x())
-        .whileTrue(elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L1));
+    Controlboard.goToAlgaeClear2().whileTrue(elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L2));
+    Controlboard.goToAlgaeClear1().whileTrue(elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L1));
+
+    // Intake controls
+    Controlboard.stationIntake()
+        .whileTrue(
+            Commands.parallel(
+                elevator.applyGoal(ElevatorGoal.CORAL_STATION),
+                wrist.applyGoal(WristGoal.CORAL_STATION),
+                wristRollers.applyGoal(WristRollersGoal.INTAKE)));
+
+    Controlboard.groundIntake()
+        .whileTrue(
+            Commands.parallel(
+                intakeDeploy.applyGoal(IntakeDeployGoal.DEPLOY),
+                intakeRollers.applyGoal(IntakeRollersGoal.INTAKE)));
   }
 
   private void configureDefaultCommands() {

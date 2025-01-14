@@ -8,17 +8,17 @@ import java.util.function.DoubleSupplier;
 public class IntakeDeploy extends TalonFXSubsystem {
 
   public IntakeDeploy(TalonFXSubsystemConfiguration config) {
-    super(config, DeployGoal.IDLE);
+    super(config, IntakeDeployGoal.IDLE);
   }
 
-  public enum DeployGoal implements TalonFXSubsystemGoal {
+  public enum IntakeDeployGoal implements TalonFXSubsystemGoal {
     HOME(Rotation2d.fromDegrees(0)),
     IDLE(Rotation2d.fromDegrees(90)),
     DEPLOY(Rotation2d.fromDegrees(145));
 
     public final double targetRotations;
 
-    private DeployGoal(Rotation2d angle) {
+    private IntakeDeployGoal(Rotation2d angle) {
       this.targetRotations = angle.getRotations();
     }
 

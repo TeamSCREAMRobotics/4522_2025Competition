@@ -4,7 +4,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import drivers.TalonFXSubsystem.CANDevice;
 import drivers.TalonFXSubsystem.TalonFXConstants;
 import drivers.TalonFXSubsystem.TalonFXSubsystemConfiguration;
-import frc2025.subsystems.intake.IntakeDeploy.DeployGoal;
+import frc2025.subsystems.intake.IntakeDeploy.IntakeDeployGoal;
 import frc2025.subsystems.intake.IntakeRollers.IntakeRollersGoal;
 
 public class IntakeConstants {
@@ -47,14 +47,14 @@ public class IntakeConstants {
   }
 
   public enum IntakeGoal {
-    IDLE(DeployGoal.IDLE, IntakeRollersGoal.IDLE),
-    INTAKE(DeployGoal.DEPLOY, IntakeRollersGoal.INTAKE),
-    EJECT(DeployGoal.IDLE, IntakeRollersGoal.EJECT);
+    IDLE(IntakeDeployGoal.IDLE, IntakeRollersGoal.IDLE),
+    INTAKE(IntakeDeployGoal.DEPLOY, IntakeRollersGoal.INTAKE),
+    EJECT(IntakeDeployGoal.IDLE, IntakeRollersGoal.EJECT);
 
-    public final DeployGoal deployGoal;
+    public final IntakeDeployGoal deployGoal;
     public final IntakeRollersGoal rollersGoal;
 
-    private IntakeGoal(DeployGoal deployGoal, IntakeRollersGoal rollersGoal) {
+    private IntakeGoal(IntakeDeployGoal deployGoal, IntakeRollersGoal rollersGoal) {
       this.deployGoal = deployGoal;
       this.rollersGoal = rollersGoal;
     }

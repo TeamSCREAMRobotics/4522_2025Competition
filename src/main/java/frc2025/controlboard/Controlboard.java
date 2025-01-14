@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc2025.subsystems.drivetrain.DrivetrainConstants;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -91,5 +92,37 @@ public class Controlboard {
 
   public static BooleanSupplier getSlowMode() {
     return driveController.leftTrigger(TRIGGER_DEADBAND).or(driveController.leftBumper());
+  }
+
+  public static Trigger goToLevel4() {
+    return driveController.y().and(driveController.leftStick().negate());
+  }
+
+  public static Trigger goToLevel3() {
+    return driveController.x().and(driveController.leftStick().negate());
+  }
+
+  public static Trigger goToLevel2() {
+    return driveController.b().and(driveController.leftStick().negate());
+  }
+
+  public static Trigger goToTrough() {
+    return driveController.a().and(driveController.leftStick().negate());
+  }
+
+  public static Trigger goToAlgaeClear1() {
+    return driveController.y().and(driveController.leftStick());
+  }
+
+  public static Trigger goToAlgaeClear2() {
+    return driveController.x().and(driveController.leftStick());
+  }
+
+  public static Trigger groundIntake() {
+    return driveController.rightTrigger(TRIGGER_DEADBAND);
+  }
+
+  public static Trigger stationIntake() {
+    return driveController.leftTrigger(TRIGGER_DEADBAND);
   }
 }
