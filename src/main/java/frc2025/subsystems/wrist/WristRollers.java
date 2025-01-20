@@ -1,9 +1,13 @@
 package frc2025.subsystems.wrist;
 
 import drivers.TalonFXSubsystem;
+
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class WristRollers extends TalonFXSubsystem {
+
+  private BooleanSupplier hasGamePiece = () -> false;
 
   public WristRollers(TalonFXSubsystemConfiguration config) {
     super(config, WristRollersGoal.IDLE);
@@ -32,4 +36,7 @@ public class WristRollers extends TalonFXSubsystem {
       return () -> voltage;
     }
   }
+
+  @Override
+  public void periodic() {}
 }

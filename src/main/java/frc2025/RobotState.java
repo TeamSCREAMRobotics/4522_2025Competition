@@ -1,13 +1,9 @@
 package frc2025;
 
-import dashboard.Mechanism;
-import dashboard.MechanismVisualizer;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import frc2025.RobotContainer.Subsystems;
 import frc2025.constants.FieldConstants;
-import frc2025.constants.SimConstants;
 import frc2025.controlboard.Controlboard;
 import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
@@ -27,10 +23,6 @@ public class RobotState {
   private final IntakeDeploy intakeDeploy;
   private final IntakeRollers intakeRollers;
 
-  private final Mechanism elevatorPivot;
-
-  private final MechanismVisualizer visualizer;
-
   public RobotState(Subsystems subsystems) {
     this.drivetrain = subsystems.drivetrain();
     this.elevator = subsystems.elevator();
@@ -38,19 +30,6 @@ public class RobotState {
     this.wristRollers = subsystems.wristRollers();
     this.intakeDeploy = subsystems.intakeDeploy();
     this.intakeRollers = subsystems.intakeRollers();
-
-    elevatorPivot =
-        new Mechanism("ElevatorWrist", elevator.getLigament(), wrist.getLigament())
-            .withStaticPosition(new Translation2d(SimConstants.MECH_ELEVATOR_X, 0));
-
-    visualizer =
-        new MechanismVisualizer(
-            SimConstants.MEASURED_MECHANISM,
-            SimConstants.SETPOINT_MECHANISM,
-            RobotState::telemeterizeMechanisms,
-            elevatorPivot);
-
-    visualizer.setEnabled(true);
   }
 
   public OptionalInt getReefZone() {

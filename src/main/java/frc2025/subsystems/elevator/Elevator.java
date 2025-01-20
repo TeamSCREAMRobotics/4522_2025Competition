@@ -1,24 +1,12 @@
 package frc2025.subsystems.elevator;
 
-import dashboard.Ligament;
 import data.Length;
 import drivers.TalonFXSubsystem;
-import edu.wpi.first.math.geometry.Rotation2d;
 import frc2025.logging.Logger;
 import java.util.function.DoubleSupplier;
 import math.Conversions;
 
 public class Elevator extends TalonFXSubsystem {
-
-  private final Ligament elevatorLig =
-      new Ligament()
-          .withStaticAngle(Rotation2d.fromDegrees(90))
-          .withDynamicLength(
-              () -> getMeasuredHeight().plus(ElevatorConstants.MIN_HEIGHT_FROM_FLOOR),
-              () ->
-                  Length.fromRotations(
-                          getGoal().target().getAsDouble(), ElevatorConstants.PULLEY_CIRCUMFERENCE)
-                      .plus(ElevatorConstants.MIN_HEIGHT_FROM_FLOOR));
 
   public Elevator(TalonFXSubsystemConfiguration config) {
     super(config, ElevatorGoal.HOME);
@@ -57,10 +45,6 @@ public class Elevator extends TalonFXSubsystem {
     }
   }
 
-  public Ligament getLigament() {
-    return elevatorLig;
-  }
-
   public Length getMeasuredHeight() {
     return Length.fromRotations(getPosition(), ElevatorConstants.PULLEY_CIRCUMFERENCE);
   }
@@ -74,11 +58,11 @@ public class Elevator extends TalonFXSubsystem {
     super.setSimState(
         Conversions.linearDistanceToRotations(
                 Length.fromMeters(position), ElevatorConstants.PULLEY_CIRCUMFERENCE)
-            * ElevatorConstants.GEAR_RATIO,
+            * ElevatorConstants.REDUCTION,
         Conversions.mpsToRPS(
             velocity,
             ElevatorConstants.PULLEY_CIRCUMFERENCE.getMeters(),
-            ElevatorConstants.GEAR_RATIO));
+            ElevatorConstants.REDUCTION));
   }
 
   @Override

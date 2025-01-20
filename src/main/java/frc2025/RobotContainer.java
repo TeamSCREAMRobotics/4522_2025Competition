@@ -102,20 +102,37 @@ public class RobotContainer {
                 () -> Controlboard.getTranslation().get().getY()));
 
     // Reef scoring/clearing controls
-    Controlboard.goToLevel4().whileTrue(elevator.applyGoal(ElevatorGoal.L4));
-    Controlboard.goToLevel3().whileTrue(elevator.applyGoal(ElevatorGoal.L3));
-    Controlboard.goToLevel2().whileTrue(elevator.applyGoal(ElevatorGoal.L2));
-    Controlboard.goToTrough().whileTrue(elevator.applyGoal(ElevatorGoal.TROUGH));
+    Controlboard.goToLevel4()
+        .whileTrue(
+            Commands.parallel(
+                elevator.applyGoal(ElevatorGoal.L4), wrist.applyGoal(WristGoal.REEF_L4)));
 
-    Controlboard.goToAlgaeClear2().whileTrue(elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L2));
-    Controlboard.goToAlgaeClear1().whileTrue(elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L1));
+    Controlboard.goToLevel3().whileTrue(
+        Commands.parallel(
+            elevator.applyGoal(ElevatorGoal.L3), wrist.applyGoal(WristGoal.REEF_L1_L3)));
+
+    Controlboard.goToLevel2().whileTrue(
+        Commands.parallel(
+            elevator.applyGoal(ElevatorGoal.L2), wrist.applyGoal(WristGoal.REEF_L1_L3)));
+
+    Controlboard.goToTrough().whileTrue(
+        Commands.parallel(
+            elevator.applyGoal(ElevatorGoal.TROUGH), wrist.applyGoal(WristGoal.REEF_L1_L3)));
+
+    Controlboard.goToAlgaeClear2().whileTrue(
+        Commands.parallel(
+            elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L2), wrist.applyGoal(WristGoal.CLEAR_ALGAE)));
+            
+    Controlboard.goToAlgaeClear1().whileTrue(
+        Commands.parallel(
+            elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L1), wrist.applyGoal(WristGoal.CLEAR_ALGAE)));
 
     // Intake controls
     Controlboard.stationIntake()
         .whileTrue(
             Commands.parallel(
                 elevator.applyGoal(ElevatorGoal.CORAL_STATION),
-                wrist.applyGoal(WristGoal.CORAL_STATION),
+                wrist.applyGoal(WristGoal.FUNNEL),
                 wristRollers.applyGoal(WristRollersGoal.INTAKE)));
 
     Controlboard.groundIntake()

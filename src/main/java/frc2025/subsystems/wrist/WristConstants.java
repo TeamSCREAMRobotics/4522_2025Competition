@@ -56,10 +56,10 @@ public class WristConstants {
     WRIST_CONFIG.feedbackRemoteSensorId = 4;
     WRIST_CONFIG.enableSupplyCurrentLimit = true;
     WRIST_CONFIG.supplyCurrentLimit = 40;
-    WRIST_CONFIG.cruiseVelocity = 20.0;
-    WRIST_CONFIG.acceleration = 10.0;
+    WRIST_CONFIG.cruiseVelocity = 1.0;
+    WRIST_CONFIG.acceleration = 1.0;
     WRIST_CONFIG.slot0 =
-        new ScreamPIDConstants(100.0, 0, 0).getSlot0Configs(new FeedforwardConstants());
+        new ScreamPIDConstants(1.0, 0, 0).getSlot0Configs(new FeedforwardConstants());
     WRIST_CONFIG.positionThreshold = 0.025;
     ;
   }
@@ -74,7 +74,7 @@ public class WristConstants {
     ROLLERS_CONFIG.logTelemetry = false;
 
     ROLLERS_CONFIG.masterConstants =
-        new TalonFXConstants(new CANDevice(13), InvertedValue.Clockwise_Positive);
+        new TalonFXConstants(new CANDevice(15), InvertedValue.Clockwise_Positive);
 
     ROLLERS_CONFIG.enableSupplyCurrentLimit = true;
     ROLLERS_CONFIG.supplyCurrentLimit = 20;

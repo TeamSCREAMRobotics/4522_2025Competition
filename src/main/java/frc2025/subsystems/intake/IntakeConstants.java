@@ -24,8 +24,6 @@ public class IntakeConstants {
     DEPLOY_CONFIG.masterConstants =
         new TalonFXConstants(new CANDevice(12), InvertedValue.Clockwise_Positive);
 
-    DEPLOY_CONFIG.enableSupplyCurrentLimit = true;
-    DEPLOY_CONFIG.supplyCurrentLimit = 20;
     DEPLOY_CONFIG.sensorToMechRatio = DEPLOY_REDUCTION;
   }
 
