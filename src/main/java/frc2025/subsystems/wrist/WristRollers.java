@@ -1,7 +1,6 @@
 package frc2025.subsystems.wrist;
 
 import drivers.TalonFXSubsystem;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 

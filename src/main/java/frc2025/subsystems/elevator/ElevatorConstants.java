@@ -19,11 +19,14 @@ public final class ElevatorConstants {
 
   // As measured from wrist pivot axis
   public static final Length MIN_HEIGHT_FROM_FLOOR = Length.fromInches(8.5782);
-  public static final Length MAX_HEIGHT_FROM_FLOOR = Length.fromInches(91.1907);
+  public static final Length MAX_HEIGHT_FROM_FLOOR = Length.fromInches(88.317193);
 
   public static final double MIN_HEIGHT = 0.0;
-  public static final Length MAX_HEIGHT = Length.fromInches(82.6125);
-  public static final double ENCODER_MAX = 11.6561948;
+  public static final Length MAX_HEIGHT =
+      MAX_HEIGHT_FROM_FLOOR.minus(MIN_HEIGHT_FROM_FLOOR); // 79.738993
+
+  // Theoretically MAX_HEIGHT / PULLEY_CIRCUMFERENCE, but needs to actually be measured
+  public static final double ENCODER_MAX = 11.25075788;
   public static final double ENCODER_MIN = 0.0;
   public static final Length PULLEY_DIAMETER = Length.fromInches(2.256);
   public static final Length PULLEY_CIRCUMFERENCE = PULLEY_DIAMETER.times(Math.PI);
@@ -32,15 +35,16 @@ public final class ElevatorConstants {
 
   public static final ElevatorSim SIM =
       new ElevatorSim(
-          DCMotor.getKrakenX60(4),
+          DCMotor.getKrakenX60(2),
           REDUCTION,
-          Units.lbsToKilograms(20),
+          Units.lbsToKilograms(21.44),
           PULLEY_DIAMETER.div(2).getMeters(),
           MIN_HEIGHT,
-          MAX_HEIGHT.getMeters(),
+          MAX_HEIGHT.plus(Length.fromInches(0.875)).getMeters(),
           false,
           0.0);
-  public static final ScreamPIDConstants SIM_GAINS = new ScreamPIDConstants(10.0, 0.0, 0.0);
+  public static final ScreamPIDConstants SIM_GAINS =
+      new ScreamPIDConstants(REDUCTION * 0.7, 0.0, 0.0);
 
   public static final TalonFXSubsystemConfiguration CONFIGURATION =
       new TalonFXSubsystemConfiguration();
@@ -55,12 +59,14 @@ public final class ElevatorConstants {
         new TalonFXSubsystemSimConstants(new SimWrapper(SIM), SIM_GAINS.getPIDController());
 
     CONFIGURATION.masterConstants =
-        new TalonFXConstants(new CANDevice(8, ""), InvertedValue.Clockwise_Positive);
+        new TalonFXConstants(
+            new CANDevice(8, ""),
+            InvertedValue.Clockwise_Positive); // Left as viewed from motor side
     CONFIGURATION.slaveConstants =
         new TalonFXConstants[] {
-          new TalonFXConstants(new CANDevice(9, ""), InvertedValue.CounterClockwise_Positive),
-          new TalonFXConstants(new CANDevice(10, ""), InvertedValue.Clockwise_Positive),
-          new TalonFXConstants(new CANDevice(11, ""), InvertedValue.CounterClockwise_Positive)
+          new TalonFXConstants(
+              new CANDevice(9, ""),
+              InvertedValue.CounterClockwise_Positive), // Right as viewed from motor side
         };
 
     CONFIGURATION.neutralMode = NeutralModeValue.Brake;

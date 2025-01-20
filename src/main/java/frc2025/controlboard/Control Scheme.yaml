@@ -21,7 +21,7 @@
   - Back: Reset gyro
 
 - Bumpers
-  - Left Bumper: Auto-Align to reef
+  - Left Bumper: Switch reef side
   - Right Bumper: Score on reef & barge
 
 - Paddles (as viewed from front of controller)
@@ -31,6 +31,5 @@
   - Bottom Right: Outtake to processor
 
 - D-Pad
-  - Left: Switch to left reef side
-  - Right: Switch to right reef side
+  - Left: Align to reef
 

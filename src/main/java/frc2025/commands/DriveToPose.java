@@ -1,5 +1,6 @@
 package frc2025.commands;
 
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -29,6 +30,7 @@ public class DriveToPose extends Command {
   private Translation2d lastSetpointTranslation;
 
   private Optional<DoubleSupplier> yOverride = Optional.empty();
+  private Optional<Supplier<Translation2d>> translationOverride = Optional.empty();
 
   public DriveToPose(Drivetrain drivetrain, Supplier<Pose2d> targetPose) {
     this.drivetrain = drivetrain;
@@ -40,6 +42,14 @@ public class DriveToPose extends Command {
   public DriveToPose(Drivetrain drivetrain, Supplier<Pose2d> targetPose, DoubleSupplier yOverride) {
     this(drivetrain, targetPose);
     this.yOverride = Optional.of(yOverride);
+  }
+
+  public DriveToPose(
+      Drivetrain drivetrain,
+      Supplier<Pose2d> targetPose,
+      Supplier<Translation2d> translationOverride) {
+    this(drivetrain, targetPose);
+    this.translationOverride = Optional.of(translationOverride);
   }
 
   public DriveToPose(Drivetrain drivetrain, Pose2d targetPose) {

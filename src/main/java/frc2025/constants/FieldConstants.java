@@ -44,8 +44,8 @@ public class FieldConstants {
 
     for (int i = 0; i < 6; i++) {
       Rotation2d rotation = Rotation2d.fromDegrees(i * 60);
-      Rotation2d blueRotation = Rotation2d.fromDegrees(-180 + (i * 60));
-      Rotation2d redRotation = Rotation2d.fromDegrees(i * 60);
+      Rotation2d blueRotation = Rotation2d.fromDegrees(-180 + (i * 60)).plus(Rotation2d.k180deg);
+      Rotation2d redRotation = Rotation2d.fromDegrees(i * 60).plus(Rotation2d.k180deg);
 
       BLUE_REEF_LOCATIONS.put(
           i,

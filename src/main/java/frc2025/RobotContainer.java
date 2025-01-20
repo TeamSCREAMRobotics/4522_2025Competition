@@ -27,7 +27,7 @@ import frc2025.subsystems.wrist.Wrist.WristGoal;
 import frc2025.subsystems.wrist.WristConstants;
 import frc2025.subsystems.wrist.WristRollers;
 import frc2025.subsystems.wrist.WristRollers.WristRollersGoal;
-import java.util.function.Supplier;
+import java.util.Set;
 import lombok.Getter;
 import util.AllianceFlipUtil;
 
@@ -55,26 +55,34 @@ public class RobotContainer {
 
   @Getter private static final RobotState robotState = new RobotState(subsystems);
 
-  private int selectedReefZone = -1;
-
-  private final Supplier<Command> reefAutoAlignFactory =
-      () ->
-          new DriveToPose(
+  private final Command reefAlign =
+      Commands.defer(
+          () ->
+              new DriveToPose(
                   drivetrain,
                   () -> {
                     return Controlboard.getScoringSide().get() == ScoringSide.LEFT
                         ? AllianceFlipUtil.get(
                                 FieldConstants.BLUE_REEF_LOCATIONS,
                                 FieldConstants.RED_REEF_LOCATIONS)
-                            .get(selectedReefZone)
+                            .get(robotState.getReefZone().getAsInt())
                             .getFirst()
                         : AllianceFlipUtil.get(
                                 FieldConstants.BLUE_REEF_LOCATIONS,
                                 FieldConstants.RED_REEF_LOCATIONS)
-                            .get(selectedReefZone)
+                            .get(robotState.getReefZone().getAsInt())
                             .getSecond();
-                  })
-              .beforeStarting(() -> selectedReefZone = robotState.getReefZone().getAsInt());
+                  },
+                  Controlboard.getTranslation()),
+          Set.of(drivetrain));
+
+  private final Command stationAlign =
+      drivetrain.applyRequest(
+          () ->
+              drivetrain
+                  .getHelper()
+                  .getFacingAngle(
+                      Controlboard.getTranslation().get(), robotState.getStationAlignAngle()));
 
   public RobotContainer() {
     configureBindings();
@@ -87,9 +95,9 @@ public class RobotContainer {
 
     // Auto aligning controls
     Controlboard.driveController
-        .leftBumper()
+        .povLeft()
         .and(() -> robotState.getReefZone().isPresent())
-        .toggleOnTrue(reefAutoAlignFactory.get());
+        .toggleOnTrue(reefAlign);
 
     Controlboard.driveController
         .rightStick()
@@ -105,34 +113,51 @@ public class RobotContainer {
     Controlboard.goToLevel4()
         .whileTrue(
             Commands.parallel(
-                elevator.applyGoal(ElevatorGoal.L4), wrist.applyGoal(WristGoal.REEF_L4)));
+                elevator.applyGoal(ElevatorGoal.L4), wrist.applyGoal(WristGoal.REEF_L4)))
+        .and(() -> robotState.getReefZone().isPresent())
+        .whileTrue(reefAlign);
 
-    Controlboard.goToLevel3().whileTrue(
-        Commands.parallel(
-            elevator.applyGoal(ElevatorGoal.L3), wrist.applyGoal(WristGoal.REEF_L1_L3)));
+    Controlboard.goToLevel3()
+        .whileTrue(
+            Commands.parallel(
+                elevator.applyGoal(ElevatorGoal.L3), wrist.applyGoal(WristGoal.REEF_L1_L3)))
+        .and(() -> robotState.getReefZone().isPresent())
+        .whileTrue(reefAlign);
 
-    Controlboard.goToLevel2().whileTrue(
-        Commands.parallel(
-            elevator.applyGoal(ElevatorGoal.L2), wrist.applyGoal(WristGoal.REEF_L1_L3)));
+    Controlboard.goToLevel2()
+        .whileTrue(
+            Commands.parallel(
+                elevator.applyGoal(ElevatorGoal.L2), wrist.applyGoal(WristGoal.REEF_L1_L3)))
+        .and(() -> robotState.getReefZone().isPresent())
+        .whileTrue(reefAlign)
+        .onFalse(wrist.applyGoal(WristGoal.BETWEEN).withTimeout(0.5));
 
-    Controlboard.goToTrough().whileTrue(
-        Commands.parallel(
-            elevator.applyGoal(ElevatorGoal.TROUGH), wrist.applyGoal(WristGoal.REEF_L1_L3)));
+    Controlboard.goToTrough()
+        .whileTrue(
+            Commands.parallel(
+                elevator.applyGoal(ElevatorGoal.TROUGH), wrist.applyGoal(WristGoal.REEF_L1_L3)))
+        .and(() -> robotState.getReefZone().isPresent())
+        .whileTrue(reefAlign);
 
-    Controlboard.goToAlgaeClear2().whileTrue(
-        Commands.parallel(
-            elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L2), wrist.applyGoal(WristGoal.CLEAR_ALGAE)));
-            
-    Controlboard.goToAlgaeClear1().whileTrue(
-        Commands.parallel(
-            elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L1), wrist.applyGoal(WristGoal.CLEAR_ALGAE)));
+    Controlboard.goToAlgaeClear2()
+        .whileTrue(
+            Commands.parallel(
+                elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L2),
+                wrist.applyGoal(WristGoal.CLEAR_ALGAE)));
+
+    Controlboard.goToAlgaeClear1()
+        .whileTrue(
+            Commands.parallel(
+                elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L1),
+                wrist.applyGoal(WristGoal.CLEAR_ALGAE)));
 
     // Intake controls
     Controlboard.stationIntake()
         .whileTrue(
             Commands.parallel(
+                stationAlign,
                 elevator.applyGoal(ElevatorGoal.CORAL_STATION),
-                wrist.applyGoal(WristGoal.FUNNEL),
+                wrist.applyGoal(WristGoal.STATION),
                 wristRollers.applyGoal(WristRollersGoal.INTAKE)));
 
     Controlboard.groundIntake()
@@ -157,6 +182,16 @@ public class RobotContainer {
                         .getRobotCentric(
                             Controlboard.getTranslation().get(),
                             Controlboard.getRotation().getAsDouble())));
+
+    /* elevator.setDefaultCommand(
+        elevator.applyVoltage(
+            () ->
+                (Controlboard.driveController.getLeftTriggerAxis()
+                        - MathUtil.applyDeadband(Controlboard.driveController.getRightY(), 0.15))
+                    * 12.0));
+
+    wrist.setDefaultCommand(
+        wrist.applyVoltage(() -> Controlboard.driveController.getRightTriggerAxis() * 24.0)); */
   }
 
   public Command getAutonomousCommand() {

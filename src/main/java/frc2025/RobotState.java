@@ -1,11 +1,13 @@
 package frc2025;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc2025.RobotContainer.Subsystems;
 import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard;
 import frc2025.logging.Logger;
+import frc2025.sim.ComponentVisualizer;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.elevator.Elevator;
 import frc2025.subsystems.intake.IntakeDeploy;
@@ -37,6 +39,14 @@ public class RobotState {
         .contains(drivetrain.getPose().getTranslation());
   }
 
+  public Rotation2d getStationAlignAngle() {
+    if (drivetrain.getPose().getY() <= FieldConstants.FIELD_DIMENSIONS.getY() / 2.0) {
+      return AllianceFlipUtil.MirroredRotation2d(Rotation2d.fromDegrees(-125));
+    } else {
+      return AllianceFlipUtil.MirroredRotation2d(Rotation2d.fromDegrees(125));
+    }
+  }
+
   public void logTelemetry() {
     getReefZone()
         .ifPresent(
@@ -54,10 +64,19 @@ public class RobotState {
                           .getSecond()
                     }));
     Logger.log("Controls/ScoringSide", Controlboard.getScoringSide().get());
+    visualizeComponents();
   }
 
-  public static void telemeterizeMechanisms(Mechanism2d measured, Mechanism2d setpoint) {
-    Logger.log("RobotState/Mechanisms/Measured", measured);
-    Logger.log("RobotState/Mechanisms/Setpoint", setpoint);
+  public void visualizeComponents() {
+    Logger.log(
+        "Components/MeasuredComponents",
+        new Pose3d[] {
+          ComponentVisualizer.getIntakePose(new Rotation2d()),
+          ComponentVisualizer.getStage1Pose(elevator.getMeasuredHeight().getMeters()),
+          ComponentVisualizer.getStage2Pose(elevator.getMeasuredHeight().getMeters()),
+          ComponentVisualizer.getCarriagePose(elevator.getMeasuredHeight().getMeters()),
+          ComponentVisualizer.getWristPose(
+              elevator.getMeasuredHeight().getMeters(), wrist.getAngle().unaryMinus())
+        });
   }
 }

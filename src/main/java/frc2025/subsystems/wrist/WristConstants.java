@@ -5,6 +5,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.sim.ChassisReference;
 import drivers.TalonFXSubsystem.CANCoderConstants;
 import drivers.TalonFXSubsystem.CANDevice;
 import drivers.TalonFXSubsystem.TalonFXConstants;
@@ -25,7 +26,7 @@ public class WristConstants {
   public static final DCMotorSim SIM =
       SimUtil.createDCMotorSim(DCMotor.getFalcon500(1), WRIST_REDUCTION, 0.01);
   public static final ScreamPIDConstants SIM_GAINS =
-      new ScreamPIDConstants(5.0 * WRIST_REDUCTION, 0.0, 0.0);
+      new ScreamPIDConstants(30.0 * WRIST_REDUCTION, 0.0, 0.0);
 
   public static final TalonFXSubsystemConfiguration WRIST_CONFIG =
       new TalonFXSubsystemConfiguration();
@@ -38,15 +39,19 @@ public class WristConstants {
 
     WRIST_CONFIG.simConstants =
         new TalonFXSubsystemSimConstants(
-            new SimWrapper(SIM), SIM_GAINS.getPIDController(), false, false, false);
+            new SimWrapper(SIM),
+            SIM_GAINS.getPIDController(-0.5, 0.5),
+            false,
+            false,
+            ChassisReference.CounterClockwise_Positive);
 
     WRIST_CONFIG.masterConstants =
-        new TalonFXConstants(new CANDevice(14, ""), InvertedValue.CounterClockwise_Positive);
+        new TalonFXConstants(new CANDevice(14, ""), InvertedValue.Clockwise_Positive);
 
     CANcoderConfiguration config = new CANcoderConfiguration();
     config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
     config.MagnetSensor.MagnetOffset = 0.0;
-    config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    config.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     WRIST_CONFIG.cancoderConstants = new CANCoderConstants(new CANDevice(4, ""), config);
 
     WRIST_CONFIG.neutralMode = NeutralModeValue.Brake;
@@ -61,7 +66,6 @@ public class WristConstants {
     WRIST_CONFIG.slot0 =
         new ScreamPIDConstants(1.0, 0, 0).getSlot0Configs(new FeedforwardConstants());
     WRIST_CONFIG.positionThreshold = 0.025;
-    ;
   }
 
   public static final TalonFXSubsystemConfiguration ROLLERS_CONFIG =
@@ -74,7 +78,7 @@ public class WristConstants {
     ROLLERS_CONFIG.logTelemetry = false;
 
     ROLLERS_CONFIG.masterConstants =
-        new TalonFXConstants(new CANDevice(15), InvertedValue.Clockwise_Positive);
+        new TalonFXConstants(new CANDevice(15), InvertedValue.CounterClockwise_Positive);
 
     ROLLERS_CONFIG.enableSupplyCurrentLimit = true;
     ROLLERS_CONFIG.supplyCurrentLimit = 20;

@@ -22,7 +22,13 @@ public class IntakeConstants {
     DEPLOY_CONFIG.logTelemetry = false;
 
     DEPLOY_CONFIG.masterConstants =
-        new TalonFXConstants(new CANDevice(12), InvertedValue.Clockwise_Positive);
+        new TalonFXConstants(new CANDevice(10), InvertedValue.Clockwise_Positive);
+
+    DEPLOY_CONFIG.slaveConstants =
+        new TalonFXConstants[] {
+          new TalonFXConstants(new CANDevice(11), InvertedValue.Clockwise_Positive),
+          new TalonFXConstants(new CANDevice(12), InvertedValue.Clockwise_Positive),
+        };
 
     DEPLOY_CONFIG.sensorToMechRatio = DEPLOY_REDUCTION;
   }
@@ -37,7 +43,7 @@ public class IntakeConstants {
     ROLLERS_CONFIG.logTelemetry = false;
 
     ROLLERS_CONFIG.masterConstants =
-        new TalonFXConstants(new CANDevice(13), InvertedValue.Clockwise_Positive);
+        new TalonFXConstants(new CANDevice(13), InvertedValue.CounterClockwise_Positive);
 
     ROLLERS_CONFIG.enableSupplyCurrentLimit = true;
     ROLLERS_CONFIG.supplyCurrentLimit = 20;

@@ -9,18 +9,19 @@ import math.Conversions;
 public class Elevator extends TalonFXSubsystem {
 
   public Elevator(TalonFXSubsystemConfiguration config) {
-    super(config, ElevatorGoal.HOME);
+    super(config, ElevatorGoal.IDLE);
   }
 
   public enum ElevatorGoal implements TalonFXSubsystemGoal {
     HOME(Length.fromInches(0)),
-    TROUGH(new Length()),
-    L2(new Length()),
-    L3(Length.fromInches(35.76)),
-    L4(Length.fromInches(71.1)),
+    IDLE(Length.fromInches(12.01875)),
+    TROUGH(Length.fromInches(18.42)),
+    L2(Length.fromInches(29.1)),
+    L3(Length.fromInches(44.8)),
+    L4(Length.fromInches(74.56)),
     CLEAR_ALGAE_L1(new Length()),
     CLEAR_ALGAE_L2(new Length()),
-    CORAL_STATION(new Length()),
+    CORAL_STATION(Length.fromInches(18.2)),
     HANDOFF(new Length()),
     BARGE(ElevatorConstants.MAX_HEIGHT),
     MAX(ElevatorConstants.MAX_HEIGHT);
