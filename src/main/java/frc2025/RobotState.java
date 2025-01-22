@@ -71,12 +71,23 @@ public class RobotState {
     Logger.log(
         "Components/MeasuredComponents",
         new Pose3d[] {
-          ComponentVisualizer.getIntakePose(new Rotation2d()),
+          ComponentVisualizer.getIntakePose(intakeDeploy.getAngle()),
           ComponentVisualizer.getStage1Pose(elevator.getMeasuredHeight().getMeters()),
           ComponentVisualizer.getStage2Pose(elevator.getMeasuredHeight().getMeters()),
           ComponentVisualizer.getCarriagePose(elevator.getMeasuredHeight().getMeters()),
           ComponentVisualizer.getWristPose(
               elevator.getMeasuredHeight().getMeters(), wrist.getAngle().unaryMinus())
+        });
+    Logger.log(
+        "Components/SetpointComponents",
+        new Pose3d[] {
+          ComponentVisualizer.getIntakePose(Rotation2d.fromRotations(intakeDeploy.getSetpoint())),
+          ComponentVisualizer.getStage1Pose(elevator.getSetpointHeight().getMeters()),
+          ComponentVisualizer.getStage2Pose(elevator.getSetpointHeight().getMeters()),
+          ComponentVisualizer.getCarriagePose(elevator.getSetpointHeight().getMeters()),
+          ComponentVisualizer.getWristPose(
+              elevator.getSetpointHeight().getMeters(),
+              Rotation2d.fromRotations(-wrist.getSetpoint()))
         });
   }
 }

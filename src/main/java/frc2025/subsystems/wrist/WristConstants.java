@@ -5,7 +5,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.ctre.phoenix6.sim.ChassisReference;
 import drivers.TalonFXSubsystem.CANCoderConstants;
 import drivers.TalonFXSubsystem.CANDevice;
 import drivers.TalonFXSubsystem.TalonFXConstants;
@@ -39,11 +38,7 @@ public class WristConstants {
 
     WRIST_CONFIG.simConstants =
         new TalonFXSubsystemSimConstants(
-            new SimWrapper(SIM),
-            SIM_GAINS.getPIDController(-0.5, 0.5),
-            false,
-            false,
-            ChassisReference.CounterClockwise_Positive);
+            new SimWrapper(SIM), SIM_GAINS.getPIDController(-0.5, 0.5));
 
     WRIST_CONFIG.masterConstants =
         new TalonFXConstants(new CANDevice(14, ""), InvertedValue.Clockwise_Positive);

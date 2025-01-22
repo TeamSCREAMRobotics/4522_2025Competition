@@ -1,6 +1,5 @@
 package frc2025.commands;
 
-import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -15,6 +14,7 @@ import frc2025.subsystems.drivetrain.DrivetrainConstants;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import util.AllianceFlipUtil;
 import util.GeomUtil;
 
 public class DriveToPose extends Command {
@@ -100,12 +100,18 @@ public class DriveToPose extends Command {
         headingController.calculate(
             currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
 
-    Translation2d velocity =
-        new Pose2d(
-                new Translation2d(),
-                currentPose.getTranslation().minus(targetPose.getTranslation()).getAngle())
-            .transformBy(GeomUtil.translationToTransform(driveVelocity, 0.0))
-            .getTranslation();
+    Translation2d velocity;
+
+    if (translationOverride.isPresent() && translationOverride.get().get().getNorm() > 0.5) {
+      velocity = translationOverride.get().get().times(AllianceFlipUtil.getDirectionCoefficient());
+    } else {
+      velocity =
+          new Pose2d(
+                  new Translation2d(),
+                  currentPose.getTranslation().minus(targetPose.getTranslation()).getAngle())
+              .transformBy(GeomUtil.translationToTransform(driveVelocity, 0.0))
+              .getTranslation();
+    }
 
     drivetrain.setControl(
         drivetrain

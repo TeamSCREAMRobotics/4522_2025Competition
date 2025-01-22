@@ -129,8 +129,7 @@ public class RobotContainer {
             Commands.parallel(
                 elevator.applyGoal(ElevatorGoal.L2), wrist.applyGoal(WristGoal.REEF_L1_L3)))
         .and(() -> robotState.getReefZone().isPresent())
-        .whileTrue(reefAlign)
-        .onFalse(wrist.applyGoal(WristGoal.BETWEEN).withTimeout(0.5));
+        .whileTrue(reefAlign);
 
     Controlboard.goToTrough()
         .whileTrue(
