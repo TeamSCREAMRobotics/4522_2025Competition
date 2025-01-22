@@ -1,16 +1,21 @@
 package frc2025.subsystems.intake;
 
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.sim.ChassisReference;
+import data.Length;
 import drivers.TalonFXSubsystem.CANDevice;
 import drivers.TalonFXSubsystem.TalonFXConstants;
 import drivers.TalonFXSubsystem.TalonFXSubsystemConfiguration;
 import drivers.TalonFXSubsystem.TalonFXSubsystemSimConstants;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc2025.subsystems.intake.IntakeDeploy.IntakeDeployGoal;
 import frc2025.subsystems.intake.IntakeRollers.IntakeRollersGoal;
+import math.ScreamMath;
 import pid.ScreamPIDConstants;
 import pid.ScreamPIDConstants.FeedforwardConstants;
 import sim.SimWrapper;
@@ -22,7 +27,14 @@ public class IntakeConstants {
   public static final double ROLLERS_REDUCTION = 2.0;
 
   public static final DCMotorSim SIM =
-      SimUtil.createDCMotorSim(DCMotor.getFalcon500(3), DEPLOY_REDUCTION, 0.015);
+      SimUtil.createDCMotorSim(
+          DCMotor.getFalcon500(3),
+          DEPLOY_REDUCTION,
+          ScreamMath.parallelAxisTheorem(
+                  Units.KilogramSquareMeters.of(0.0534783828),
+                  Units.Pounds.of(5.5251888),
+                  Length.fromInches(9.401318))
+              .in(KilogramSquareMeters));
   public static final ScreamPIDConstants SIM_GAINS =
       new ScreamPIDConstants(75.0 * DEPLOY_REDUCTION, 0.0, 0.0);
 
@@ -38,10 +50,10 @@ public class IntakeConstants {
     DEPLOY_CONFIG.simConstants =
         new TalonFXSubsystemSimConstants(
             new SimWrapper(SIM),
-            SIM_GAINS.getPIDController(),
+            SIM_GAINS.getProfiledPIDController(new Constraints(1, 1)),
             false,
             false,
-            ChassisReference.Clockwise_Positive);
+            false);
 
     DEPLOY_CONFIG.masterConstants =
         new TalonFXConstants(new CANDevice(10), InvertedValue.Clockwise_Positive);

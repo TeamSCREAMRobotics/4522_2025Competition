@@ -14,7 +14,6 @@ import frc2025.subsystems.drivetrain.DrivetrainConstants;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-import util.AllianceFlipUtil;
 import util.GeomUtil;
 
 public class DriveToPose extends Command {
@@ -103,7 +102,7 @@ public class DriveToPose extends Command {
     Translation2d velocity;
 
     if (translationOverride.isPresent() && translationOverride.get().get().getNorm() > 0.5) {
-      velocity = translationOverride.get().get().times(AllianceFlipUtil.getDirectionCoefficient());
+      velocity = translationOverride.get().get();
     } else {
       velocity =
           new Pose2d(

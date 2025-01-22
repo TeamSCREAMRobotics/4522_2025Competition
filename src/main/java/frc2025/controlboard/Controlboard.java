@@ -12,6 +12,7 @@ import frc2025.subsystems.drivetrain.DrivetrainConstants;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import util.AllianceFlipUtil;
 import util.ScreamUtil;
 
 public class Controlboard {
@@ -54,12 +55,13 @@ public class Controlboard {
   public static Supplier<Translation2d> getTranslation() {
     return () ->
         snapTranslationToPole(
-            new Translation2d(
-                    applyPower(
-                        -MathUtil.applyDeadband(driveController.getLeftY(), STICK_DEADBAND), 2),
-                    applyPower(
-                        -MathUtil.applyDeadband(driveController.getLeftX(), STICK_DEADBAND), 2))
-                .times(DrivetrainConstants.MAX_SPEED));
+                new Translation2d(
+                        applyPower(
+                            -MathUtil.applyDeadband(driveController.getLeftY(), STICK_DEADBAND), 2),
+                        applyPower(
+                            -MathUtil.applyDeadband(driveController.getLeftX(), STICK_DEADBAND), 2))
+                    .times(DrivetrainConstants.MAX_SPEED))
+            .times(AllianceFlipUtil.getDirectionCoefficient());
   }
 
   public static Translation2d snapTranslationToPole(Translation2d translation) {

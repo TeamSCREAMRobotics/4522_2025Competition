@@ -5,6 +5,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import frc2025.subsystems.wrist.WristConstants;
 import java.util.HashMap;
 import java.util.Map;
 import zones.HexagonalPoseArea;
@@ -32,15 +33,18 @@ public class FieldConstants {
   public static final Map<Integer, Pair<Pose2d, Pose2d>> BLUE_REEF_LOCATIONS = new HashMap<>();
   public static final Map<Integer, Pair<Pose2d, Pose2d>> RED_REEF_LOCATIONS = new HashMap<>();
 
+  public static final Translation2d SCORE_LOCATION_1 =
+      new Translation2d(5.268944 + 0.5, 3.869997 - WristConstants.ROLLERS_TO_ORIGIN.getMeters());
+  public static final Translation2d SCORE_LOCATION_2 =
+      new Translation2d(5.268944 + 0.5, 4.198614 - WristConstants.ROLLERS_TO_ORIGIN.getMeters());
+
   static {
-    Translation2d blueScoreLocation1 =
-        new Translation2d(5.268944 + 0.5, 3.869997).minus(BLUE_REEF_CENTER);
-    Translation2d blueScoreLocation2 =
-        new Translation2d(5.268944 + 0.5, 4.198614).minus(BLUE_REEF_CENTER);
+    Translation2d blueScoreLocation1 = SCORE_LOCATION_1.minus(BLUE_REEF_CENTER);
+    Translation2d blueScoreLocation2 = SCORE_LOCATION_2.minus(BLUE_REEF_CENTER);
     Translation2d redScoreLocation1 =
-        FIELD_DIMENSIONS.minus(new Translation2d(5.268944 + 0.5, 3.869997)).minus(RED_REEF_CENTER);
+        FIELD_DIMENSIONS.minus(SCORE_LOCATION_1).minus(RED_REEF_CENTER);
     Translation2d redScoreLocation2 =
-        FIELD_DIMENSIONS.minus(new Translation2d(5.268944 + 0.5, 4.198614)).minus(RED_REEF_CENTER);
+        FIELD_DIMENSIONS.minus(SCORE_LOCATION_2).minus(RED_REEF_CENTER);
 
     for (int i = 0; i < 6; i++) {
       Rotation2d rotation = Rotation2d.fromDegrees(i * 60);

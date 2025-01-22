@@ -179,7 +179,9 @@ public class RobotContainer {
                     : drivetrain
                         .getHelper()
                         .getRobotCentric(
-                            Controlboard.getTranslation().get(),
+                            Controlboard.getTranslation()
+                                .get()
+                                .times(AllianceFlipUtil.getDirectionCoefficient()),
                             Controlboard.getRotation().getAsDouble())));
 
     /* elevator.setDefaultCommand(

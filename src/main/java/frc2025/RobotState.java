@@ -40,29 +40,34 @@ public class RobotState {
   }
 
   public Rotation2d getStationAlignAngle() {
+    Rotation2d angle;
     if (drivetrain.getPose().getY() <= FieldConstants.FIELD_DIMENSIONS.getY() / 2.0) {
-      return AllianceFlipUtil.MirroredRotation2d(Rotation2d.fromDegrees(-125));
+      angle = AllianceFlipUtil.get(Rotation2d.fromDegrees(-125), Rotation2d.fromDegrees(-55));
     } else {
-      return AllianceFlipUtil.MirroredRotation2d(Rotation2d.fromDegrees(125));
+      angle = AllianceFlipUtil.get(Rotation2d.fromDegrees(125), Rotation2d.fromDegrees(55));
     }
+    Logger.log("RobotState/StationAlignAngle", angle.getDegrees());
+    return angle;
   }
 
   public void logTelemetry() {
     getReefZone()
         .ifPresent(
-            reefZone ->
-                Logger.log(
-                    "Field/ScoringLocations",
-                    new Pose2d[] {
-                      AllianceFlipUtil.get(
-                              FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                          .get(reefZone)
-                          .getFirst(),
-                      AllianceFlipUtil.get(
-                              FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                          .get(reefZone)
-                          .getSecond()
-                    }));
+            reefZone -> {
+              Logger.log(
+                  "Field/ScoringLocations",
+                  new Pose2d[] {
+                    AllianceFlipUtil.get(
+                            FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
+                        .get(reefZone)
+                        .getFirst(),
+                    AllianceFlipUtil.get(
+                            FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
+                        .get(reefZone)
+                        .getSecond()
+                  });
+              Logger.log("Field/ReefZone", reefZone);
+            });
     Logger.log("Controls/ScoringSide", Controlboard.getScoringSide().get());
     visualizeComponents();
   }

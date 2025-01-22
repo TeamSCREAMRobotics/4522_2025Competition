@@ -1,31 +1,51 @@
 package frc2025.subsystems.wrist;
 
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Pounds;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import data.Length;
 import drivers.TalonFXSubsystem.CANCoderConstants;
 import drivers.TalonFXSubsystem.CANDevice;
 import drivers.TalonFXSubsystem.TalonFXConstants;
 import drivers.TalonFXSubsystem.TalonFXSubsystemConfiguration;
 import drivers.TalonFXSubsystem.TalonFXSubsystemSimConstants;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import math.ScreamMath;
 import pid.ScreamPIDConstants;
 import pid.ScreamPIDConstants.FeedforwardConstants;
 import sim.SimWrapper;
-import util.SimUtil;
 
 public class WristConstants {
+
+  public static final Length ROLLERS_TO_ORIGIN = Length.fromInches(1.383);
 
   public static final double WRIST_REDUCTION = 30.0;
   public static final double ROLLERS_REDUCTION = 2.25;
 
-  public static final DCMotorSim SIM =
-      SimUtil.createDCMotorSim(DCMotor.getFalcon500(1), WRIST_REDUCTION, 0.01);
+  public static final SingleJointedArmSim SIM =
+      new SingleJointedArmSim(
+          DCMotor.getKrakenX60(1),
+          WRIST_REDUCTION,
+          ScreamMath.parallelAxisTheorem(
+                  KilogramSquareMeters.of(0.0951567339),
+                  Pounds.of(4.6028013),
+                  Length.fromInches(12.024525))
+              .in(KilogramSquareMeters),
+          Units.inchesToMeters(20.5),
+          Units.rotationsToRadians(-9999),
+          Units.rotationsToRadians(9999),
+          true,
+          0);
   public static final ScreamPIDConstants SIM_GAINS =
-      new ScreamPIDConstants(30.0 * WRIST_REDUCTION, 0.0, 0.0);
+      new ScreamPIDConstants(25.0 * WRIST_REDUCTION, 0.0, 0.0);
 
   public static final TalonFXSubsystemConfiguration WRIST_CONFIG =
       new TalonFXSubsystemConfiguration();
@@ -34,25 +54,29 @@ public class WristConstants {
     WRIST_CONFIG.name = "Wrist";
 
     WRIST_CONFIG.codeEnabled = true;
-    WRIST_CONFIG.logTelemetry = false;
+    WRIST_CONFIG.logTelemetry = true;
 
     WRIST_CONFIG.simConstants =
         new TalonFXSubsystemSimConstants(
-            new SimWrapper(SIM), SIM_GAINS.getPIDController(-0.5, 0.5));
+            new SimWrapper(SIM),
+            SIM_GAINS.getProfiledPIDController(new Constraints(4.5, 2.5), -0.5, 0.5),
+            false,
+            false,
+            true);
 
     WRIST_CONFIG.masterConstants =
-        new TalonFXConstants(new CANDevice(14, ""), InvertedValue.Clockwise_Positive);
+        new TalonFXConstants(new CANDevice(14), InvertedValue.Clockwise_Positive);
 
     CANcoderConfiguration config = new CANcoderConfiguration();
     config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
     config.MagnetSensor.MagnetOffset = 0.0;
-    config.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-    WRIST_CONFIG.cancoderConstants = new CANCoderConstants(new CANDevice(4, ""), config);
+    config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    WRIST_CONFIG.cancoderConstants = new CANCoderConstants(new CANDevice(4), config);
 
     WRIST_CONFIG.neutralMode = NeutralModeValue.Brake;
     WRIST_CONFIG.rotorToSensorRatio = WRIST_REDUCTION;
     WRIST_CONFIG.feedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    // WRIST_CONFIG.continuousWrap = true; //TODO commented due to not being a valid configuration?
+    WRIST_CONFIG.continuousWrap = true;
     WRIST_CONFIG.feedbackRemoteSensorId = 4;
     WRIST_CONFIG.enableSupplyCurrentLimit = true;
     WRIST_CONFIG.supplyCurrentLimit = 40;

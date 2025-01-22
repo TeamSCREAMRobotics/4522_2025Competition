@@ -144,7 +144,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   @Override
   public void periodic() {
-    attemptToSetPerspective();
+    // attemptToSetPerspective();
     if (getCurrentCommand() != null) {
       Logger.log("RobotState/Subsystems/Drivetrain/ActiveCommand", getCurrentCommand().getName());
     }

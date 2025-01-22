@@ -9,6 +9,7 @@ import drivers.TalonFXSubsystem.TalonFXConstants;
 import drivers.TalonFXSubsystem.TalonFXSubsystemConfiguration;
 import drivers.TalonFXSubsystem.TalonFXSubsystemSimConstants;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import pid.ScreamPIDConstants;
@@ -56,7 +57,12 @@ public final class ElevatorConstants {
     CONFIGURATION.logTelemetry = false;
 
     CONFIGURATION.simConstants =
-        new TalonFXSubsystemSimConstants(new SimWrapper(SIM), SIM_GAINS.getPIDController());
+        new TalonFXSubsystemSimConstants(
+            new SimWrapper(SIM),
+            SIM_GAINS.getProfiledPIDController(new Constraints(50.0 * REDUCTION, 0.0)),
+            false,
+            true,
+            false);
 
     CONFIGURATION.masterConstants =
         new TalonFXConstants(
@@ -76,7 +82,7 @@ public final class ElevatorConstants {
     CONFIGURATION.minUnitsLimit = ENCODER_MIN;
     CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
     CONFIGURATION.cruiseVelocity = 3.0 * REDUCTION;
-    CONFIGURATION.acceleration = CONFIGURATION.cruiseVelocity / 0.8;
+    CONFIGURATION.acceleration = CONFIGURATION.cruiseVelocity * 0.8;
     CONFIGURATION.slot0 =
         new ScreamPIDConstants(50.0, 0, 0)
             .getSlot0Configs(

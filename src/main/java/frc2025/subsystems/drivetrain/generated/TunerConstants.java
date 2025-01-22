@@ -49,7 +49,7 @@ public class TunerConstants {
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
   private static final Slot0Configs DRIVE_GAINS =
       new Slot0Configs()
-          .withKP(0.1) // 0.12
+          .withKP(0.3) // 0.12
           .withKI(0)
           .withKD(0) // 3
           .withKS(0)
@@ -96,8 +96,8 @@ public class TunerConstants {
   private static final MomentOfInertia STEER_INERTIA = KilogramSquareMeters.of(0.01);
   private static final MomentOfInertia DRIVE_INERTIA = KilogramSquareMeters.of(0.01);
   // Simulated voltage necessary to overcome friction
-  private static final Voltage STEER_KS = Volts.of(0.2);
-  private static final Voltage DRIVE_KS = Volts.of(0.2);
+  private static final Voltage STEER_KS = Volts.of(0.25);
+  private static final Voltage DRIVE_KS = Volts.of(0.25);
 
   private static final TalonFXConfiguration DRIVE_CONFIG = new TalonFXConfiguration();
 
