@@ -1,19 +1,24 @@
-package frc2025.subsystems.elevator;
+package frc2025.subsystems.superstructure.elevator;
 
 import data.Length;
 import drivers.TalonFXSubsystem;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.logging.Logger;
 import java.util.function.DoubleSupplier;
 import math.Conversions;
 
 public class Elevator extends TalonFXSubsystem {
 
+  private static DoubleSupplier solverOutput = () -> 0.0;
+
   public Elevator(TalonFXSubsystemConfiguration config) {
-    super(config, ElevatorGoal.IDLE);
+    super(config, ElevatorGoal.SOLVER);
   }
 
-  public enum ElevatorGoal implements TalonFXSubsystemGoal {
-    HOME(Length.fromInches(0)),
+  private enum ElevatorGoal implements TalonFXSubsystemGoal {
+    SOLVER(() -> solverOutput.getAsDouble());
+    /* HOME(Length.fromInches(0)),
     IDLE(Length.fromInches(12.01875)),
     TROUGH(Length.fromInches(18.42)),
     L2(Length.fromInches(29.1)),
@@ -24,15 +29,12 @@ public class Elevator extends TalonFXSubsystem {
     CORAL_STATION(Length.fromInches(18.2)),
     HANDOFF(new Length()),
     BARGE(ElevatorConstants.MAX_HEIGHT),
-    MAX(ElevatorConstants.MAX_HEIGHT);
+    MAX(ElevatorConstants.MAX_HEIGHT); */
 
-    public DoubleSupplier targetRotations;
+    public final DoubleSupplier targetRotations;
 
-    private ElevatorGoal(Length targetHeight) {
-      this.targetRotations =
-          () ->
-              Conversions.linearDistanceToRotations(
-                  targetHeight, ElevatorConstants.PULLEY_CIRCUMFERENCE);
+    private ElevatorGoal(DoubleSupplier targetRotations) {
+      this.targetRotations = targetRotations;
     }
 
     @Override
@@ -46,6 +48,10 @@ public class Elevator extends TalonFXSubsystem {
     }
   }
 
+  public Command setSolverOutput(DoubleSupplier output) {
+    return Commands.run(() -> solverOutput = output);
+  }
+
   public Length getMeasuredHeight() {
     return Length.fromRotations(getPosition(), ElevatorConstants.PULLEY_CIRCUMFERENCE);
   }
@@ -54,12 +60,14 @@ public class Elevator extends TalonFXSubsystem {
     return Length.fromRotations(getSetpoint(), ElevatorConstants.PULLEY_CIRCUMFERENCE);
   }
 
+  public static double heightToRotations(Length height) {
+    return Conversions.linearDistanceToRotations(height, ElevatorConstants.PULLEY_CIRCUMFERENCE);
+  }
+
   @Override
   public synchronized void setSimState(double position, double velocity) {
     super.setSimState(
-        Conversions.linearDistanceToRotations(
-                Length.fromMeters(position), ElevatorConstants.PULLEY_CIRCUMFERENCE)
-            * ElevatorConstants.REDUCTION,
+        heightToRotations(Length.fromMeters(position)) * ElevatorConstants.REDUCTION,
         Conversions.mpsToRPS(
             velocity,
             ElevatorConstants.PULLEY_CIRCUMFERENCE.getMeters(),
@@ -70,5 +78,8 @@ public class Elevator extends TalonFXSubsystem {
   public void periodic() {
     super.periodic();
     Logger.log(logPrefix + "Height", getMeasuredHeight().getInches());
+    Logger.log(
+        logPrefix + "AbsHeight",
+        getMeasuredHeight().plus(ElevatorConstants.MIN_HEIGHT_FROM_FLOOR).getInches());
   }
 }

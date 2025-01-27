@@ -36,7 +36,7 @@ public class IntakeConstants {
                   Length.fromInches(9.401318))
               .in(KilogramSquareMeters));
   public static final ScreamPIDConstants SIM_GAINS =
-      new ScreamPIDConstants(75.0 * DEPLOY_REDUCTION, 0.0, 0.0);
+      new ScreamPIDConstants(100.0 * DEPLOY_REDUCTION, 0.0, 0.0);
 
   public static final TalonFXSubsystemConfiguration DEPLOY_CONFIG =
       new TalonFXSubsystemConfiguration();
@@ -50,7 +50,7 @@ public class IntakeConstants {
     DEPLOY_CONFIG.simConstants =
         new TalonFXSubsystemSimConstants(
             new SimWrapper(SIM),
-            SIM_GAINS.getProfiledPIDController(new Constraints(1, 1)),
+            SIM_GAINS.getProfiledPIDController(new Constraints(1000.0, 500.0)),
             false,
             false,
             false);
@@ -68,8 +68,8 @@ public class IntakeConstants {
 
     DEPLOY_CONFIG.sensorToMechRatio = DEPLOY_REDUCTION;
 
-    DEPLOY_CONFIG.cruiseVelocity = 1.0;
-    DEPLOY_CONFIG.acceleration = 1.0;
+    DEPLOY_CONFIG.cruiseVelocity = 50.0;
+    DEPLOY_CONFIG.acceleration = 30.0;
     DEPLOY_CONFIG.slot0 =
         new ScreamPIDConstants(1.0, 0, 0).getSlot0Configs(new FeedforwardConstants());
     DEPLOY_CONFIG.positionThreshold = 0.025;

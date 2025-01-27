@@ -1,4 +1,4 @@
-package frc2025.subsystems.wrist;
+package frc2025.subsystems.superstructure.wrist;
 
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Pounds;
@@ -26,6 +26,7 @@ import sim.SimWrapper;
 public class WristConstants {
 
   public static final Length ROLLERS_TO_ORIGIN = Length.fromInches(1.383);
+  public static final Length MANIPULATOR_LENGTH = Length.fromInches(18.668462);
 
   public static final double WRIST_REDUCTION = 30.0;
   public static final double ROLLERS_REDUCTION = 2.25;
@@ -35,17 +36,17 @@ public class WristConstants {
           DCMotor.getKrakenX60(1),
           WRIST_REDUCTION,
           ScreamMath.parallelAxisTheorem(
-                  KilogramSquareMeters.of(0.0951567339),
-                  Pounds.of(4.6028013),
-                  Length.fromInches(12.024525))
-              .in(KilogramSquareMeters),
+                      KilogramSquareMeters.of(0.0951567339),
+                      Pounds.of(4.6028013),
+                      Length.fromInches(12.024525))
+                  .in(KilogramSquareMeters)
+              - 0.002,
           Units.inchesToMeters(20.5),
           Units.rotationsToRadians(-9999),
           Units.rotationsToRadians(9999),
           true,
           0);
-  public static final ScreamPIDConstants SIM_GAINS =
-      new ScreamPIDConstants(25.0 * WRIST_REDUCTION, 0.0, 0.0);
+  public static final ScreamPIDConstants SIM_GAINS = new ScreamPIDConstants(425.0, 0.0, 0.0);
 
   public static final TalonFXSubsystemConfiguration WRIST_CONFIG =
       new TalonFXSubsystemConfiguration();
@@ -55,14 +56,15 @@ public class WristConstants {
 
     WRIST_CONFIG.codeEnabled = true;
     WRIST_CONFIG.logTelemetry = true;
+    WRIST_CONFIG.debugMode = false;
 
     WRIST_CONFIG.simConstants =
         new TalonFXSubsystemSimConstants(
             new SimWrapper(SIM),
-            SIM_GAINS.getProfiledPIDController(new Constraints(4.5, 2.5), -0.5, 0.5),
+            SIM_GAINS.getProfiledPIDController(new Constraints(20.0, 15.0), -0.5, 0.5),
+            true,
             false,
-            false,
-            true);
+            false);
 
     WRIST_CONFIG.masterConstants =
         new TalonFXConstants(new CANDevice(14), InvertedValue.Clockwise_Positive);

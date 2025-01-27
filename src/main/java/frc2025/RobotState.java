@@ -9,11 +9,11 @@ import frc2025.controlboard.Controlboard;
 import frc2025.logging.Logger;
 import frc2025.sim.ComponentVisualizer;
 import frc2025.subsystems.drivetrain.Drivetrain;
-import frc2025.subsystems.elevator.Elevator;
 import frc2025.subsystems.intake.IntakeDeploy;
 import frc2025.subsystems.intake.IntakeRollers;
-import frc2025.subsystems.wrist.Wrist;
-import frc2025.subsystems.wrist.WristRollers;
+import frc2025.subsystems.superstructure.elevator.Elevator;
+import frc2025.subsystems.superstructure.wrist.Wrist;
+import frc2025.subsystems.superstructure.wrist.WristRollers;
 import java.util.OptionalInt;
 import util.AllianceFlipUtil;
 
@@ -27,8 +27,8 @@ public class RobotState {
 
   public RobotState(Subsystems subsystems) {
     this.drivetrain = subsystems.drivetrain();
-    this.elevator = subsystems.elevator();
-    this.wrist = subsystems.wrist();
+    this.elevator = subsystems.superstructure().elevator;
+    this.wrist = subsystems.superstructure().wrist;
     this.wristRollers = subsystems.wristRollers();
     this.intakeDeploy = subsystems.intakeDeploy();
     this.intakeRollers = subsystems.intakeRollers();
@@ -81,7 +81,7 @@ public class RobotState {
           ComponentVisualizer.getStage2Pose(elevator.getMeasuredHeight().getMeters()),
           ComponentVisualizer.getCarriagePose(elevator.getMeasuredHeight().getMeters()),
           ComponentVisualizer.getWristPose(
-              elevator.getMeasuredHeight().getMeters(), wrist.getAngle().unaryMinus())
+              elevator.getMeasuredHeight().getMeters(), wrist.getAngle())
         });
     Logger.log(
         "Components/SetpointComponents",
@@ -92,7 +92,7 @@ public class RobotState {
           ComponentVisualizer.getCarriagePose(elevator.getSetpointHeight().getMeters()),
           ComponentVisualizer.getWristPose(
               elevator.getSetpointHeight().getMeters(),
-              Rotation2d.fromRotations(-wrist.getSetpoint()))
+              Rotation2d.fromRotations(wrist.getSetpoint()))
         });
   }
 }

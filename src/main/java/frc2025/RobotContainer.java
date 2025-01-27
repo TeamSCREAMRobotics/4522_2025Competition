@@ -14,19 +14,16 @@ import frc2025.controlboard.Controlboard.ScoringSide;
 import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.drivetrain.generated.TunerConstants;
-import frc2025.subsystems.elevator.Elevator;
-import frc2025.subsystems.elevator.Elevator.ElevatorGoal;
-import frc2025.subsystems.elevator.ElevatorConstants;
 import frc2025.subsystems.intake.IntakeConstants;
 import frc2025.subsystems.intake.IntakeDeploy;
 import frc2025.subsystems.intake.IntakeDeploy.IntakeDeployGoal;
 import frc2025.subsystems.intake.IntakeRollers;
 import frc2025.subsystems.intake.IntakeRollers.IntakeRollersGoal;
-import frc2025.subsystems.wrist.Wrist;
-import frc2025.subsystems.wrist.Wrist.WristGoal;
-import frc2025.subsystems.wrist.WristConstants;
-import frc2025.subsystems.wrist.WristRollers;
-import frc2025.subsystems.wrist.WristRollers.WristRollersGoal;
+import frc2025.subsystems.superstructure.Superstructure;
+import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructurePosition;
+import frc2025.subsystems.superstructure.elevator.ElevatorConstants;
+import frc2025.subsystems.superstructure.wrist.WristConstants;
+import frc2025.subsystems.superstructure.wrist.WristRollers;
 import java.util.Set;
 import lombok.Getter;
 import util.AllianceFlipUtil;
@@ -35,15 +32,14 @@ public class RobotContainer {
 
   public record Subsystems(
       Drivetrain drivetrain,
-      Elevator elevator,
-      Wrist wrist,
+      Superstructure superstructure,
       WristRollers wristRollers,
       IntakeDeploy intakeDeploy,
       IntakeRollers intakeRollers) {}
 
   private static final Drivetrain drivetrain = TunerConstants.DriveTrain;
-  private static final Elevator elevator = new Elevator(ElevatorConstants.CONFIGURATION);
-  private static final Wrist wrist = new Wrist(WristConstants.WRIST_CONFIG);
+  private static final Superstructure superstructure =
+      new Superstructure(ElevatorConstants.CONFIGURATION, WristConstants.WRIST_CONFIG);
   private static final WristRollers wristRollers = new WristRollers(WristConstants.ROLLERS_CONFIG);
   private static final IntakeDeploy intakeDeploy = new IntakeDeploy(IntakeConstants.DEPLOY_CONFIG);
   private static final IntakeRollers intakeRollers =
@@ -51,7 +47,7 @@ public class RobotContainer {
 
   @Getter
   private static final Subsystems subsystems =
-      new Subsystems(drivetrain, elevator, wrist, wristRollers, intakeDeploy, intakeRollers);
+      new Subsystems(drivetrain, superstructure, wristRollers, intakeDeploy, intakeRollers);
 
   @Getter private static final RobotState robotState = new RobotState(subsystems);
 
@@ -111,27 +107,21 @@ public class RobotContainer {
 
     // Reef scoring/clearing controls
     Controlboard.goToLevel4()
-        .whileTrue(
-            Commands.parallel(
-                elevator.applyGoal(ElevatorGoal.L4), wrist.applyGoal(WristGoal.REEF_L4)))
+        .whileTrue(superstructure.applyPosition(SuperstructurePosition.REEF_L4))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
 
     Controlboard.goToLevel3()
-        .whileTrue(
-            Commands.parallel(
-                elevator.applyGoal(ElevatorGoal.L3), wrist.applyGoal(WristGoal.REEF_L1_L3)))
+        .whileTrue(superstructure.applyPosition(SuperstructurePosition.REEF_L3))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
 
     Controlboard.goToLevel2()
-        .whileTrue(
-            Commands.parallel(
-                elevator.applyGoal(ElevatorGoal.L2), wrist.applyGoal(WristGoal.REEF_L1_L3)))
+        .whileTrue(superstructure.applyPosition(SuperstructurePosition.REEF_L2))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
 
-    Controlboard.goToTrough()
+    /* Controlboard.goToTrough()
         .whileTrue(
             Commands.parallel(
                 elevator.applyGoal(ElevatorGoal.TROUGH), wrist.applyGoal(WristGoal.REEF_L1_L3)))
@@ -157,7 +147,7 @@ public class RobotContainer {
                 stationAlign,
                 elevator.applyGoal(ElevatorGoal.CORAL_STATION),
                 wrist.applyGoal(WristGoal.STATION),
-                wristRollers.applyGoal(WristRollersGoal.INTAKE)));
+                wristRollers.applyGoal(WristRollersGoal.INTAKE))); */
 
     Controlboard.groundIntake()
         .whileTrue(
@@ -183,6 +173,8 @@ public class RobotContainer {
                                 .get()
                                 .times(AllianceFlipUtil.getDirectionCoefficient()),
                             Controlboard.getRotation().getAsDouble())));
+
+    superstructure.setDefaultCommand(superstructure.applyPosition(SuperstructurePosition.IDLE));
 
     /* elevator.setDefaultCommand(
         elevator.applyVoltage(

@@ -1,4 +1,4 @@
-package frc2025.subsystems.wrist;
+package frc2025.subsystems.superstructure.wrist;
 
 import drivers.TalonFXSubsystem;
 import java.util.function.BooleanSupplier;
