@@ -1,4 +1,4 @@
-package frc2025.subsystems.elevator;
+package frc2025.subsystems.superstructure.elevator;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -8,6 +8,7 @@ import drivers.TalonFXSubsystem.CANDevice;
 import drivers.TalonFXSubsystem.TalonFXConstants;
 import drivers.TalonFXSubsystem.TalonFXSubsystemConfiguration;
 import drivers.TalonFXSubsystem.TalonFXSubsystemSimConstants;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -21,6 +22,9 @@ public final class ElevatorConstants {
   // As measured from wrist pivot axis
   public static final Length MIN_HEIGHT_FROM_FLOOR = Length.fromInches(8.5782);
   public static final Length MAX_HEIGHT_FROM_FLOOR = Length.fromInches(88.317193);
+
+  public static final Translation2d ELEVATOR_ORIGIN =
+      new Translation2d(0, MIN_HEIGHT_FROM_FLOOR.getMeters());
 
   public static final double MIN_HEIGHT = 0.0;
   public static final Length MAX_HEIGHT =
@@ -55,6 +59,7 @@ public final class ElevatorConstants {
 
     CONFIGURATION.codeEnabled = true;
     CONFIGURATION.logTelemetry = false;
+    CONFIGURATION.debugMode = false;
 
     CONFIGURATION.simConstants =
         new TalonFXSubsystemSimConstants(

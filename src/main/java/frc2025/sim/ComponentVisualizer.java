@@ -46,6 +46,6 @@ public class ComponentVisualizer {
         WRIST_ORIGIN_POSE.getX(),
         WRIST_ORIGIN_POSE.getY(),
         elevatorHeight + WRIST_ORIGIN_POSE.getZ(),
-        new Rotation3d(0, wristAngle.getRadians(), 0));
+        new Rotation3d(0, wristAngle.getRadians(), 0).unaryMinus());
   }
 }

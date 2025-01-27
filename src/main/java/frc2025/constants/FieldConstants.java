@@ -5,7 +5,8 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import frc2025.subsystems.wrist.WristConstants;
+import edu.wpi.first.math.util.Units;
+import frc2025.subsystems.superstructure.wrist.WristConstants;
 import java.util.HashMap;
 import java.util.Map;
 import zones.HexagonalPoseArea;
@@ -13,6 +14,14 @@ import zones.HexagonalPoseArea;
 public class FieldConstants {
 
   public static final Translation2d FIELD_DIMENSIONS = new Translation2d(17.548225, 8.0518);
+
+  public static final Length BRANCH_DISTANCE = Length.fromInches(-17.807500);
+  public static final Translation2d BRANCH_L2 =
+      new Translation2d(BRANCH_DISTANCE.getMeters(), Units.inchesToMeters(31.875));
+  public static final Translation2d BRANCH_L3 =
+      new Translation2d(BRANCH_DISTANCE.getMeters(), Units.inchesToMeters(47.625));
+  public static final Translation2d BRANCH_L4 =
+      new Translation2d(BRANCH_DISTANCE.getMeters(), Units.inchesToMeters(72.0));
 
   public static final Pose2d BLUE_BARGE_ALIGN =
       new Pose2d(7.715, FIELD_DIMENSIONS.getY() * 0.75, Rotation2d.fromDegrees(0));
