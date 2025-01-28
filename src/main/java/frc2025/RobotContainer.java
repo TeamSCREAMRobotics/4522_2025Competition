@@ -20,7 +20,6 @@ import frc2025.subsystems.intake.IntakeDeploy.IntakeDeployGoal;
 import frc2025.subsystems.intake.IntakeRollers;
 import frc2025.subsystems.intake.IntakeRollers.IntakeRollersGoal;
 import frc2025.subsystems.superstructure.Superstructure;
-import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructurePosition;
 import frc2025.subsystems.superstructure.elevator.ElevatorConstants;
 import frc2025.subsystems.superstructure.wrist.WristConstants;
 import frc2025.subsystems.superstructure.wrist.WristRollers;
@@ -106,7 +105,7 @@ public class RobotContainer {
                 () -> Controlboard.getTranslation().get().getY()));
 
     // Reef scoring/clearing controls
-    Controlboard.goToLevel4()
+    /* Controlboard.goToLevel4()
         .whileTrue(superstructure.interpolateToPosition(SuperstructurePosition.REEF_L4, true))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
@@ -119,7 +118,7 @@ public class RobotContainer {
     Controlboard.goToLevel2()
         .whileTrue(superstructure.interpolateToPosition(SuperstructurePosition.REEF_L2))
         .and(() -> robotState.getReefZone().isPresent())
-        .whileTrue(reefAlign);
+        .whileTrue(reefAlign); */
 
     /* Controlboard.goToTrough()
         .whileTrue(
@@ -174,8 +173,8 @@ public class RobotContainer {
                                 .times(AllianceFlipUtil.getDirectionCoefficient()),
                             Controlboard.getRotation().getAsDouble())));
 
-    superstructure.setDefaultCommand(
-        superstructure.interpolateToPosition(SuperstructurePosition.IDLE));
+    /* superstructure.setDefaultCommand(
+        superstructure.interpolateToPosition(SuperstructurePosition.IDLE)); */
 
     /* elevator.setDefaultCommand(
         elevator.applyVoltage(

@@ -11,12 +11,11 @@ public class Elevator extends TalonFXSubsystem {
   private static DoubleSupplier solverOutput = () -> 0.0;
 
   public Elevator(TalonFXSubsystemConfiguration config) {
-    super(config, ElevatorGoal.SOLVER);
+    super(config, ElevatorGoal.IDLE);
   }
 
-  private enum ElevatorGoal implements TalonFXSubsystemGoal {
-    SOLVER(() -> solverOutput.getAsDouble());
-    /* HOME(Length.fromInches(0)),
+  public enum ElevatorGoal implements TalonFXSubsystemGoal {
+    HOME(Length.fromInches(0)),
     IDLE(Length.fromInches(12.01875)),
     TROUGH(Length.fromInches(18.42)),
     L2(Length.fromInches(29.1)),
@@ -27,12 +26,15 @@ public class Elevator extends TalonFXSubsystem {
     CORAL_STATION(Length.fromInches(18.2)),
     HANDOFF(new Length()),
     BARGE(ElevatorConstants.MAX_HEIGHT),
-    MAX(ElevatorConstants.MAX_HEIGHT); */
+    MAX(ElevatorConstants.MAX_HEIGHT);
 
-    public final DoubleSupplier targetRotations;
+    public DoubleSupplier targetRotations;
 
-    private ElevatorGoal(DoubleSupplier targetRotations) {
-      this.targetRotations = targetRotations;
+    private ElevatorGoal(Length targetHeight) {
+      this.targetRotations =
+          () ->
+              Conversions.linearDistanceToRotations(
+                  targetHeight, ElevatorConstants.PULLEY_CIRCUMFERENCE);
     }
 
     @Override
@@ -44,10 +46,6 @@ public class Elevator extends TalonFXSubsystem {
     public DoubleSupplier target() {
       return targetRotations;
     }
-  }
-
-  public void setSolverOutput(DoubleSupplier output) {
-    solverOutput = output;
   }
 
   public Length getMeasuredHeight() {
