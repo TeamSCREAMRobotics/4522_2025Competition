@@ -2,8 +2,6 @@ package frc2025.subsystems.superstructure.elevator;
 
 import data.Length;
 import drivers.TalonFXSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.logging.Logger;
 import java.util.function.DoubleSupplier;
 import math.Conversions;
@@ -48,8 +46,8 @@ public class Elevator extends TalonFXSubsystem {
     }
   }
 
-  public Command setSolverOutput(DoubleSupplier output) {
-    return Commands.run(() -> solverOutput = output);
+  public void setSolverOutput(DoubleSupplier output) {
+    solverOutput = output;
   }
 
   public Length getMeasuredHeight() {

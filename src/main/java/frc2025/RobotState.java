@@ -15,6 +15,7 @@ import frc2025.subsystems.superstructure.elevator.Elevator;
 import frc2025.subsystems.superstructure.wrist.Wrist;
 import frc2025.subsystems.superstructure.wrist.WristRollers;
 import java.util.OptionalInt;
+import lombok.Setter;
 import util.AllianceFlipUtil;
 
 public class RobotState {
@@ -33,6 +34,8 @@ public class RobotState {
     this.intakeDeploy = subsystems.intakeDeploy();
     this.intakeRollers = subsystems.intakeRollers();
   }
+
+  @Setter private static Pose3d axesPose = new Pose3d();
 
   public OptionalInt getReefZone() {
     return AllianceFlipUtil.get(FieldConstants.BLUE_REEF, FieldConstants.RED_REEF)
@@ -81,7 +84,8 @@ public class RobotState {
           ComponentVisualizer.getStage2Pose(elevator.getMeasuredHeight().getMeters()),
           ComponentVisualizer.getCarriagePose(elevator.getMeasuredHeight().getMeters()),
           ComponentVisualizer.getWristPose(
-              elevator.getMeasuredHeight().getMeters(), wrist.getAngle())
+              elevator.getMeasuredHeight().getMeters(), wrist.getAngle()),
+          axesPose
         });
     Logger.log(
         "Components/SetpointComponents",

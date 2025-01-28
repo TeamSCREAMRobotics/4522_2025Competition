@@ -107,17 +107,17 @@ public class RobotContainer {
 
     // Reef scoring/clearing controls
     Controlboard.goToLevel4()
-        .whileTrue(superstructure.applyPosition(SuperstructurePosition.REEF_L4))
+        .whileTrue(superstructure.interpolateToPosition(SuperstructurePosition.REEF_L4, true))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
 
     Controlboard.goToLevel3()
-        .whileTrue(superstructure.applyPosition(SuperstructurePosition.REEF_L3))
+        .whileTrue(superstructure.interpolateToPosition(SuperstructurePosition.REEF_L3, true))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
 
     Controlboard.goToLevel2()
-        .whileTrue(superstructure.applyPosition(SuperstructurePosition.REEF_L2))
+        .whileTrue(superstructure.interpolateToPosition(SuperstructurePosition.REEF_L2))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
 
@@ -174,7 +174,8 @@ public class RobotContainer {
                                 .times(AllianceFlipUtil.getDirectionCoefficient()),
                             Controlboard.getRotation().getAsDouble())));
 
-    superstructure.setDefaultCommand(superstructure.applyPosition(SuperstructurePosition.IDLE));
+    superstructure.setDefaultCommand(
+        superstructure.interpolateToPosition(SuperstructurePosition.IDLE));
 
     /* elevator.setDefaultCommand(
         elevator.applyVoltage(

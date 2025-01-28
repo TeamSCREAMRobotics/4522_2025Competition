@@ -3,8 +3,6 @@ package frc2025.subsystems.superstructure.wrist;
 import drivers.TalonFXSubsystem;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import java.util.function.DoubleSupplier;
 
 public class Wrist extends TalonFXSubsystem {
@@ -47,8 +45,8 @@ public class Wrist extends TalonFXSubsystem {
     }
   }
 
-  public Command setSolverOutput(DoubleSupplier output) {
-    return Commands.run(() -> solverOutput = output);
+  public void setSolverOutput(DoubleSupplier output) {
+    solverOutput = output;
   }
 
   @Override
