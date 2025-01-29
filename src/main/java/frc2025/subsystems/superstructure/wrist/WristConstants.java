@@ -86,7 +86,7 @@ public class WristConstants {
     WRIST_CONFIG.acceleration = 1.0;
     WRIST_CONFIG.slot0 =
         new ScreamPIDConstants(1.0, 0, 0).getSlot0Configs(new FeedforwardConstants());
-    WRIST_CONFIG.positionThreshold = Units.degreesToRotations(15);
+    WRIST_CONFIG.positionThreshold = Units.degreesToRotations(30);
   }
 
   public static final TalonFXSubsystemConfiguration ROLLERS_CONFIG =

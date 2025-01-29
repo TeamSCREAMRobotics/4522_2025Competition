@@ -2,6 +2,7 @@ package frc2025.subsystems.superstructure.elevator;
 
 import data.Length;
 import drivers.TalonFXSubsystem;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc2025.logging.Logger;
 import java.util.function.DoubleSupplier;
 import math.Conversions;
@@ -12,11 +13,14 @@ public class Elevator extends TalonFXSubsystem {
 
   public Elevator(TalonFXSubsystemConfiguration config) {
     super(config, ElevatorGoal.IDLE);
+
+    removeDefaultCommand();
   }
 
   public enum ElevatorGoal implements TalonFXSubsystemGoal {
     HOME(Length.fromInches(0)),
     IDLE(Length.fromInches(12.01875)),
+    IDLE_CORAL(Length.fromInches(20.0)),
     TROUGH(Length.fromInches(18.42)),
     L2(Length.fromInches(29.1)),
     L3(Length.fromInches(44.8)),
@@ -26,6 +30,7 @@ public class Elevator extends TalonFXSubsystem {
     CORAL_STATION(Length.fromInches(18.2)),
     HANDOFF(new Length()),
     BARGE(ElevatorConstants.MAX_HEIGHT),
+    MAX_CARRIAGE(Length.fromInches(24.04)),
     MAX(ElevatorConstants.MAX_HEIGHT);
 
     public DoubleSupplier targetRotations;
@@ -46,6 +51,10 @@ public class Elevator extends TalonFXSubsystem {
     public DoubleSupplier target() {
       return targetRotations;
     }
+  }
+
+  public Command applyUntilAtGoal(ElevatorGoal goal) {
+    return super.applyGoal(goal).until(() -> atGoal());
   }
 
   public Length getMeasuredHeight() {

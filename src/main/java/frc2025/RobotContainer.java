@@ -20,6 +20,7 @@ import frc2025.subsystems.intake.IntakeDeploy.IntakeDeployGoal;
 import frc2025.subsystems.intake.IntakeRollers;
 import frc2025.subsystems.intake.IntakeRollers.IntakeRollersGoal;
 import frc2025.subsystems.superstructure.Superstructure;
+import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureState;
 import frc2025.subsystems.superstructure.elevator.ElevatorConstants;
 import frc2025.subsystems.superstructure.wrist.WristConstants;
 import frc2025.subsystems.superstructure.wrist.WristRollers;
@@ -105,22 +106,26 @@ public class RobotContainer {
                 () -> Controlboard.getTranslation().get().getY()));
 
     // Reef scoring/clearing controls
-    /* Controlboard.goToLevel4()
-        .whileTrue(superstructure.interpolateToPosition(SuperstructurePosition.REEF_L4, true))
+    Controlboard.goToLevel4()
+        .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_L4))
+        .onFalse(superstructure.applyTargetState(SuperstructureState.IDLE_NONE))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
 
     Controlboard.goToLevel3()
-        .whileTrue(superstructure.interpolateToPosition(SuperstructurePosition.REEF_L3, true))
+        .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_L3))
+        .onFalse(superstructure.applyTargetState(SuperstructureState.IDLE_NONE))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
 
     Controlboard.goToLevel2()
-        .whileTrue(superstructure.interpolateToPosition(SuperstructurePosition.REEF_L2))
+        .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_L2))
+        .onFalse(superstructure.applyTargetState(SuperstructureState.IDLE_NONE))
         .and(() -> robotState.getReefZone().isPresent())
-        .whileTrue(reefAlign); */
+        .whileTrue(reefAlign);
 
-    /* Controlboard.goToTrough()
+    /*
+    Controlboard.goToTrough()
         .whileTrue(
             Commands.parallel(
                 elevator.applyGoal(ElevatorGoal.TROUGH), wrist.applyGoal(WristGoal.REEF_L1_L3)))
@@ -172,9 +177,6 @@ public class RobotContainer {
                                 .get()
                                 .times(AllianceFlipUtil.getDirectionCoefficient()),
                             Controlboard.getRotation().getAsDouble())));
-
-    /* superstructure.setDefaultCommand(
-    superstructure.interpolateToPosition(SuperstructurePosition.IDLE)); */
 
     /* elevator.setDefaultCommand(
         elevator.applyVoltage(
