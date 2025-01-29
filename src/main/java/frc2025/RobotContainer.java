@@ -174,7 +174,7 @@ public class RobotContainer {
                             Controlboard.getRotation().getAsDouble())));
 
     /* superstructure.setDefaultCommand(
-        superstructure.interpolateToPosition(SuperstructurePosition.IDLE)); */
+    superstructure.interpolateToPosition(SuperstructurePosition.IDLE)); */
 
     /* elevator.setDefaultCommand(
         elevator.applyVoltage(

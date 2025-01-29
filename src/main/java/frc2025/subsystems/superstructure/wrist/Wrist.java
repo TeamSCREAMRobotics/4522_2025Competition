@@ -13,7 +13,7 @@ public class Wrist extends TalonFXSubsystem {
   private static DoubleSupplier solverOutput = () -> 0.0;
 
   public Wrist(TalonFXSubsystemConfiguration config) {
-    super(config, WristGoal.IDLE);
+    super(config, WristGoal.IDLE_CCW55);
 
     simFeedforwardSup =
         () ->
@@ -23,8 +23,9 @@ public class Wrist extends TalonFXSubsystem {
   }
 
   public enum WristGoal implements TalonFXSubsystemGoal {
-    HOME(Rotation2d.fromDegrees(90.0)),
-    IDLE(Rotation2d.fromDegrees(55.0)),
+    STOW_CCW90(Rotation2d.fromDegrees(90.0)),
+    IDLE_CCW55(Rotation2d.fromDegrees(55.0)),
+    PRE_IDLE_CW45(Rotation2d.fromDegrees(-45.0)),
     REEF_L1_L3(Rotation2d.fromDegrees(196.9)),
     REEF_L4(Rotation2d.fromDegrees(209.2)),
     CLEAR_ALGAE(Rotation2d.fromDegrees(170)),
