@@ -53,8 +53,8 @@ public class Elevator extends TalonFXSubsystem {
     }
   }
 
-  public Command applyUntilAtGoal(ElevatorGoal goal) {
-    return super.applyGoal(goal).until(() -> atGoal());
+  public Command applyUntilAtGoalCommand(ElevatorGoal goal) {
+    return super.applyGoalCommand(goal).until(() -> atGoal());
   }
 
   public Length getMeasuredHeight() {

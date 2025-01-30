@@ -63,7 +63,7 @@ public class Wrist extends TalonFXSubsystem {
     }
   }
 
-  public Command applyGoal(WristGoal goal, Direction direction) {
+  public Command applyGoalCommand(WristGoal goal, Direction direction) {
     Supplier<Rotation2d> midpoint =
         () -> {
           double diff = goal.angle.getRadians() - getAngle().getRadians();
@@ -89,15 +89,15 @@ public class Wrist extends TalonFXSubsystem {
             return goal.toString();
           }
         };
-    return super.applyGoal(newGoal);
+    return super.applyGoalCommand(newGoal);
   }
 
-  public Command applyUntilAtGoal(TalonFXSubsystemGoal goal) {
-    return super.applyGoal(goal).until(() -> atGoal());
+  public Command applyUntilAtGoalCommand(TalonFXSubsystemGoal goal) {
+    return super.applyGoalCommand(goal).until(() -> atGoal());
   }
 
-  public Command applyUntilAtGoal(WristGoal goal, Direction direction) {
-    return applyGoal(goal, direction).until(() -> atGoal());
+  public Command applyUntilAtGoalCommand(WristGoal goal, Direction direction) {
+    return applyGoalCommand(goal, direction).until(() -> atGoal());
   }
 
   @Override
