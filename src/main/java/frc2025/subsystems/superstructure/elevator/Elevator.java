@@ -9,8 +9,6 @@ import math.Conversions;
 
 public class Elevator extends TalonFXSubsystem {
 
-  private static DoubleSupplier solverOutput = () -> 0.0;
-
   public Elevator(TalonFXSubsystemConfiguration config) {
     super(config, ElevatorGoal.IDLE);
 
@@ -28,7 +26,7 @@ public class Elevator extends TalonFXSubsystem {
     CLEAR_ALGAE_L1(new Length()),
     CLEAR_ALGAE_L2(new Length()),
     CORAL_STATION(Length.fromInches(18.2)),
-    HANDOFF(new Length()),
+    HANDOFF(new Length(18.2)),
     BARGE(ElevatorConstants.MAX_HEIGHT),
     MAX_CARRIAGE(Length.fromInches(24.04)),
     MAX(ElevatorConstants.MAX_HEIGHT);
@@ -86,5 +84,7 @@ public class Elevator extends TalonFXSubsystem {
     Logger.log(
         logPrefix + "AbsHeight",
         getMeasuredHeight().plus(ElevatorConstants.MIN_HEIGHT_FROM_FLOOR).getInches());
+    Logger.log(
+        logPrefix + "ErrorHeight", getSetpointHeight().minus(getMeasuredHeight()).getInches());
   }
 }

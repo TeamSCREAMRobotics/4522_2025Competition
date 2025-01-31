@@ -6,18 +6,15 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 public class Wrist extends TalonFXSubsystem {
 
   public enum Direction {
-    CLOCKWISE,
-    COUNTER_CLOCKWISE;
+    CLOSEST,
+    OPPOSITE;
   }
 
   private final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.3, 0.57, 0.01);
-
-  private static DoubleSupplier solverOutput = () -> 0.0;
 
   public Wrist(TalonFXSubsystemConfiguration config) {
     super(config, WristGoal.IDLE_NONE);
@@ -41,7 +38,8 @@ public class Wrist extends TalonFXSubsystem {
     REEF_L4(Rotation2d.fromDegrees(209.2)),
     CLEAR_ALGAE(Rotation2d.fromDegrees(170)),
     BARGE(Rotation2d.kZero),
-    STATION(Rotation2d.fromDegrees(34.55));
+    STATION(Rotation2d.fromDegrees(34.55)),
+    HANDOFF(Rotation2d.fromDegrees(-45.0));
 
     public final DoubleSupplier target;
 
@@ -63,45 +61,11 @@ public class Wrist extends TalonFXSubsystem {
     }
   }
 
-  public Command applyGoalCommand(WristGoal goal, Direction direction) {
-    Supplier<Rotation2d> midpoint =
-        () -> {
-          double diff = goal.angle.getRadians() - getAngle().getRadians();
-          double sign = direction == Direction.COUNTER_CLOCKWISE ? -1.0 : 1.0;
-          return Rotation2d.fromRadians(diff * 0.5 * sign);
-        };
-    Supplier<Rotation2d> target = () -> goal.angle.minus(midpoint.get());
-    TalonFXSubsystemGoal newGoal =
-        new TalonFXSubsystemGoal() {
-
-          @Override
-          public ControlType controlType() {
-            return ControlType.MOTION_MAGIC_POSITION;
-          }
-
-          @Override
-          public DoubleSupplier target() {
-            return () -> target.get().getRotations();
-          }
-
-          @Override
-          public String toString() {
-            return goal.toString();
-          }
-        };
-    return super.applyGoalCommand(newGoal);
-  }
-
   public Command applyUntilAtGoalCommand(TalonFXSubsystemGoal goal) {
     return super.applyGoalCommand(goal).until(() -> atGoal());
   }
 
-  public Command applyUntilAtGoalCommand(WristGoal goal, Direction direction) {
-    return applyGoalCommand(goal, direction).until(() -> atGoal());
-  }
-
-  @Override
-  public synchronized void setSimState(double position, double velocity) {
-    super.setSimState(-position, velocity);
+  public Command applyUntilAtGoalCommand(TalonFXSubsystemGoal goal, double absTolerance) {
+    return super.applyGoalCommand(goal).until(() -> atGoal(absTolerance));
   }
 }

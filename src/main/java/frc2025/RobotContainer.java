@@ -7,7 +7,6 @@ package frc2025;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc2025.commands.ApplySuperstructureState;
 import frc2025.commands.DriveToPose;
 import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard;
@@ -26,7 +25,6 @@ import frc2025.subsystems.superstructure.elevator.ElevatorConstants;
 import frc2025.subsystems.superstructure.wrist.WristConstants;
 import frc2025.subsystems.superstructure.wrist.WristRollers;
 import java.util.Set;
-import java.util.function.Supplier;
 import lombok.Getter;
 import util.AllianceFlipUtil;
 
@@ -109,19 +107,22 @@ public class RobotContainer {
 
     // Reef scoring/clearing controls
     Controlboard.goToLevel4()
-        .whileTrue(getApplySuperstructureState(SuperstructureState.REEF_L4).get())
+        .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_L4))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
 
     Controlboard.goToLevel3()
-        .whileTrue(getApplySuperstructureState(SuperstructureState.REEF_L3).get())
+        .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_L3))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
 
     Controlboard.goToLevel2()
-        .whileTrue(getApplySuperstructureState(SuperstructureState.REEF_L2).get())
+        .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_L2))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
+
+    Controlboard.goToTrough()
+        .whileTrue(superstructure.applyTargetState(SuperstructureState.HANDOFF));
 
     /*
     Controlboard.goToTrough()
@@ -178,7 +179,7 @@ public class RobotContainer {
                             Controlboard.getRotation().getAsDouble())));
 
     superstructure.setDefaultCommand(
-        getApplySuperstructureState(SuperstructureState.IDLE_NONE).get());
+        superstructure.applyTargetState(SuperstructureState.IDLE_ALGAE));
 
     /* elevator.setDefaultCommand(
         elevator.applyVoltage(
@@ -189,10 +190,6 @@ public class RobotContainer {
 
     wrist.setDefaultCommand(
         wrist.applyVoltage(() -> Controlboard.driveController.getRightTriggerAxis() * 24.0)); */
-  }
-
-  private Supplier<Command> getApplySuperstructureState(SuperstructureState state) {
-    return () -> new ApplySuperstructureState(state, superstructure);
   }
 
   public Command getAutonomousCommand() {

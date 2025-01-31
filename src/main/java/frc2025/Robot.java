@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc2025.constants.Constants;
 import frc2025.logging.Logger;
 
 public class Robot extends TimedRobot {
@@ -20,11 +19,6 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     robotContainer = new RobotContainer();
-
-    if (isSimulation()) {
-      addPeriodic(
-          RobotContainer.getSubsystems().drivetrain()::updateSimState, Constants.SIM_PERIOD_SEC);
-    }
 
     Logger.setOptions(
         new DogLogOptions()

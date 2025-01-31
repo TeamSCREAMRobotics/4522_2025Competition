@@ -12,16 +12,17 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc2025.Robot;
+import frc2025.constants.Constants;
 import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.generated.TunerConstants.TunerSwerveDrivetrain;
 import java.util.function.Supplier;
 import lombok.Getter;
-import util.AllianceFlipUtil;
 import util.RunnableUtil.RunOnce;
 import util.ScreamUtil;
 
@@ -30,6 +31,7 @@ import util.ScreamUtil;
  * in command-based projects easily.
  */
 public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
+  private Notifier simThread = null;
   private double lastSimTime;
 
   private RunOnce operatorPerspectiveApplier = new RunOnce();
@@ -66,6 +68,10 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         () -> false,
         this);
 
+    if (Robot.isSimulation()) {
+      startSimThread();
+    }
+
     System.out.println("[Init] Drivetrain initialization complete!");
   }
 
@@ -93,12 +99,17 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
                     getLinearVelocity().getNorm() * AllianceFlipUtil.getDirectionCoefficient()));
   } */
 
-  public void updateSimState() {
-    final double currentTime = Utils.getCurrentTimeSeconds();
-    double deltaTime = currentTime - lastSimTime;
-    lastSimTime = currentTime;
+  public void startSimThread() {
+    simThread =
+        new Notifier(
+            () -> {
+              final double currentTime = Utils.getCurrentTimeSeconds();
+              double deltaTime = currentTime - lastSimTime;
+              lastSimTime = currentTime;
 
-    updateSimState(deltaTime, RobotController.getBatteryVoltage());
+              updateSimState(deltaTime, RobotController.getBatteryVoltage());
+            });
+    simThread.startPeriodic(Constants.SIM_PERIOD_SEC);
   }
 
   public boolean getWithinAngleThreshold(Rotation2d targetAngle, Rotation2d threshold) {
@@ -144,16 +155,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   @Override
   public void periodic() {
-    // attemptToSetPerspective();
     if (getCurrentCommand() != null) {
       Logger.log("RobotState/Subsystems/Drivetrain/ActiveCommand", getCurrentCommand().getName());
     }
-  }
-
-  public void attemptToSetPerspective() {
-    operatorPerspectiveApplier.runOnceWhenTrueThenWhenChanged(
-        () -> setOperatorPerspectiveForward(AllianceFlipUtil.getFwdHeading()),
-        DriverStation.getAlliance().isPresent(),
-        DriverStation.getAlliance().orElse(null));
   }
 }

@@ -42,11 +42,11 @@ public class WristConstants {
                   .in(KilogramSquareMeters)
               - 0.002,
           Units.inchesToMeters(20.5),
-          Units.rotationsToRadians(-9999),
-          Units.rotationsToRadians(9999),
+          Units.rotationsToRadians(-WRIST_REDUCTION),
+          Units.rotationsToRadians(WRIST_REDUCTION),
           true,
           0);
-  public static final ScreamPIDConstants SIM_GAINS = new ScreamPIDConstants(600.0, 0.0, 0.0);
+  public static final ScreamPIDConstants SIM_GAINS = new ScreamPIDConstants(400.0, 0.0, 0.0);
 
   public static final TalonFXSubsystemConfiguration WRIST_CONFIG =
       new TalonFXSubsystemConfiguration();
@@ -55,16 +55,16 @@ public class WristConstants {
     WRIST_CONFIG.name = "Wrist";
 
     WRIST_CONFIG.codeEnabled = true;
-    WRIST_CONFIG.logTelemetry = false;
+    WRIST_CONFIG.logTelemetry = true;
     WRIST_CONFIG.debugMode = false;
 
     WRIST_CONFIG.simConstants =
         new TalonFXSubsystemSimConstants(
             new SimWrapper(SIM),
-            SIM_GAINS.getProfiledPIDController(new Constraints(100.0, 75.0), -0.5, 0.5),
+            SIM_GAINS.getProfiledPIDController(new Constraints(300.0, 200.0)),
+            true,
             false,
-            false,
-            false);
+            true);
 
     WRIST_CONFIG.masterConstants =
         new TalonFXConstants(new CANDevice(14), InvertedValue.Clockwise_Positive);
