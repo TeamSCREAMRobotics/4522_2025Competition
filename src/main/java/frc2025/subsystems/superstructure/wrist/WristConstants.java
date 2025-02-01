@@ -46,7 +46,7 @@ public class WristConstants {
           Units.rotationsToRadians(WRIST_REDUCTION),
           true,
           0);
-  public static final ScreamPIDConstants SIM_GAINS = new ScreamPIDConstants(400.0, 0.0, 0.0);
+  public static final ScreamPIDConstants SIM_GAINS = new ScreamPIDConstants(500.0, 0.0, 100);
 
   public static final TalonFXSubsystemConfiguration WRIST_CONFIG =
       new TalonFXSubsystemConfiguration();
@@ -61,7 +61,7 @@ public class WristConstants {
     WRIST_CONFIG.simConstants =
         new TalonFXSubsystemSimConstants(
             new SimWrapper(SIM),
-            SIM_GAINS.getProfiledPIDController(new Constraints(300.0, 200.0)),
+            SIM_GAINS.getProfiledPIDController(new Constraints(300.0, 250.0)),
             true,
             false,
             true);
@@ -86,7 +86,7 @@ public class WristConstants {
     WRIST_CONFIG.acceleration = 1.0;
     WRIST_CONFIG.slot0 =
         new ScreamPIDConstants(1.0, 0, 0).getSlot0Configs(new FeedforwardConstants());
-    WRIST_CONFIG.positionThreshold = Units.degreesToRotations(30);
+    WRIST_CONFIG.positionThreshold = Units.degreesToRotations(22.5);
   }
 
   public static final TalonFXSubsystemConfiguration ROLLERS_CONFIG =

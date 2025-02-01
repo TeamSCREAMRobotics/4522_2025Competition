@@ -43,9 +43,9 @@ public class FieldConstants {
   public static final Map<Integer, Pair<Pose2d, Pose2d>> RED_REEF_LOCATIONS = new HashMap<>();
 
   public static final Translation2d SCORE_LOCATION_1 =
-      new Translation2d(5.268944 + 0.5, 3.869997 - WristConstants.ROLLERS_TO_ORIGIN.getMeters());
+      new Translation2d(5.268944 + 0.5059, 3.869997 - WristConstants.ROLLERS_TO_ORIGIN.getMeters());
   public static final Translation2d SCORE_LOCATION_2 =
-      new Translation2d(5.268944 + 0.5, 4.198614 - WristConstants.ROLLERS_TO_ORIGIN.getMeters());
+      new Translation2d(5.268944 + 0.5059, 4.198614 - WristConstants.ROLLERS_TO_ORIGIN.getMeters());
 
   static {
     Translation2d blueScoreLocation1 = SCORE_LOCATION_1.minus(BLUE_REEF_CENTER);

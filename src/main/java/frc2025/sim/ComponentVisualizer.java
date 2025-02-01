@@ -4,6 +4,9 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
+import frc2025.subsystems.superstructure.wrist.WristConstants;
 
 public class ComponentVisualizer {
 
@@ -47,5 +50,29 @@ public class ComponentVisualizer {
         WRIST_ORIGIN_POSE.getY(),
         elevatorHeight + WRIST_ORIGIN_POSE.getZ(),
         new Rotation3d(0, wristAngle.getRadians(), 0).unaryMinus());
+  }
+
+  public static Pose3d getCoralPose(double elevatorHeight, Rotation2d wristAngle) {
+    Pose3d wristPose = getWristPose(elevatorHeight, wristAngle);
+    Translation2d relPos =
+        new Translation2d(Units.inchesToMeters((11.93 / 2.0) + 6.737390), wristAngle)
+            .plus(new Translation2d(0, wristPose.getZ()));
+    return new Pose3d(
+        relPos.getX(),
+        WristConstants.ROLLERS_TO_ORIGIN.getMeters(),
+        relPos.getY(),
+        new Rotation3d(0, -wristAngle.getRadians(), 0));
+  }
+
+  public static Pose3d getAlgaePose(double elevatorHeight, Rotation2d wristAngle) {
+    Pose3d wristPose = getWristPose(elevatorHeight, wristAngle);
+    Translation2d relPos =
+        new Translation2d(Units.inchesToMeters(17.426), wristAngle.plus(new Rotation2d(0.4614)))
+            .plus(new Translation2d(0, wristPose.getZ()));
+    return new Pose3d(
+        relPos.getX(),
+        WristConstants.ROLLERS_TO_ORIGIN.getMeters(),
+        relPos.getY(),
+        new Rotation3d());
   }
 }

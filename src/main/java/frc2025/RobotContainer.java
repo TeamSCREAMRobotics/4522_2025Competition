@@ -7,6 +7,7 @@ package frc2025;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc2025.RobotState.GamePiece;
 import frc2025.commands.DriveToPose;
 import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard;
@@ -122,7 +123,10 @@ public class RobotContainer {
         .whileTrue(reefAlign);
 
     Controlboard.goToTrough()
-        .whileTrue(superstructure.applyTargetState(SuperstructureState.HANDOFF));
+        .whileTrue(
+            superstructure
+                .applyTargetState(SuperstructureState.HANDOFF)
+                .alongWith(Commands.runOnce(() -> Dashboard.currentGamePiece = GamePiece.CORAL)));
 
     /*
     Controlboard.goToTrough()
@@ -179,7 +183,7 @@ public class RobotContainer {
                             Controlboard.getRotation().getAsDouble())));
 
     superstructure.setDefaultCommand(
-        superstructure.applyTargetState(SuperstructureState.IDLE_ALGAE));
+        superstructure.applyTargetState(SuperstructureState.IDLE_NONE));
 
     /* elevator.setDefaultCommand(
         elevator.applyVoltage(

@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     RobotContainer.getRobotState().logTelemetry();
+    Dashboard.periodic();
   }
 
   @Override

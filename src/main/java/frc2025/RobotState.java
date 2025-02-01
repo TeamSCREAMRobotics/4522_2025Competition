@@ -15,6 +15,7 @@ import frc2025.subsystems.superstructure.elevator.Elevator;
 import frc2025.subsystems.superstructure.wrist.Wrist;
 import frc2025.subsystems.superstructure.wrist.WristRollers;
 import java.util.OptionalInt;
+import java.util.function.Supplier;
 import util.AllianceFlipUtil;
 
 public class RobotState {
@@ -32,6 +33,14 @@ public class RobotState {
     this.wristRollers = subsystems.wristRollers();
     this.intakeDeploy = subsystems.intakeDeploy();
     this.intakeRollers = subsystems.intakeRollers();
+  }
+
+  public static Supplier<GamePiece> activeGamePiece = () -> Dashboard.selectedGamePiece();
+
+  public enum GamePiece {
+    NONE,
+    CORAL,
+    ALGAE;
   }
 
   public OptionalInt getReefZone() {
@@ -81,7 +90,15 @@ public class RobotState {
           ComponentVisualizer.getStage2Pose(elevator.getMeasuredHeight().getMeters()),
           ComponentVisualizer.getCarriagePose(elevator.getMeasuredHeight().getMeters()),
           ComponentVisualizer.getWristPose(
-              elevator.getMeasuredHeight().getMeters(), wrist.getAngle())
+              elevator.getMeasuredHeight().getMeters(), wrist.getAngle()),
+          ComponentVisualizer.getCoralPose(
+              elevator.getMeasuredHeight().getMeters()
+                  - (activeGamePiece.get() == GamePiece.CORAL ? 0 : 2.5),
+              wrist.getAngle()),
+          ComponentVisualizer.getAlgaePose(
+              elevator.getMeasuredHeight().getMeters()
+                  - (activeGamePiece.get() == GamePiece.ALGAE ? 0 : 2.5),
+              wrist.getAngle())
         });
     Logger.log(
         "Components/SetpointComponents",

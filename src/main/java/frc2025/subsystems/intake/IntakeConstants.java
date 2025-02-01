@@ -23,7 +23,7 @@ import util.SimUtil;
 
 public class IntakeConstants {
 
-  public static final double DEPLOY_REDUCTION = 154.0;
+  public static final double DEPLOY_REDUCTION = 198.0;
   public static final double ROLLERS_REDUCTION = 2.0;
 
   public static final DCMotorSim SIM =
