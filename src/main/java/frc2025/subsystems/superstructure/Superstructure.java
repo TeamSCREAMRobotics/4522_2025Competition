@@ -1,10 +1,10 @@
 package frc2025.subsystems.superstructure;
 
-import data.Length;
 import drivers.TalonFXSubsystem.TalonFXSubsystemConfiguration;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc2025.logging.Logger;
 import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureState;
 import frc2025.subsystems.superstructure.elevator.Elevator;
 import frc2025.subsystems.superstructure.elevator.Elevator.ElevatorGoal;
@@ -19,7 +19,10 @@ public class Superstructure extends SubsystemBase {
   @Getter private Elevator elevator;
   @Getter private Wrist wrist;
 
+  private final String logPrefix = "RobotState/Superstructure/";
+
   public SuperstructureState currentState = SuperstructureState.IDLE_NONE;
+  public SuperstructureState targetState = currentState;
 
   public Superstructure(
       TalonFXSubsystemConfiguration elevatorConfig, TalonFXSubsystemConfiguration wristConfig) {
@@ -30,6 +33,7 @@ public class Superstructure extends SubsystemBase {
   public Command applyTargetState(SuperstructureState targetState) {
     return Commands.defer(
         () -> {
+          this.targetState = targetState;
           Command transitionCommand = Commands.none();
           switch (targetState) {
             case HOME:
@@ -90,6 +94,7 @@ public class Superstructure extends SubsystemBase {
                               WristGoal.IDLE_ALGAE, Direction.COUNTER_CLOCKWISE),
                           elevator.applyGoalCommand(ElevatorGoal.IDLE));
                   break;
+                case IDLE_ALGAE:
                 case HANDOFF:
                   transitionCommand =
                       Commands.sequence(
@@ -119,60 +124,71 @@ public class Superstructure extends SubsystemBase {
                 case IDLE_NONE:
                   transitionCommand =
                       Commands.parallel(
-                          elevator.applyGoalCommand(ElevatorGoal.L2),
+                          elevator.applyUntilAtGoalCommand(ElevatorGoal.L2),
+                          wrist.applyUntilAtGoalCommand(
+                              WristGoal.REEF_L1_L3, Direction.COUNTER_CLOCKWISE));
+                  break;
+                case REEF_L2:
+                case REEF_L3:
+                case REEF_L4:
+                case IDLE_CORAL:
+                  transitionCommand =
+                      Commands.parallel(
+                          elevator.applyUntilAtGoalCommand(ElevatorGoal.L2),
                           Commands.sequence(
                               Commands.waitUntil(
-                                  () ->
-                                      elevator.atGoal(
-                                          Elevator.heightToRotations(Length.fromInches(5)))),
+                                  () -> elevator.getMeasuredHeight().getInches() > 25.0),
                               wrist.applyUntilAtGoalCommand(
                                   WristGoal.REEF_L1_L3, Direction.CLOCKWISE)));
                   break;
               }
-              transitionCommand =
-                  Commands.parallel(
-                      elevator.applyUntilAtGoalCommand(ElevatorGoal.L2),
-                      wrist.applyUntilAtGoalCommand(WristGoal.REEF_L1_L3, Direction.CLOCKWISE));
               break;
             case REEF_L3:
               switch (currentState) {
                 case IDLE_NONE:
                   transitionCommand =
                       Commands.parallel(
-                          elevator.applyGoalCommand(ElevatorGoal.L3),
+                          elevator.applyUntilAtGoalCommand(ElevatorGoal.L3),
+                          wrist.applyUntilAtGoalCommand(
+                              WristGoal.REEF_L1_L3, Direction.COUNTER_CLOCKWISE));
+                  break;
+                case REEF_L2:
+                case REEF_L3:
+                case REEF_L4:
+                case IDLE_CORAL:
+                  transitionCommand =
+                      Commands.parallel(
+                          elevator.applyUntilAtGoalCommand(ElevatorGoal.L3),
                           Commands.sequence(
                               Commands.waitUntil(
-                                  () ->
-                                      elevator.atGoal(
-                                          Elevator.heightToRotations(Length.fromInches(2.5)))),
+                                  () -> elevator.getMeasuredHeight().getInches() > 25.0),
                               wrist.applyUntilAtGoalCommand(
                                   WristGoal.REEF_L1_L3, Direction.CLOCKWISE)));
                   break;
               }
-              transitionCommand =
-                  Commands.parallel(
-                      elevator.applyUntilAtGoalCommand(ElevatorGoal.L3),
-                      wrist.applyUntilAtGoalCommand(WristGoal.REEF_L1_L3, Direction.CLOCKWISE));
               break;
             case REEF_L4:
               switch (currentState) {
                 case IDLE_NONE:
                   transitionCommand =
                       Commands.parallel(
-                          elevator.applyGoalCommand(ElevatorGoal.L4),
+                          elevator.applyUntilAtGoalCommand(ElevatorGoal.L4),
+                          wrist.applyUntilAtGoalCommand(
+                              WristGoal.REEF_L4, Direction.COUNTER_CLOCKWISE));
+                  break;
+                case REEF_L2:
+                case REEF_L3:
+                case REEF_L4:
+                case IDLE_CORAL:
+                  transitionCommand =
+                      Commands.parallel(
+                          elevator.applyUntilAtGoalCommand(ElevatorGoal.L4),
                           Commands.sequence(
                               Commands.waitUntil(
-                                  () ->
-                                      elevator.atGoal(
-                                          Elevator.heightToRotations(Length.fromInches(10)))),
-                              wrist.applyUntilAtGoalCommand(
-                                  WristGoal.REEF_L4, Direction.CLOCKWISE)));
+                                  () -> elevator.getMeasuredHeight().getInches() > 25.0),
+                              wrist.applyUntilAtGoalCommand(WristGoal.REEF_L4)));
                   break;
               }
-              transitionCommand =
-                  Commands.parallel(
-                      elevator.applyUntilAtGoalCommand(ElevatorGoal.L4),
-                      wrist.applyUntilAtGoalCommand(WristGoal.REEF_L4, Direction.CLOCKWISE));
               break;
             case BARGE_NET:
               break;
@@ -192,10 +208,15 @@ public class Superstructure extends SubsystemBase {
           }
           return transitionCommand.andThen(
               Commands.parallel(
-                  wrist.applyGoalCommand(targetState.wristGoal, targetState.desiredDirection),
+                  wrist.applyGoalCommand(targetState.wristGoal),
                   elevator.applyGoalCommand(targetState.elevatorGoal),
                   Commands.runOnce(() -> currentState = targetState)));
         },
-        Set.of(this));
+        Set.of(this, elevator, wrist));
+  }
+
+  public void logTelemetry() {
+    Logger.log(logPrefix + "CurrentState", currentState);
+    Logger.log(logPrefix + "TargetState", targetState);
   }
 }

@@ -25,14 +25,15 @@ public class Robot extends TimedRobot {
             .withCaptureDs(true)
             .withCaptureNt(true)
             .withLogExtras(false)
-            .withNtPublish(true));
+            .withNtPublish(true)
+            .withLogEntryQueueCapacity(5000));
     Logger.setEnabled(true);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    RobotContainer.getRobotState().logTelemetry();
+    robotContainer.logTelemetry();
     Dashboard.periodic();
   }
 

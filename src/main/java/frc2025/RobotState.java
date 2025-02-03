@@ -93,11 +93,11 @@ public class RobotState {
               elevator.getMeasuredHeight().getMeters(), wrist.getAngle()),
           ComponentVisualizer.getCoralPose(
               elevator.getMeasuredHeight().getMeters()
-                  - (activeGamePiece.get() == GamePiece.CORAL ? 0 : 2.5),
+                  - (activeGamePiece.get() == GamePiece.CORAL ? 0 : 4),
               wrist.getAngle()),
           ComponentVisualizer.getAlgaePose(
               elevator.getMeasuredHeight().getMeters()
-                  - (activeGamePiece.get() == GamePiece.ALGAE ? 0 : 2.5),
+                  - (activeGamePiece.get() == GamePiece.ALGAE ? 0 : 4),
               wrist.getAngle())
         });
     Logger.log(

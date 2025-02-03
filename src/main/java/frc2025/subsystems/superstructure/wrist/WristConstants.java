@@ -42,11 +42,11 @@ public class WristConstants {
                   .in(KilogramSquareMeters)
               - 0.002,
           Units.inchesToMeters(20.5),
-          Units.rotationsToRadians(-WRIST_REDUCTION),
-          Units.rotationsToRadians(WRIST_REDUCTION),
-          true,
-          0);
-  public static final ScreamPIDConstants SIM_GAINS = new ScreamPIDConstants(500.0, 0.0, 100);
+          -Double.MAX_VALUE,
+          Double.MAX_VALUE,
+          false,
+          Math.PI / 2.0);
+  public static final ScreamPIDConstants SIM_GAINS = new ScreamPIDConstants(50.0, 0.0, 50.0);
 
   public static final TalonFXSubsystemConfiguration WRIST_CONFIG =
       new TalonFXSubsystemConfiguration();
@@ -56,14 +56,14 @@ public class WristConstants {
 
     WRIST_CONFIG.codeEnabled = true;
     WRIST_CONFIG.logTelemetry = true;
-    WRIST_CONFIG.debugMode = false;
+    WRIST_CONFIG.debugMode = true;
 
     WRIST_CONFIG.simConstants =
         new TalonFXSubsystemSimConstants(
-            new SimWrapper(SIM),
-            SIM_GAINS.getProfiledPIDController(new Constraints(300.0, 250.0)),
+            new SimWrapper(SIM, WRIST_REDUCTION),
+            WRIST_REDUCTION,
+            SIM_GAINS.getProfiledPIDController(new Constraints(0.5, 0.1)),
             true,
-            false,
             true);
 
     WRIST_CONFIG.masterConstants =
@@ -77,8 +77,7 @@ public class WristConstants {
 
     WRIST_CONFIG.neutralMode = NeutralModeValue.Brake;
     WRIST_CONFIG.rotorToSensorRatio = WRIST_REDUCTION;
-    WRIST_CONFIG.feedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    WRIST_CONFIG.continuousWrap = true;
+    WRIST_CONFIG.feedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
     WRIST_CONFIG.feedbackRemoteSensorId = 4;
     WRIST_CONFIG.enableSupplyCurrentLimit = true;
     WRIST_CONFIG.supplyCurrentLimit = 40;

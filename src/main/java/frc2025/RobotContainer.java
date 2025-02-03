@@ -26,6 +26,7 @@ import frc2025.subsystems.superstructure.elevator.ElevatorConstants;
 import frc2025.subsystems.superstructure.wrist.WristConstants;
 import frc2025.subsystems.superstructure.wrist.WristRollers;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 import lombok.Getter;
 import util.AllianceFlipUtil;
 
@@ -81,6 +82,28 @@ public class RobotContainer {
                   .getFacingAngle(
                       Controlboard.getTranslation().get(), robotState.getStationAlignAngle()));
 
+  private final Command superstructureDefault =
+      Commands.defer(
+          () -> {
+            SuperstructureState state;
+            switch (Dashboard.selectedGamePiece()) {
+              case ALGAE:
+                state = SuperstructureState.IDLE_ALGAE;
+                break;
+              case CORAL:
+                state = SuperstructureState.IDLE_CORAL;
+                break;
+              default:
+                state = SuperstructureState.IDLE_NONE;
+                break;
+            }
+            return superstructure.applyTargetState(state);
+          },
+          Set.of(superstructure));
+
+  private final BooleanSupplier hasCoral = () -> Dashboard.selectedGamePiece() == GamePiece.CORAL;
+  private final BooleanSupplier hasAlgae = () -> Dashboard.selectedGamePiece() == GamePiece.ALGAE;
+
   public RobotContainer() {
     configureBindings();
     configureDefaultCommands();
@@ -108,25 +131,25 @@ public class RobotContainer {
 
     // Reef scoring/clearing controls
     Controlboard.goToLevel4()
+        .and(hasCoral)
         .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_L4))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
 
     Controlboard.goToLevel3()
+        .and(hasCoral)
         .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_L3))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
 
     Controlboard.goToLevel2()
+        .and(hasCoral)
         .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_L2))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(reefAlign);
 
-    Controlboard.goToTrough()
-        .whileTrue(
-            superstructure
-                .applyTargetState(SuperstructureState.HANDOFF)
-                .alongWith(Commands.runOnce(() -> Dashboard.currentGamePiece = GamePiece.CORAL)));
+    Controlboard.testButton()
+        .whileTrue(superstructure.applyTargetState(SuperstructureState.HANDOFF));
 
     /*
     Controlboard.goToTrough()
@@ -182,8 +205,7 @@ public class RobotContainer {
                                 .times(AllianceFlipUtil.getDirectionCoefficient()),
                             Controlboard.getRotation().getAsDouble())));
 
-    superstructure.setDefaultCommand(
-        superstructure.applyTargetState(SuperstructureState.IDLE_NONE));
+    superstructure.setDefaultCommand(superstructureDefault);
 
     /* elevator.setDefaultCommand(
         elevator.applyVoltage(
@@ -198,6 +220,11 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
+  }
+
+  public void logTelemetry() {
+    robotState.logTelemetry();
+    superstructure.logTelemetry();
   }
 
   public static void telemeterizeDrivetrain(SwerveDriveState state) {

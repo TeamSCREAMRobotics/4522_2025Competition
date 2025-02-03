@@ -57,16 +57,16 @@ public final class ElevatorConstants {
     CONFIGURATION.name = "Elevator";
 
     CONFIGURATION.codeEnabled = true;
-    CONFIGURATION.logTelemetry = true;
+    CONFIGURATION.logTelemetry = false;
     CONFIGURATION.debugMode = false;
 
     CONFIGURATION.simConstants =
         new TalonFXSubsystemSimConstants(
-            new SimWrapper(SIM),
+            new SimWrapper(SIM, PULLEY_CIRCUMFERENCE, REDUCTION),
+            REDUCTION,
             SIM_GAINS.getProfiledPIDController(new Constraints(1.5, 1)),
             true,
-            true,
-            false);
+            true);
 
     CONFIGURATION.masterConstants =
         new TalonFXConstants(

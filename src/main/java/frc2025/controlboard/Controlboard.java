@@ -127,4 +127,8 @@ public class Controlboard {
   public static Trigger stationIntake() {
     return driveController.leftTrigger(TRIGGER_DEADBAND);
   }
+
+  public static Trigger testButton() {
+    return driveController.povDown();
+  }
 }

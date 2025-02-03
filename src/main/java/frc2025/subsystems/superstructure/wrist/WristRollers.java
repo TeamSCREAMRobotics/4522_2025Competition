@@ -34,6 +34,11 @@ public class WristRollers extends TalonFXSubsystem {
     public DoubleSupplier target() {
       return () -> voltage;
     }
+
+    @Override
+    public DoubleSupplier feedForward() {
+      return () -> 0.0;
+    }
   }
 
   @Override

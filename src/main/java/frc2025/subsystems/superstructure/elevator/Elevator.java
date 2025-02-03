@@ -10,9 +10,7 @@ import math.Conversions;
 public class Elevator extends TalonFXSubsystem {
 
   public Elevator(TalonFXSubsystemConfiguration config) {
-    super(config, ElevatorGoal.IDLE);
-
-    removeDefaultCommand();
+    super(config);
   }
 
   public enum ElevatorGoal implements TalonFXSubsystemGoal {
@@ -49,6 +47,11 @@ public class Elevator extends TalonFXSubsystem {
     public DoubleSupplier target() {
       return targetRotations;
     }
+
+    @Override
+    public DoubleSupplier feedForward() {
+      return () -> 0.0;
+    }
   }
 
   @Override
@@ -74,14 +77,8 @@ public class Elevator extends TalonFXSubsystem {
     return Conversions.linearDistanceToRotations(height, ElevatorConstants.PULLEY_CIRCUMFERENCE);
   }
 
-  @Override
-  public synchronized void setSimState(double position, double velocity) {
-    super.setSimState(
-        heightToRotations(Length.fromMeters(position)) * ElevatorConstants.REDUCTION,
-        Conversions.mpsToRPS(
-            velocity,
-            ElevatorConstants.PULLEY_CIRCUMFERENCE.getMeters(),
-            ElevatorConstants.REDUCTION));
+  public void setGoal(ElevatorGoal goal) {
+    super.goal = goal;
   }
 
   @Override
@@ -92,6 +89,7 @@ public class Elevator extends TalonFXSubsystem {
         logPrefix + "AbsHeight",
         getMeasuredHeight().plus(ElevatorConstants.MIN_HEIGHT_FROM_FLOOR).getInches());
     Logger.log(
-        logPrefix + "ErrorHeight", getSetpointHeight().minus(getMeasuredHeight()).getInches());
+        logPrefix + "ErrorHeight",
+        Length.fromRotations(getError(), ElevatorConstants.PULLEY_CIRCUMFERENCE).getInches());
   }
 }

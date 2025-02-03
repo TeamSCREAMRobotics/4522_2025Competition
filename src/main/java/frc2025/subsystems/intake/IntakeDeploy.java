@@ -31,6 +31,11 @@ public class IntakeDeploy extends TalonFXSubsystem {
     public DoubleSupplier target() {
       return () -> targetRotations;
     }
+
+    @Override
+    public DoubleSupplier feedForward() {
+      return () -> 0.0;
+    }
   }
 
   @Override
