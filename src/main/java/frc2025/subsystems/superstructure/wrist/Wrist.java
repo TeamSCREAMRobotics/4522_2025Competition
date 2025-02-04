@@ -14,6 +14,7 @@ import java.util.function.IntSupplier;
 public class Wrist extends TalonFXSubsystem {
 
   public enum Direction {
+    CLOSEST,
     CLOCKWISE,
     COUNTER_CLOCKWISE;
   }
@@ -82,14 +83,6 @@ public class Wrist extends TalonFXSubsystem {
     return new ApplyWristGoal(goal, direction, this);
   }
 
-  public Command applyGoalCommand(WristGoal goal) {
-    return new ApplyWristGoal(goal, null, this);
-  }
-
-  public Command applyUntilAtGoalCommand(WristGoal goal) {
-    return applyGoalCommand(goal).until(() -> atGoal());
-  }
-
   public Command applyUntilAtGoalCommand(WristGoal goal, Direction direction) {
     return applyGoalCommand(goal, direction).until(() -> atGoal());
   }
@@ -145,7 +138,7 @@ public class Wrist extends TalonFXSubsystem {
       this.goal = goal;
       this.direction = direction;
       this.wrist = wrist;
-      this.closest = direction == null;
+      this.closest = direction == Direction.CLOSEST;
       addRequirements(wrist);
     }
 

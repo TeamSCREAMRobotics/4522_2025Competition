@@ -42,10 +42,27 @@ public class Superstructure extends SubsystemBase {
           Command transitionCommand = Commands.none();
           switch (targetState) {
             case HOME:
-              transitionCommand =
-                  Commands.sequence(
-                      wrist.applyUntilAtGoalCommand(WristGoal.STOW_CCW90),
-                      elevator.applyGoalCommand(ElevatorGoal.HOME));
+              switch(currentState){
+                case BARGE_NET:
+                case CLIMB:
+                case HOME:
+                case REEF_L2:
+                case REEF_L3:
+                case REEF_L4:
+                  transitionCommand = Commands.parallel(wrist.applyUntilAtGoalCommand(WristGoal.STOW_CCW90, Direction.CLOSEST), elevator.applyUntilAtGoalCommand(ElevatorGoal.HOME));
+                  break;
+                case CORAL_STATION:
+                case HANDOFF:
+                case IDLE_ALGAE:
+                case IDLE_CORAL:
+                case IDLE_NONE:
+                case PROCESSOR:
+                case REEF_ALGAE_L1:
+                case REEF_ALGAE_L2:
+                default:
+                  transitionCommand = Commands.sequence(wrist.applyUntilAtGoalCommand(WristGoal.STOW_CCW90, Direction.CLOSEST), elevator.applyUntilAtGoalCommand(ElevatorGoal.HOME));
+                  break;
+              }
               break;
             case IDLE_NONE:
               switch (currentState) {
@@ -60,7 +77,20 @@ public class Superstructure extends SubsystemBase {
                               WristGoal.IDLE_NONE, Direction.COUNTER_CLOCKWISE),
                           elevator.applyUntilAtGoalCommand(ElevatorGoal.IDLE));
                   break;
-                default:
+                case BARGE_NET:
+                case CLIMB:
+                case HOME:
+                case IDLE_ALGAE:
+                case IDLE_CORAL:
+                case PROCESSOR:
+                  transitionCommand = Commands.sequence(
+                    wrist.applyUntilAtGoalCommand(WristGoal.STOW_CCW90, Direction.CLOSEST), elevator.applyUntilAtGoalCommand(ElevatorGoal.IDLE), wrist.applyUntilAtGoalCommand(WristGoal.IDLE_NONE, Direction.CLOSEST)
+                  );
+                  break;
+                case CORAL_STATION:
+                case HANDOFF:
+                case IDLE_NONE:
+                  transitionCommand = Commands.parallel(elevator.applyUntilAtGoalCommand(ElevatorGoal.IDLE), wrist.applyUntilAtGoalCommand(WristGoal.IDLE_NONE, Direction.CLOSEST));
                   break;
               }
               break;
@@ -70,18 +100,32 @@ public class Superstructure extends SubsystemBase {
                 case REEF_L3:
                 case REEF_L4:
                 case CORAL_STATION:
+                case BARGE_NET:
                   transitionCommand =
                       Commands.sequence(
                           wrist.applyUntilAtGoalCommand(
                               WristGoal.IDLE_CORAL, Direction.COUNTER_CLOCKWISE),
                           elevator.applyUntilAtGoalCommand(ElevatorGoal.IDLE_CORAL));
                   break;
+                case CLIMB:
+                  break;
+                case HANDOFF:
+                  break;
+                case HOME:
+                  break;
+                case IDLE_ALGAE:
+                  break;
+                case IDLE_CORAL:
+                  break;
+                case IDLE_NONE:
+                  break;
+                case PROCESSOR:
+                  break;
+                case REEF_ALGAE_L1:
+                  break;
+                case REEF_ALGAE_L2:
+                  break;
                 default:
-                  transitionCommand =
-                      Commands.sequence(
-                          elevator.applyUntilAtGoalCommand(ElevatorGoal.IDLE_CORAL),
-                          wrist.applyUntilAtGoalCommand(
-                              WristGoal.IDLE_CORAL, Direction.COUNTER_CLOCKWISE));
                   break;
               }
               break;
@@ -144,15 +188,15 @@ public class Superstructure extends SubsystemBase {
                           Commands.sequence(
                               Commands.waitUntil(
                                   () -> elevator.getMeasuredHeight().getInches() > 25.0),
-                              wrist.applyUntilAtGoalCommand(WristGoal.REEF_L1_L3)));
+                              wrist.applyUntilAtGoalCommand(WristGoal.REEF_L1_L3, Direction.CLOSEST)));
                   break;
                 case CLIMB:
                   transitionCommand =
                       Commands.sequence(
                           elevator.applyUntilAtGoalCommand(ElevatorGoal.IDLE_CORAL),
-                          wrist.applyUntilAtGoalCommand(WristGoal.IDLE_CORAL),
+                          wrist.applyUntilAtGoalCommand(WristGoal.IDLE_CORAL, Direction.CLOSEST),
                           elevator.applyUntilAtGoalCommand(ElevatorGoal.L2),
-                          wrist.applyUntilAtGoalCommand(WristGoal.REEF_L1_L3));
+                          wrist.applyUntilAtGoalCommand(WristGoal.REEF_L1_L3, Direction.CLOSEST));
                   break;
                 case HANDOFF:
                   break;
@@ -189,7 +233,7 @@ public class Superstructure extends SubsystemBase {
                           Commands.sequence(
                               Commands.waitUntil(
                                   () -> elevator.getMeasuredHeight().getInches() > 25.0),
-                              wrist.applyUntilAtGoalCommand(WristGoal.REEF_L1_L3)));
+                              wrist.applyUntilAtGoalCommand(WristGoal.REEF_L1_L3, Direction.CLOSEST)));
                   break;
               }
               break;
@@ -212,7 +256,7 @@ public class Superstructure extends SubsystemBase {
                           Commands.sequence(
                               Commands.waitUntil(
                                   () -> elevator.getMeasuredHeight().getInches() > 25.0),
-                              wrist.applyUntilAtGoalCommand(WristGoal.REEF_L4)));
+                              wrist.applyUntilAtGoalCommand(WristGoal.REEF_L4, Direction.CLOSEST)));
                   break;
               }
               break;
