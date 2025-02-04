@@ -98,12 +98,8 @@ public class Wrist extends TalonFXSubsystem {
     return applyGoalCommand(goal, direction).until(() -> atGoal(absTolerance));
   }
 
-  public Command holdPosition() {
-    return run(
-        () ->
-            setSetpointMotionMagicPosition(
-                targetDeg / 360.0,
-                shouldSimulate.getAsBoolean() ? simFeedforwardSup.getAsDouble() : 0.0));
+  public void resetSimController() {
+    simController.reset(getPosition(), getVelocity());
   }
 
   @Override
@@ -128,10 +124,10 @@ public class Wrist extends TalonFXSubsystem {
         new double[] {
           Units.rotationsToDegrees(setpoint), Units.rotationsToDegrees(setpoint) % 360
         });
-    Logger.log(logPrefix + "LastGoal", lastGoal.getAsDouble());
+    /* Logger.log(logPrefix + "LastGoal", lastGoal.getAsDouble());
     Logger.log(logPrefix + "TotalRotations", totalRotations.getAsInt());
     Logger.log(logPrefix + "TargetDeg", targetDeg);
-    Logger.log(logPrefix + "Feedforward", simFeedforwardSup.getAsDouble());
+    Logger.log(logPrefix + "Feedforward", simFeedforwardSup.getAsDouble()); */
   }
 
   private class ApplyWristGoal extends Command {
@@ -174,9 +170,9 @@ public class Wrist extends TalonFXSubsystem {
     @Override
     public void execute() {
       targetDeg = lastGoal.getAsDouble() + goalDiff;
-      Logger.log(logPrefix + "GoalDiff", goalDiff);
+      /* Logger.log(logPrefix + "GoalDiff", goalDiff);
       Logger.log(logPrefix + "NormalizedLast", normalizedLast);
-      Logger.log(logPrefix + "NormalizedGoal", normalizedGoal);
+      Logger.log(logPrefix + "NormalizedGoal", normalizedGoal); */
       setSetpointMotionMagicPosition(
           targetDeg / 360.0, shouldSimulate.getAsBoolean() ? simFeedforwardSup.getAsDouble() : 0.0);
     }

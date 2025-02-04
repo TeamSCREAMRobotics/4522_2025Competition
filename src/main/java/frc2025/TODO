@@ -1,3 +1,5 @@
 --- Superstructure ---
-* Need to implement a better way to pivot a certain direction (CW vs CCW) to the goal. ?
-* Figure out elevator atGoal detection wrong
+X Need to implement a better way to pivot a certain direction (CW vs CCW) to the goal.
+X Figure out elevator atGoal detection wrong.
+
+O Account for every possible state transition. Have it and not need it > breaking something.

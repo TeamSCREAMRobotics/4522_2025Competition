@@ -19,7 +19,7 @@ public class SuperstructureConstants {
     BARGE_NET(ElevatorGoal.BARGE, WristGoal.BARGE),
     HANDOFF(ElevatorGoal.HANDOFF, WristGoal.HANDOFF),
     PROCESSOR(ElevatorGoal.IDLE, WristGoal.IDLE_ALGAE),
-    CLIMB(ElevatorGoal.HOME, WristGoal.STOW_CCW90);
+    CLIMB(ElevatorGoal.HOME, WristGoal.IDLE_ALGAE);
 
     public WristGoal wristGoal;
     public ElevatorGoal elevatorGoal;

@@ -4,6 +4,7 @@ import drivers.TalonFXSubsystem.TalonFXSubsystemConfiguration;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc2025.Robot;
 import frc2025.logging.Logger;
 import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureState;
 import frc2025.subsystems.superstructure.elevator.Elevator;
@@ -33,14 +34,17 @@ public class Superstructure extends SubsystemBase {
   public Command applyTargetState(SuperstructureState targetState) {
     return Commands.defer(
         () -> {
+          if (Robot.isSimulation()) {
+            wrist.resetSimController();
+            elevator.resetSimController();
+          }
           this.targetState = targetState;
           Command transitionCommand = Commands.none();
           switch (targetState) {
             case HOME:
               transitionCommand =
                   Commands.sequence(
-                      wrist.applyUntilAtGoalCommand(
-                          WristGoal.STOW_CCW90, Direction.COUNTER_CLOCKWISE),
+                      wrist.applyUntilAtGoalCommand(WristGoal.STOW_CCW90),
                       elevator.applyGoalCommand(ElevatorGoal.HOME));
               break;
             case IDLE_NONE:
@@ -122,6 +126,8 @@ public class Superstructure extends SubsystemBase {
             case REEF_L2:
               switch (currentState) {
                 case IDLE_NONE:
+                case BARGE_NET:
+                case CORAL_STATION:
                   transitionCommand =
                       Commands.parallel(
                           elevator.applyUntilAtGoalCommand(ElevatorGoal.L2),
@@ -138,8 +144,29 @@ public class Superstructure extends SubsystemBase {
                           Commands.sequence(
                               Commands.waitUntil(
                                   () -> elevator.getMeasuredHeight().getInches() > 25.0),
-                              wrist.applyUntilAtGoalCommand(
-                                  WristGoal.REEF_L1_L3, Direction.CLOCKWISE)));
+                              wrist.applyUntilAtGoalCommand(WristGoal.REEF_L1_L3)));
+                  break;
+                case CLIMB:
+                  transitionCommand =
+                      Commands.sequence(
+                          elevator.applyUntilAtGoalCommand(ElevatorGoal.IDLE_CORAL),
+                          wrist.applyUntilAtGoalCommand(WristGoal.IDLE_CORAL),
+                          elevator.applyUntilAtGoalCommand(ElevatorGoal.L2),
+                          wrist.applyUntilAtGoalCommand(WristGoal.REEF_L1_L3));
+                  break;
+                case HANDOFF:
+                  break;
+                case HOME:
+                  break;
+                case IDLE_ALGAE:
+                  break;
+                case PROCESSOR:
+                  break;
+                case REEF_ALGAE_L1:
+                  break;
+                case REEF_ALGAE_L2:
+                  break;
+                default:
                   break;
               }
               break;
@@ -162,8 +189,7 @@ public class Superstructure extends SubsystemBase {
                           Commands.sequence(
                               Commands.waitUntil(
                                   () -> elevator.getMeasuredHeight().getInches() > 25.0),
-                              wrist.applyUntilAtGoalCommand(
-                                  WristGoal.REEF_L1_L3, Direction.CLOCKWISE)));
+                              wrist.applyUntilAtGoalCommand(WristGoal.REEF_L1_L3)));
                   break;
               }
               break;

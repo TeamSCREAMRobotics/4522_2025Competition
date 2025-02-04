@@ -77,6 +77,10 @@ public class Elevator extends TalonFXSubsystem {
     return Conversions.linearDistanceToRotations(height, ElevatorConstants.PULLEY_CIRCUMFERENCE);
   }
 
+  public void resetSimController() {
+    simController.reset(getPosition(), getVelocity());
+  }
+
   public void setGoal(ElevatorGoal goal) {
     super.goal = goal;
   }

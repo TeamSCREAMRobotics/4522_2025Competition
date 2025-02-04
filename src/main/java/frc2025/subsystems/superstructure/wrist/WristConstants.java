@@ -1,8 +1,5 @@
 package frc2025.subsystems.superstructure.wrist;
 
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
-import static edu.wpi.first.units.Units.Pounds;
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -18,7 +15,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import math.ScreamMath;
 import pid.ScreamPIDConstants;
 import pid.ScreamPIDConstants.FeedforwardConstants;
 import sim.SimWrapper;
@@ -35,12 +31,7 @@ public class WristConstants {
       new SingleJointedArmSim(
           DCMotor.getKrakenX60(1),
           WRIST_REDUCTION,
-          ScreamMath.parallelAxisTheorem(
-                      KilogramSquareMeters.of(0.0951567339),
-                      Pounds.of(4.6028013),
-                      Length.fromInches(12.024525))
-                  .in(KilogramSquareMeters)
-              - 0.002,
+          0.00490209781964,
           Units.inchesToMeters(20.5),
           -Double.MAX_VALUE,
           Double.MAX_VALUE,
@@ -55,8 +46,8 @@ public class WristConstants {
     WRIST_CONFIG.name = "Wrist";
 
     WRIST_CONFIG.codeEnabled = true;
-    WRIST_CONFIG.logTelemetry = true;
-    WRIST_CONFIG.debugMode = true;
+    WRIST_CONFIG.logTelemetry = false;
+    WRIST_CONFIG.debugMode = false;
 
     WRIST_CONFIG.simConstants =
         new TalonFXSubsystemSimConstants(

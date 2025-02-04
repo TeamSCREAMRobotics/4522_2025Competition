@@ -99,7 +99,7 @@ public class RobotContainer {
             }
             return superstructure.applyTargetState(state);
           },
-          Set.of(superstructure));
+          Set.of(superstructure, superstructure.getElevator(), superstructure.getWrist()));
 
   private final BooleanSupplier hasCoral = () -> Dashboard.selectedGamePiece() == GamePiece.CORAL;
   private final BooleanSupplier hasAlgae = () -> Dashboard.selectedGamePiece() == GamePiece.ALGAE;

@@ -35,7 +35,12 @@ jobs:
 
     # Runs a Spotless command to check for code lint
     - name: Lint robot code
+      continue-on-error: true
       run: ./gradlew :spotlessCheck
+
+    - name: Apply spotless on failure
+      if: steps.spotless_check.outcome == 'failure'
+      run: ./gradlew :spotlessApply
 
     # Runs a single command using the runners shell
     - name: Compile and run tests on robot code

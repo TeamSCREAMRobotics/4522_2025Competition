@@ -10,13 +10,13 @@ public class Dashboard {
   private static final SendableChooser<GamePiece> overridePieceChooser = new SendableChooser<>();
 
   static {
-    overridePieceChooser.setDefaultOption("NONE", GamePiece.NONE);
-    overridePieceChooser.addOption("CORAL", GamePiece.CORAL);
+    overridePieceChooser.setDefaultOption("CORAL", GamePiece.CORAL);
+    overridePieceChooser.addOption("NONE", GamePiece.NONE);
     overridePieceChooser.addOption("ALGAE", GamePiece.ALGAE);
     initialize();
   }
 
-  public static GamePiece currentGamePiece = GamePiece.NONE;
+  public static GamePiece currentGamePiece = GamePiece.CORAL;
   private static Supplier<GamePiece> wantedGamePiece = () -> overridePieceChooser.getSelected();
   private static GamePiece lastGamePiece = wantedGamePiece.get();
 
