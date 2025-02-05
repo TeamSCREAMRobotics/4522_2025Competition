@@ -42,10 +42,16 @@ public class FieldConstants {
   public static final Map<Integer, Pair<Pose2d, Pose2d>> BLUE_REEF_LOCATIONS = new HashMap<>();
   public static final Map<Integer, Pair<Pose2d, Pose2d>> RED_REEF_LOCATIONS = new HashMap<>();
 
+  public static final Map<Integer, Pose2d> BLUE_ALGAE_LOCATIONS = new HashMap<>();
+  public static final Map<Integer, Pose2d> RED_ALGAE_LOCATIONS = new HashMap<>();
+
   public static final Translation2d SCORE_LOCATION_1 =
       new Translation2d(5.268944 + 0.5059, 3.869997 - WristConstants.ROLLERS_TO_ORIGIN.getMeters());
   public static final Translation2d SCORE_LOCATION_2 =
       new Translation2d(5.268944 + 0.5059, 4.198614 - WristConstants.ROLLERS_TO_ORIGIN.getMeters());
+  public static final Translation2d ALGAE_LOCATION =
+      new Translation2d(
+          5.268944 + 0.5059, (SCORE_LOCATION_1.getY() + SCORE_LOCATION_2.getY()) / 2.0);
 
   static {
     Translation2d blueScoreLocation1 = SCORE_LOCATION_1.minus(BLUE_REEF_CENTER);
@@ -54,6 +60,8 @@ public class FieldConstants {
         FIELD_DIMENSIONS.minus(SCORE_LOCATION_1).minus(RED_REEF_CENTER);
     Translation2d redScoreLocation2 =
         FIELD_DIMENSIONS.minus(SCORE_LOCATION_2).minus(RED_REEF_CENTER);
+    Translation2d blueAlgaeLocation = ALGAE_LOCATION.minus(BLUE_REEF_CENTER);
+    Translation2d redAlgaeLocation = FIELD_DIMENSIONS.minus(ALGAE_LOCATION).minus(RED_REEF_CENTER);
 
     for (int i = 0; i < 6; i++) {
       Rotation2d rotation = Rotation2d.fromDegrees(i * 60);
@@ -73,6 +81,12 @@ public class FieldConstants {
           new Pair<>(
               new Pose2d(redScoreLocation1.rotateBy(rotation).plus(RED_REEF_CENTER), redRotation),
               new Pose2d(redScoreLocation2.rotateBy(rotation).plus(RED_REEF_CENTER), redRotation)));
+
+      BLUE_ALGAE_LOCATIONS.put(
+          i, new Pose2d(blueAlgaeLocation.rotateBy(rotation).plus(BLUE_REEF_CENTER), blueRotation));
+
+      RED_ALGAE_LOCATIONS.put(
+          i, new Pose2d(redAlgaeLocation.rotateBy(rotation).plus(RED_REEF_CENTER), redRotation));
     }
   }
 }

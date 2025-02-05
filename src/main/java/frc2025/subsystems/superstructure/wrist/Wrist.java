@@ -50,9 +50,10 @@ public class Wrist extends TalonFXSubsystem {
     REEF_L1_L3(Rotation2d.fromDegrees(196.9)),
     REEF_L4(Rotation2d.fromDegrees(209.2)),
     CLEAR_ALGAE(Rotation2d.fromDegrees(170)),
-    BARGE(Rotation2d.kZero),
+    BARGE(Rotation2d.fromDegrees(30.0)),
     STATION(Rotation2d.fromDegrees(34.55)),
-    HANDOFF(Rotation2d.fromDegrees(315.0));
+    HANDOFF(Rotation2d.fromDegrees(315.0)),
+    CLIMB(Rotation2d.fromDegrees(130.0));
 
     public final DoubleSupplier target;
 

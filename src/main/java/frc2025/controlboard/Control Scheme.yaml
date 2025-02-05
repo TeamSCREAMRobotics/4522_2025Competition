@@ -22,13 +22,13 @@
 
 - Bumpers
   - Left Bumper: Switch reef side
-  - Right Bumper: Score on reef & barge
+  - Right Bumper: Score
 
 - Paddles (as viewed from front of controller)
-  - Top Left: Alternate controls
-  - Top Right: Auto-Align and move to Barge net setpoint
-  - Bottom Left: Handoff from intake -> wrist / Handoff from wrist -> intake (alternate controls)
-  - Bottom Right: Outtake to processor
+  - Top Left: Alternate controls (Left Stick)
+  - Top Right: Auto-Align and move to Barge net setpoint (Right Stick)
+  - Bottom Left: Handoff from intake -> wrist (D-Pad up)
+  - Bottom Right: Outtake to processor (D-Pad Right)
 
 - D-Pad
   - Left: Align to reef

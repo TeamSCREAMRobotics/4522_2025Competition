@@ -5,6 +5,7 @@
 package frc2025;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.RobotState.GamePiece;
@@ -53,7 +54,7 @@ public class RobotContainer {
 
   @Getter private static final RobotState robotState = new RobotState(subsystems);
 
-  private final Command reefAlign =
+  private final Command branchAlign =
       Commands.defer(
           () ->
               new DriveToPose(
@@ -70,6 +71,19 @@ public class RobotContainer {
                                 FieldConstants.RED_REEF_LOCATIONS)
                             .get(robotState.getReefZone().getAsInt())
                             .getSecond();
+                  },
+                  Controlboard.getTranslation()),
+          Set.of(drivetrain));
+
+  private final Command algaeAlign =
+      Commands.defer(
+          () ->
+              new DriveToPose(
+                  drivetrain,
+                  () -> {
+                    return AllianceFlipUtil.get(
+                            FieldConstants.BLUE_ALGAE_LOCATIONS, FieldConstants.RED_ALGAE_LOCATIONS)
+                        .get(robotState.getReefZone().getAsInt());
                   },
                   Controlboard.getTranslation()),
           Set.of(drivetrain));
@@ -114,71 +128,73 @@ public class RobotContainer {
   private void configureBindings() {
 
     // Auto aligning controls
-    Controlboard.driveController
-        .povLeft()
+    Controlboard.alignToReef()
         .and(() -> robotState.getReefZone().isPresent())
-        .toggleOnTrue(reefAlign);
+        .toggleOnTrue(branchAlign);
 
     Controlboard.driveController
         .rightStick()
         .whileTrue(
-            new DriveToPose(
-                drivetrain,
-                () ->
-                    AllianceFlipUtil.get(
-                        FieldConstants.BLUE_BARGE_ALIGN, FieldConstants.RED_BARGE_ALIGN),
-                () -> Controlboard.getTranslation().get().getY()));
+            Commands.parallel(
+                new DriveToPose(
+                    drivetrain,
+                    () ->
+                        AllianceFlipUtil.get(
+                            FieldConstants.BLUE_BARGE_ALIGN, FieldConstants.RED_BARGE_ALIGN),
+                    () -> Controlboard.getTranslation().get().getY()),
+                Commands.sequence(
+                    Commands.waitUntil(
+                        () ->
+                            drivetrain.getPose().getX()
+                                > AllianceFlipUtil.get(
+                                        FieldConstants.BLUE_BARGE_ALIGN
+                                            .getTranslation()
+                                            .minus(new Translation2d(1.215, 0)),
+                                        FieldConstants.RED_BARGE_ALIGN
+                                            .getTranslation()
+                                            .plus(new Translation2d(1.215, 0)))
+                                    .getX()),
+                    superstructure.applyTargetState(SuperstructureState.BARGE_NET))));
 
     // Reef scoring/clearing controls
     Controlboard.goToLevel4()
         .and(hasCoral)
         .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_L4))
         .and(() -> robotState.getReefZone().isPresent())
-        .whileTrue(reefAlign);
+        .whileTrue(branchAlign);
 
     Controlboard.goToLevel3()
         .and(hasCoral)
         .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_L3))
         .and(() -> robotState.getReefZone().isPresent())
-        .whileTrue(reefAlign);
+        .whileTrue(branchAlign);
 
     Controlboard.goToLevel2()
         .and(hasCoral)
         .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_L2))
         .and(() -> robotState.getReefZone().isPresent())
-        .whileTrue(reefAlign);
+        .whileTrue(branchAlign);
 
     Controlboard.testButton()
         .whileTrue(superstructure.applyTargetState(SuperstructureState.HANDOFF));
 
-    /*
-    Controlboard.goToTrough()
-        .whileTrue(
-            Commands.parallel(
-                elevator.applyGoal(ElevatorGoal.TROUGH), wrist.applyGoal(WristGoal.REEF_L1_L3)))
-        .and(() -> robotState.getReefZone().isPresent())
-        .whileTrue(reefAlign);
-
     Controlboard.goToAlgaeClear2()
-        .whileTrue(
-            Commands.parallel(
-                elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L2),
-                wrist.applyGoal(WristGoal.CLEAR_ALGAE)));
+        .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_ALGAE_L2))
+        .and(() -> robotState.getReefZone().isPresent())
+        .whileTrue(algaeAlign);
 
     Controlboard.goToAlgaeClear1()
-        .whileTrue(
-            Commands.parallel(
-                elevator.applyGoal(ElevatorGoal.CLEAR_ALGAE_L1),
-                wrist.applyGoal(WristGoal.CLEAR_ALGAE)));
+        .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_ALGAE_L1))
+        .and(() -> robotState.getReefZone().isPresent())
+        .whileTrue(algaeAlign);
 
     // Intake controls
     Controlboard.stationIntake()
         .whileTrue(
             Commands.parallel(
                 stationAlign,
-                elevator.applyGoal(ElevatorGoal.CORAL_STATION),
-                wrist.applyGoal(WristGoal.STATION),
-                wristRollers.applyGoal(WristRollersGoal.INTAKE))); */
+                superstructure.applyTargetState(SuperstructureState.CORAL_STATION),
+                intakeRollers.applyGoalCommand(IntakeRollersGoal.INTAKE)));
 
     Controlboard.groundIntake()
         .whileTrue(

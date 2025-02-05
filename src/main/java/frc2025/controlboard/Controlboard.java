@@ -34,7 +34,10 @@ public class Controlboard {
 
   static {
     driveController.leftBumper().onTrue(Commands.runOnce(() -> leftSide = !leftSide));
-    driveController.start().onTrue(Commands.runOnce(() -> fieldCentric = !fieldCentric));
+    driveController
+        .start()
+        .whileTrue(
+            Commands.waitSeconds(2).andThen(Commands.runOnce(() -> fieldCentric = !fieldCentric)));
   }
 
   public static Command driverRumbleCommand(Supplier<RumbleType> type, double value, double time) {
@@ -96,6 +99,14 @@ public class Controlboard {
     return driveController.leftTrigger(TRIGGER_DEADBAND).or(driveController.leftBumper());
   }
 
+  public static Trigger resetGyro() {
+    return driveController.back();
+  }
+
+  public static Trigger startClimb() {
+    return driveController.start();
+  }
+
   public static Trigger goToLevel4() {
     return driveController.y().and(driveController.leftStick().negate());
   }
@@ -113,11 +124,11 @@ public class Controlboard {
   }
 
   public static Trigger goToAlgaeClear1() {
-    return driveController.y().and(driveController.leftStick());
+    return driveController.x().and(driveController.leftStick());
   }
 
   public static Trigger goToAlgaeClear2() {
-    return driveController.x().and(driveController.leftStick());
+    return driveController.y().and(driveController.leftStick());
   }
 
   public static Trigger groundIntake() {
@@ -126,6 +137,22 @@ public class Controlboard {
 
   public static Trigger stationIntake() {
     return driveController.leftTrigger(TRIGGER_DEADBAND);
+  }
+
+  public static Trigger score() {
+    return driveController.rightBumper();
+  }
+
+  public static Trigger alignToReef() {
+    return driveController.povLeft();
+  }
+
+  public static Trigger handoff() {
+    return driveController.povUp();
+  }
+
+  public static Trigger outtake() {
+    return driveController.povRight();
   }
 
   public static Trigger testButton() {
