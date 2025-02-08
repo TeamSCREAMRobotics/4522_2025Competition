@@ -515,9 +515,7 @@ public class Superstructure extends SubsystemBase {
               switch (currentState) {
                 case BARGE_NET:
                 case CLIMB:
-                case CORAL_STATION:
                 case HOME:
-                case IDLE_CORAL:
                   transitionCommand =
                       Commands.sequence(
                           wrist.applyUntilAtGoalCommand(WristGoal.STOW_CCW90, Direction.CLOSEST),
@@ -548,6 +546,13 @@ public class Superstructure extends SubsystemBase {
                       Commands.sequence(
                           wrist.applyUntilAtGoalCommand(
                               WristGoal.STATION, Direction.COUNTER_CLOCKWISE),
+                          elevator.applyUntilAtGoalCommand(ElevatorGoal.CORAL_STATION));
+                  break;
+                case IDLE_CORAL:
+                case CORAL_STATION:
+                  transitionCommand =
+                      Commands.parallel(
+                          wrist.applyUntilAtGoalCommand(WristGoal.STATION, Direction.CLOCKWISE),
                           elevator.applyUntilAtGoalCommand(ElevatorGoal.CORAL_STATION));
                   break;
               }

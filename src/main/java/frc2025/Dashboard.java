@@ -16,12 +16,16 @@ public class Dashboard {
     initialize();
   }
 
-  public static GamePiece currentGamePiece = GamePiece.CORAL;
+  private static GamePiece currentGamePiece = GamePiece.CORAL;
   private static Supplier<GamePiece> wantedGamePiece = () -> overridePieceChooser.getSelected();
   private static GamePiece lastGamePiece = wantedGamePiece.get();
 
   private static void initialize() {
     SmartDashboard.putData("Override Game Piece", overridePieceChooser);
+  }
+
+  public static void setGamePiece(GamePiece gamePiece){
+    currentGamePiece = gamePiece;
   }
 
   public static GamePiece selectedGamePiece() {

@@ -1,12 +1,11 @@
 package frc2025.subsystems.superstructure.wrist;
 
 import drivers.TalonFXSubsystem;
+import frc2025.Robot;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class WristRollers extends TalonFXSubsystem {
-
-  private BooleanSupplier hasGamePiece = () -> false;
 
   public WristRollers(TalonFXSubsystemConfiguration config) {
     super(config, WristRollersGoal.IDLE);
@@ -43,4 +42,10 @@ public class WristRollers extends TalonFXSubsystem {
 
   @Override
   public void periodic() {}
+
+  public BooleanSupplier acquiredGamePiece() {
+    return () ->
+        (master.getSupplyCurrent().getValueAsDouble() > WristConstants.ACQUIRED_PIECE_THRESHOLD)
+            || Robot.isSimulation();
+  }
 }

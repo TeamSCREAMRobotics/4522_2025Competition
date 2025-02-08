@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc2025.logging.Logger;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import java.util.function.IntSupplier;
 
 public class Wrist extends TalonFXSubsystem {
 
@@ -22,11 +21,8 @@ public class Wrist extends TalonFXSubsystem {
   private static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0, 1.1589, 0, 0);
 
   private final ProfiledPIDController simController;
-  private static DoubleSupplier simFeedforwardSup;
 
   private static BooleanSupplier shouldSimulate;
-
-  private IntSupplier totalRotations = () -> (int) getPosition();
 
   private DoubleSupplier lastGoal = () -> WristGoal.IDLE_NONE.angle.getDegrees();
   private double targetDeg = 55.0;
@@ -35,10 +31,6 @@ public class Wrist extends TalonFXSubsystem {
     super(config);
 
     simController = super.simController;
-    simFeedforwardSup = () -> 0.0; /*
-            FEEDFORWARD.calculate(
-                Units.rotationsToRadians(simController.getSetpoint().position),
-                Units.rotationsToRadians(simController.getSetpoint().velocity)); */
     shouldSimulate = () -> shouldSimulate();
   }
 
@@ -76,7 +68,7 @@ public class Wrist extends TalonFXSubsystem {
 
     @Override
     public DoubleSupplier feedForward() {
-      return shouldSimulate.getAsBoolean() ? simFeedforwardSup : () -> 0.0;
+      return () -> 0.0;
     }
   }
 

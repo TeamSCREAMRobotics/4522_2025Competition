@@ -179,12 +179,26 @@ public class RobotContainer {
         .whileTrue(superstructure.applyTargetState(SuperstructureState.HANDOFF));
 
     Controlboard.goToAlgaeClear2()
-        .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_ALGAE_L2))
+        .whileTrue(
+            superstructure
+                .applyTargetState(SuperstructureState.REEF_ALGAE_L2)
+                .finallyDo(
+                    () ->
+                        Commands.runOnce(() -> Dashboard.setGamePiece(GamePiece.ALGAE))
+                            .onlyIf(wristRollers.acquiredGamePiece())
+                            .schedule()))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(algaeAlign);
 
     Controlboard.goToAlgaeClear1()
-        .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_ALGAE_L1))
+        .whileTrue(
+            superstructure
+                .applyTargetState(SuperstructureState.REEF_ALGAE_L1)
+                .finallyDo(
+                    () ->
+                        Commands.runOnce(() -> Dashboard.setGamePiece(GamePiece.ALGAE))
+                            .onlyIf(wristRollers.acquiredGamePiece())
+                            .schedule()))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(algaeAlign);
 
@@ -192,9 +206,14 @@ public class RobotContainer {
     Controlboard.stationIntake()
         .whileTrue(
             Commands.parallel(
-                stationAlign,
-                superstructure.applyTargetState(SuperstructureState.CORAL_STATION),
-                intakeRollers.applyGoalCommand(IntakeRollersGoal.INTAKE)));
+                    stationAlign,
+                    superstructure.applyTargetState(SuperstructureState.CORAL_STATION),
+                    intakeRollers.applyGoalCommand(IntakeRollersGoal.INTAKE))
+                .finallyDo(
+                    () ->
+                        Commands.runOnce(() -> Dashboard.setGamePiece(GamePiece.ALGAE))
+                            .onlyIf(wristRollers.acquiredGamePiece())
+                            .schedule()));
 
     Controlboard.groundIntake()
         .whileTrue(

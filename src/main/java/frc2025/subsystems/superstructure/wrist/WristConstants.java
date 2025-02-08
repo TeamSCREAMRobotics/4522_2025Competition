@@ -27,6 +27,8 @@ public class WristConstants {
   public static final double WRIST_REDUCTION = 30.0;
   public static final double ROLLERS_REDUCTION = 2.25;
 
+  public static final double ACQUIRED_PIECE_THRESHOLD = 0.0;
+
   public static final SingleJointedArmSim SIM =
       new SingleJointedArmSim(
           DCMotor.getKrakenX60(1),
