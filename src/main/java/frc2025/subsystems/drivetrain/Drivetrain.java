@@ -67,6 +67,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         DrivetrainConstants.ROBOT_CONFIG,
         () -> false,
         this);
+    
+    registerTelemetry(this::logTelemetry);
 
     if (Robot.isSimulation()) {
       startSimThread();
@@ -78,26 +80,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
     return run(() -> this.setControl(requestSupplier.get()));
   }
-
-  /* public Command driveToBargeScoringZone(Supplier<Translation2d> translation) {
-    return applyRequest(
-            () ->
-                helper.getFacingAngle(
-                    new Translation2d(
-                        DrivetrainConstants.X_ALIGNMENT_CONTROLLER.calculate(
-                                getPose().getX(),
-                                AllianceFlipUtil.get(
-                                    FieldConstants.BLUE_BARGE_ALIGN_X,
-                                    FieldConstants.RED_BARGE_ALIGN_X))
-                            * AllianceFlipUtil.getDirectionCoefficient(),
-                        translation.get().getY()),
-                    AllianceFlipUtil.getFwdHeading()))
-        .beforeStarting(
-            () ->
-                DrivetrainConstants.X_ALIGNMENT_CONTROLLER.reset(
-                    getPose().getX(),
-                    getLinearVelocity().getNorm() * AllianceFlipUtil.getDirectionCoefficient()));
-  } */
 
   public void startSimThread() {
     simThread =
@@ -151,6 +133,12 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public void stop() {
     setControl(new SwerveRequest.Idle());
+  }
+
+  public void logTelemetry(SwerveDriveState state) {
+    Logger.log("RobotState/RobotPose", state.Pose);
+    Logger.log("RobotState/Subsystems/Drivetrain/MeasuredStates", state.ModuleStates);
+    Logger.log("RobotState/Subsystems/Drivetrain/SetpointStates", state.ModuleTargets);
   }
 
   @Override

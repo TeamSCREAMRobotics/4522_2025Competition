@@ -6,6 +6,8 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.controllers.PathFollowingController;
+
+import data.Length;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -19,6 +21,8 @@ public final class DrivetrainConstants {
   public static final double MAX_SPEED = TunerConstants.SPEED_12V_MPS.in(MetersPerSecond);
   public static final double MAX_ANGULAR_SPEED_RADS = 8.0;
   public static final double MAX_AZIMUTH_VEL_RADS = Units.rotationsToRadians(10);
+
+  public static final Length AT_POSE_DIST_THRESHOLD = Length.fromInches(2.0);
 
   public static final int NUM_MODULES = 4;
 

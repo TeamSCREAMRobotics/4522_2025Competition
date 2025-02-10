@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.RobotState.GamePiece;
+import frc2025.autonomous.AutoSelector;
 import frc2025.commands.DriveToPose;
 import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard;
@@ -49,10 +50,12 @@ public class RobotContainer {
       new IntakeRollers(IntakeConstants.ROLLERS_CONFIG);
 
   @Getter
-  private static final Subsystems subsystems =
+  private final Subsystems subsystems =
       new Subsystems(drivetrain, superstructure, wristRollers, intakeDeploy, intakeRollers);
 
-  @Getter private static final RobotState robotState = new RobotState(subsystems);
+  @Getter private final RobotState robotState = new RobotState(subsystems);
+
+  private final AutoSelector autoSelector;
 
   private final Command branchAlign =
       Commands.defer(
@@ -122,7 +125,7 @@ public class RobotContainer {
     configureBindings();
     configureDefaultCommands();
 
-    drivetrain.registerTelemetry(RobotContainer::telemeterizeDrivetrain);
+    autoSelector = new AutoSelector(this);
   }
 
   private void configureBindings() {
@@ -229,7 +232,7 @@ public class RobotContainer {
                 Controlboard.getFieldCentric().getAsBoolean()
                     ? drivetrain
                         .getHelper()
-                        .getFieldCentric(
+                        .getHeadingCorrectedFieldCentric(
                             Controlboard.getTranslation().get(),
                             Controlboard.getRotation().getAsDouble())
                     : drivetrain
@@ -254,17 +257,11 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return autoSelector.getAutonomousCommand();
   }
 
   public void logTelemetry() {
     robotState.logTelemetry();
     superstructure.logTelemetry();
-  }
-
-  public static void telemeterizeDrivetrain(SwerveDriveState state) {
-    Logger.log("RobotState/RobotPose", state.Pose);
-    Logger.log("RobotState/Subsystems/Drivetrain/MeasuredStates", state.ModuleStates);
-    Logger.log("RobotState/Subsystems/Drivetrain/SetpointStates", state.ModuleTargets);
   }
 }

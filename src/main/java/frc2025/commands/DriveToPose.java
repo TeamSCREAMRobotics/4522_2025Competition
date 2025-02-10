@@ -130,8 +130,4 @@ public class DriveToPose extends Command {
         new Pose2d(lastSetpointTranslation, new Rotation2d(headingController.getSetpoint())));
     Logger.log("DriveToPose/TargetPose", targetPose);
   }
-
-  public boolean atGoal() {
-    return driveController.atGoal() && headingController.atSetpoint();
-  }
 }
