@@ -57,7 +57,7 @@ public class DriveToPose extends Command {
 
   @Override
   public void initialize() {
-    Pose2d currentPose = drivetrain.getPose();
+    Pose2d currentPose = drivetrain.getGlobalPoseEstimate();
     driveController.reset(
         currentPose.getTranslation().getDistance(targetPose.get().getTranslation()),
         Math.min(
@@ -67,7 +67,7 @@ public class DriveToPose extends Command {
                     targetPose
                         .get()
                         .getTranslation()
-                        .minus(drivetrain.getPose().getTranslation())
+                        .minus(drivetrain.getGlobalPoseEstimate().getTranslation())
                         .getAngle()
                         .unaryMinus())
                 .getX()));
@@ -77,7 +77,7 @@ public class DriveToPose extends Command {
 
   @Override
   public void execute() {
-    Pose2d currentPose = drivetrain.getPose();
+    Pose2d currentPose = drivetrain.getGlobalPoseEstimate();
     Pose2d targetPose = this.targetPose.get();
 
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());

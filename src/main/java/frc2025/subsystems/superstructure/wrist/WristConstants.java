@@ -21,7 +21,6 @@ import sim.SimWrapper;
 
 public class WristConstants {
 
-  public static final Length ROLLERS_TO_ORIGIN = Length.fromInches(1.383);
   public static final Length MANIPULATOR_LENGTH = Length.fromInches(18.668462);
 
   public static final double WRIST_REDUCTION = 30.0;
@@ -48,7 +47,7 @@ public class WristConstants {
     WRIST_CONFIG.name = "Wrist";
 
     WRIST_CONFIG.codeEnabled = true;
-    WRIST_CONFIG.logTelemetry = false;
+    WRIST_CONFIG.logTelemetry = true;
     WRIST_CONFIG.debugMode = false;
 
     WRIST_CONFIG.simConstants =
@@ -60,17 +59,17 @@ public class WristConstants {
             true);
 
     WRIST_CONFIG.masterConstants =
-        new TalonFXConstants(new CANDevice(14), InvertedValue.Clockwise_Positive);
+        new TalonFXConstants(new CANDevice(14), InvertedValue.CounterClockwise_Positive);
 
     CANcoderConfiguration config = new CANcoderConfiguration();
-    config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+    config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.625;
     config.MagnetSensor.MagnetOffset = 0.0;
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     WRIST_CONFIG.cancoderConstants = new CANCoderConstants(new CANDevice(4), config);
 
     WRIST_CONFIG.neutralMode = NeutralModeValue.Brake;
     WRIST_CONFIG.rotorToSensorRatio = WRIST_REDUCTION;
-    WRIST_CONFIG.feedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
+    WRIST_CONFIG.feedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     WRIST_CONFIG.feedbackRemoteSensorId = 4;
     WRIST_CONFIG.enableSupplyCurrentLimit = true;
     WRIST_CONFIG.supplyCurrentLimit = 40;

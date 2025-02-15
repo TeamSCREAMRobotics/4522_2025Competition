@@ -6,14 +6,17 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import drivers.PhoenixSwerveHelper;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -38,6 +41,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   @Getter private final PhoenixSwerveHelper helper;
 
+  public final SwerveDrivePoseEstimator globalPoseEstimate;
+  public final SwerveDrivePoseEstimator specializedPoseEstimate;
+
   public Drivetrain(
       SwerveDrivetrainConstants driveTrainConstants,
       double OdometryUpdateFrequency,
@@ -46,15 +52,22 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
     CommandScheduler.getInstance().registerSubsystem(this);
 
+    globalPoseEstimate =
+        new SwerveDrivePoseEstimator(
+            getKinematics(), getHeading(), getState().ModulePositions, getOdometryPose());
+    specializedPoseEstimate =
+        new SwerveDrivePoseEstimator(
+            getKinematics(), getHeading(), getState().ModulePositions, getOdometryPose());
+
     helper =
         new PhoenixSwerveHelper(
-            this::getPose,
+            this::getGlobalPoseEstimate,
             DrivetrainConstants.MAX_SPEED,
             DrivetrainConstants.HEADING_CORRECTION_CONSTANTS,
             DrivetrainConstants.HEADING_CORRECTION_CONSTANTS);
 
     AutoBuilder.configure(
-        this::getPose,
+        this::getGlobalPoseEstimate,
         this::resetPose,
         () -> getState().Speeds,
         (speeds, feedforwards) ->
@@ -67,7 +80,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         DrivetrainConstants.ROBOT_CONFIG,
         () -> false,
         this);
-    
+
     registerTelemetry(this::logTelemetry);
 
     if (Robot.isSimulation()) {
@@ -98,12 +111,21 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return ScreamUtil.withinAngleThreshold(targetAngle, getHeading(), threshold);
   }
 
-  public Pose2d getPose() {
+  public Pose2d getOdometryPose() {
     return getState().Pose;
   }
 
+  public Pose2d getGlobalPoseEstimate() {
+    return globalPoseEstimate.getEstimatedPosition();
+  }
+
   public Rotation2d getHeading() {
-    return getPose().getRotation();
+    return getOdometryPose().getRotation();
+  }
+
+  public Rotation2d getYawRate() {
+    return Rotation2d.fromDegrees(
+        getPigeon2().getAngularVelocityZWorld().asSupplier().get().in(Units.DegreesPerSecond));
   }
 
   public SwerveModuleState[] getModuleStates() {
@@ -136,15 +158,23 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public void logTelemetry(SwerveDriveState state) {
-    Logger.log("RobotState/RobotPose", state.Pose);
-    Logger.log("RobotState/Subsystems/Drivetrain/MeasuredStates", state.ModuleStates);
-    Logger.log("RobotState/Subsystems/Drivetrain/SetpointStates", state.ModuleTargets);
+    Logger.log("RobotState/OdometryPose", state.Pose);
+    Logger.log("Subsystems/Drivetrain/MeasuredStates", state.ModuleStates);
+    Logger.log("Subsystems/Drivetrain/SetpointStates", state.ModuleTargets);
   }
 
   @Override
   public void periodic() {
+    globalPoseEstimate.updateWithTime(
+        Timer.getFPGATimestamp(), getHeading(), getState().ModulePositions);
+    specializedPoseEstimate.updateWithTime(
+        Timer.getFPGATimestamp(), getHeading(), getState().ModulePositions);
+
     if (getCurrentCommand() != null) {
-      Logger.log("RobotState/Subsystems/Drivetrain/ActiveCommand", getCurrentCommand().getName());
+      Logger.log("Subsystems/Drivetrain/ActiveCommand", getCurrentCommand().getName());
     }
+    Logger.log("RobotState/EstimatedPose", globalPoseEstimate.getEstimatedPosition());
+    Logger.log(
+        "RobotState/SpecializedPoseEstimate", specializedPoseEstimate.getEstimatedPosition());
   }
 }

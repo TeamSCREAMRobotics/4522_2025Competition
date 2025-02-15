@@ -8,7 +8,6 @@ import drivers.TalonFXSubsystem.CANDevice;
 import drivers.TalonFXSubsystem.TalonFXConstants;
 import drivers.TalonFXSubsystem.TalonFXSubsystemConfiguration;
 import drivers.TalonFXSubsystem.TalonFXSubsystemSimConstants;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -20,18 +19,15 @@ import sim.SimWrapper;
 public final class ElevatorConstants {
 
   // As measured from wrist pivot axis
-  public static final Length MIN_HEIGHT_FROM_FLOOR = Length.fromInches(8.5782);
-  public static final Length MAX_HEIGHT_FROM_FLOOR = Length.fromInches(88.317193);
-
-  public static final Translation2d ELEVATOR_ORIGIN =
-      new Translation2d(0, MIN_HEIGHT_FROM_FLOOR.getMeters());
+  public static final Length MIN_HEIGHT_FROM_FLOOR = Length.fromInches(10.7125);
+  public static final Length MAX_HEIGHT_FROM_FLOOR = Length.fromInches(89.825);
 
   public static final double MIN_HEIGHT = 0.0;
   public static final Length MAX_HEIGHT =
-      MAX_HEIGHT_FROM_FLOOR.minus(MIN_HEIGHT_FROM_FLOOR); // 79.738993
+      MAX_HEIGHT_FROM_FLOOR.minus(MIN_HEIGHT_FROM_FLOOR); // 79.1125
 
   // Theoretically MAX_HEIGHT / PULLEY_CIRCUMFERENCE, but needs to actually be measured
-  public static final double ENCODER_MAX = 11.25075788;
+  public static final double ENCODER_MAX = 11.16236297;
   public static final double ENCODER_MIN = 0.0;
   public static final Length PULLEY_DIAMETER = Length.fromInches(2.256);
   public static final Length PULLEY_CIRCUMFERENCE = PULLEY_DIAMETER.times(Math.PI);
@@ -42,10 +38,10 @@ public final class ElevatorConstants {
       new ElevatorSim(
           DCMotor.getKrakenX60(2),
           REDUCTION,
-          Units.lbsToKilograms(21.44),
+          Units.lbsToKilograms(19.225),
           PULLEY_DIAMETER.div(2).getMeters(),
           MIN_HEIGHT,
-          MAX_HEIGHT.plus(Length.fromInches(0.875)).getMeters(),
+          MAX_HEIGHT.getMeters(),
           false,
           0.0);
   public static final ScreamPIDConstants SIM_GAINS = new ScreamPIDConstants(5.0, 0.0, 0.0);

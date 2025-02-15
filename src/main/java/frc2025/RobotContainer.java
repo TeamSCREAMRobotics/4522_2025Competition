@@ -4,7 +4,6 @@
 
 package frc2025;
 
-import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -14,19 +13,17 @@ import frc2025.commands.DriveToPose;
 import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard;
 import frc2025.controlboard.Controlboard.ScoringSide;
-import frc2025.logging.Logger;
+import frc2025.subsystems.climber.Climber;
+import frc2025.subsystems.climber.ClimberConstants;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.drivetrain.generated.TunerConstants;
-import frc2025.subsystems.intake.IntakeConstants;
-import frc2025.subsystems.intake.IntakeDeploy;
-import frc2025.subsystems.intake.IntakeDeploy.IntakeDeployGoal;
-import frc2025.subsystems.intake.IntakeRollers;
-import frc2025.subsystems.intake.IntakeRollers.IntakeRollersGoal;
 import frc2025.subsystems.superstructure.Superstructure;
 import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureState;
 import frc2025.subsystems.superstructure.elevator.ElevatorConstants;
 import frc2025.subsystems.superstructure.wrist.WristConstants;
 import frc2025.subsystems.superstructure.wrist.WristRollers;
+import frc2025.subsystems.superstructure.wrist.WristRollers.WristRollersGoal;
+import frc2025.subsystems.vision.VisionManager;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import lombok.Getter;
@@ -38,20 +35,22 @@ public class RobotContainer {
       Drivetrain drivetrain,
       Superstructure superstructure,
       WristRollers wristRollers,
-      IntakeDeploy intakeDeploy,
-      IntakeRollers intakeRollers) {}
+      Climber climber) {}
 
   private static final Drivetrain drivetrain = TunerConstants.DriveTrain;
   private static final Superstructure superstructure =
       new Superstructure(ElevatorConstants.CONFIGURATION, WristConstants.WRIST_CONFIG);
   private static final WristRollers wristRollers = new WristRollers(WristConstants.ROLLERS_CONFIG);
-  private static final IntakeDeploy intakeDeploy = new IntakeDeploy(IntakeConstants.DEPLOY_CONFIG);
+  /* private static final IntakeDeploy intakeDeploy = new IntakeDeploy(IntakeConstants.DEPLOY_CONFIG);
   private static final IntakeRollers intakeRollers =
-      new IntakeRollers(IntakeConstants.ROLLERS_CONFIG);
+      new IntakeRollers(IntakeConstants.ROLLERS_CONFIG); */
+  private static final Climber climber = new Climber(ClimberConstants.CONFIGURATION);
+
+  private static final VisionManager visionManager = new VisionManager(drivetrain);
 
   @Getter
   private final Subsystems subsystems =
-      new Subsystems(drivetrain, superstructure, wristRollers, intakeDeploy, intakeRollers);
+      new Subsystems(drivetrain, superstructure, wristRollers, climber);
 
   @Getter private final RobotState robotState = new RobotState(subsystems);
 
@@ -99,25 +98,6 @@ public class RobotContainer {
                   .getFacingAngle(
                       Controlboard.getTranslation().get(), robotState.getStationAlignAngle()));
 
-  private final Command superstructureDefault =
-      Commands.defer(
-          () -> {
-            SuperstructureState state;
-            switch (Dashboard.selectedGamePiece()) {
-              case ALGAE:
-                state = SuperstructureState.IDLE_ALGAE;
-                break;
-              case CORAL:
-                state = SuperstructureState.IDLE_CORAL;
-                break;
-              default:
-                state = SuperstructureState.IDLE_NONE;
-                break;
-            }
-            return superstructure.applyTargetState(state);
-          },
-          Set.of(superstructure, superstructure.getElevator(), superstructure.getWrist()));
-
   private final BooleanSupplier hasCoral = () -> Dashboard.selectedGamePiece() == GamePiece.CORAL;
   private final BooleanSupplier hasAlgae = () -> Dashboard.selectedGamePiece() == GamePiece.ALGAE;
 
@@ -148,7 +128,7 @@ public class RobotContainer {
                 Commands.sequence(
                     Commands.waitUntil(
                         () ->
-                            drivetrain.getPose().getX()
+                            drivetrain.getGlobalPoseEstimate().getX()
                                 > AllianceFlipUtil.get(
                                         FieldConstants.BLUE_BARGE_ALIGN
                                             .getTranslation()
@@ -177,9 +157,6 @@ public class RobotContainer {
         .whileTrue(superstructure.applyTargetState(SuperstructureState.REEF_L2))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(branchAlign);
-
-    Controlboard.testButton()
-        .whileTrue(superstructure.applyTargetState(SuperstructureState.HANDOFF));
 
     Controlboard.goToAlgaeClear2()
         .whileTrue(
@@ -210,50 +187,63 @@ public class RobotContainer {
         .whileTrue(
             Commands.parallel(
                     stationAlign,
-                    superstructure.applyTargetState(SuperstructureState.CORAL_STATION),
-                    intakeRollers.applyGoalCommand(IntakeRollersGoal.INTAKE))
+                    superstructure.applyTargetState(SuperstructureState.FEEDING),
+                    wristRollers.applyGoalCommand(WristRollersGoal.INTAKE))
                 .finallyDo(
                     () ->
-                        Commands.runOnce(() -> Dashboard.setGamePiece(GamePiece.ALGAE))
+                        Commands.runOnce(() -> Dashboard.setGamePiece(GamePiece.CORAL))
                             .onlyIf(wristRollers.acquiredGamePiece())
                             .schedule()));
 
-    Controlboard.groundIntake()
-        .whileTrue(
-            Commands.parallel(
-                intakeDeploy.applyGoalCommand(IntakeDeployGoal.DEPLOY),
-                intakeRollers.applyGoalCommand(IntakeRollersGoal.INTAKE)));
+    /* Controlboard.groundIntake()
+    .whileTrue(
+        Commands.parallel(
+            intakeDeploy.applyGoalCommand(IntakeDeployGoal.DEPLOY),
+            intakeRollers.applyGoalCommand(IntakeRollersGoal.INTAKE))); */
   }
 
   private void configureDefaultCommands() {
     drivetrain.setDefaultCommand(
-        drivetrain.applyRequest(
-            () ->
-                Controlboard.getFieldCentric().getAsBoolean()
-                    ? drivetrain
-                        .getHelper()
-                        .getHeadingCorrectedFieldCentric(
-                            Controlboard.getTranslation().get(),
-                            Controlboard.getRotation().getAsDouble())
-                    : drivetrain
-                        .getHelper()
-                        .getRobotCentric(
-                            Controlboard.getTranslation()
-                                .get()
-                                .times(AllianceFlipUtil.getDirectionCoefficient()),
-                            Controlboard.getRotation().getAsDouble())));
+        drivetrain
+            .applyRequest(
+                () ->
+                    Controlboard.getFieldCentric().getAsBoolean()
+                        ? drivetrain
+                            .getHelper()
+                            .getHeadingCorrectedFieldCentric(
+                                Controlboard.getTranslation().get(),
+                                Controlboard.getRotation().getAsDouble())
+                        : drivetrain
+                            .getHelper()
+                            .getRobotCentric(
+                                Controlboard.getTranslation()
+                                    .get()
+                                    .times(AllianceFlipUtil.getDirectionCoefficient()),
+                                Controlboard.getRotation().getAsDouble()))
+            .beforeStarting(() -> drivetrain.getHelper().setLastAngle(drivetrain.getHeading())));
 
-    superstructure.setDefaultCommand(superstructureDefault);
+    superstructure.setDefaultCommand(superstructure.applyTargetState(SuperstructureState.HOME));
 
-    /* elevator.setDefaultCommand(
-        elevator.applyVoltage(
-            () ->
-                (Controlboard.driveController.getLeftTriggerAxis()
-                        - MathUtil.applyDeadband(Controlboard.driveController.getRightY(), 0.15))
-                    * 12.0));
+    /* superstructure
+        .getElevator()
+        .setDefaultCommand(
+            superstructure
+                .getElevator()
+                .applyVoltageCommand(
+                    () ->
+                        (-MathUtil.applyDeadband(Controlboard.driveController.getRightY(), 0.15))
+                            * 12.0));
 
-    wrist.setDefaultCommand(
-        wrist.applyVoltage(() -> Controlboard.driveController.getRightTriggerAxis() * 24.0)); */
+    superstructure
+        .getWrist()
+        .setDefaultCommand(
+            superstructure
+                .getWrist()
+                .applyVoltageCommand(
+                    () ->
+                        (-Controlboard.driveController.getRightTriggerAxis()
+                                + Controlboard.driveController.getLeftTriggerAxis())
+                            * 24.0)); */
   }
 
   public Command getAutonomousCommand() {

@@ -24,7 +24,7 @@ public class Dashboard {
     SmartDashboard.putData("Override Game Piece", overridePieceChooser);
   }
 
-  public static void setGamePiece(GamePiece gamePiece){
+  public static void setGamePiece(GamePiece gamePiece) {
     currentGamePiece = gamePiece;
   }
 

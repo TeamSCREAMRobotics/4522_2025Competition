@@ -10,24 +10,18 @@ import math.Conversions;
 public class Elevator extends TalonFXSubsystem {
 
   public Elevator(TalonFXSubsystemConfiguration config) {
-    super(config);
+    super(config, ElevatorGoal.HOME);
   }
 
   public enum ElevatorGoal implements TalonFXSubsystemGoal {
-    HOME(Length.fromInches(0)),
-    IDLE(Length.fromInches(12.01875)),
-    IDLE_ALGAE(Length.fromInches(12.01875)),
-    IDLE_CORAL(Length.fromInches(20.0)),
-    TROUGH(Length.fromInches(18.42)),
-    L2(Length.fromInches(29.1)),
-    L3(Length.fromInches(44.8)),
-    L4(Length.fromInches(74.56)),
-    CLEAR_ALGAE_L1(Length.fromInches(30.0)),
-    CLEAR_ALGAE_L2(Length.fromInches(45.5)),
-    CORAL_STATION(Length.fromInches(18.2)),
-    HANDOFF(Length.fromInches(18.2)),
+    HOME(Length.fromInches(0.0)),
+    TROUGH(Length.fromInches(10.5)),
+    L2(Length.fromInches(18.95)),
+    L3(Length.fromInches(35.0)),
+    L4(Length.fromInches(59.85)),
+    CLEAR_ALGAE_L1(Length.fromInches(9.1)),
+    CLEAR_ALGAE_L2(Length.fromInches(24.611)),
     BARGE(ElevatorConstants.MAX_HEIGHT),
-    MAX_CARRIAGE(Length.fromInches(24.04)),
     MAX(ElevatorConstants.MAX_HEIGHT);
 
     public DoubleSupplier targetRotations;
