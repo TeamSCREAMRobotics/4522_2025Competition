@@ -1,8 +1,6 @@
 package frc2025.subsystems.superstructure.wrist;
 
 import drivers.TalonFXSubsystem;
-import frc2025.Robot;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class WristRollers extends TalonFXSubsystem {
@@ -14,7 +12,8 @@ public class WristRollers extends TalonFXSubsystem {
   public enum WristRollersGoal implements TalonFXSubsystemGoal {
     IDLE(0.0, ControlType.VOLTAGE),
     INTAKE(7.5, ControlType.VOLTAGE),
-    EJECT(-7.5, ControlType.VOLTAGE);
+    EJECT_CORAL(12.0, ControlType.VOLTAGE),
+    EJECT_ALGAE(-7.5, ControlType.VOLTAGE);
 
     public final double voltage;
     public final ControlType controlType;
@@ -38,14 +37,5 @@ public class WristRollers extends TalonFXSubsystem {
     public DoubleSupplier feedForward() {
       return () -> 0.0;
     }
-  }
-
-  @Override
-  public void periodic() {}
-
-  public BooleanSupplier acquiredGamePiece() {
-    return () ->
-        (master.getSupplyCurrent().getValueAsDouble() > WristConstants.ACQUIRED_PIECE_THRESHOLD)
-            || Robot.isSimulation();
   }
 }

@@ -51,11 +51,11 @@ public class ClimberConstants {
             true);
 
     CONFIGURATION.masterConstants =
-        new TalonFXConstants(new CANDevice(10), InvertedValue.Clockwise_Positive);
+        new TalonFXConstants(new CANDevice(14), InvertedValue.Clockwise_Positive);
 
     CONFIGURATION.slaveConstants =
         new TalonFXConstants[] {
-          new TalonFXConstants(new CANDevice(11), InvertedValue.Clockwise_Positive)
+          new TalonFXConstants(new CANDevice(15), InvertedValue.Clockwise_Positive)
         };
 
     CONFIGURATION.neutralMode = NeutralModeValue.Brake;

@@ -1,7 +1,7 @@
 package frc2025.subsystems.intake;
 
+import data.Length;
 import drivers.TalonFXSubsystem;
-import edu.wpi.first.math.geometry.Rotation2d;
 import frc2025.logging.Logger;
 import java.util.function.DoubleSupplier;
 
@@ -12,14 +12,15 @@ public class IntakeDeploy extends TalonFXSubsystem {
   }
 
   public enum IntakeDeployGoal implements TalonFXSubsystemGoal {
-    HOME(Rotation2d.fromDegrees(0)),
-    IDLE(Rotation2d.fromDegrees(0)),
-    DEPLOY(Rotation2d.fromDegrees(60));
+    HOME(Length.kZero),
+    HOLDING(Length.fromInches(10.0)),
+    MAX(IntakeConstants.MAX_EXTENSION);
 
     public final double targetRotations;
 
-    private IntakeDeployGoal(Rotation2d angle) {
-      this.targetRotations = angle.getRotations();
+    private IntakeDeployGoal(Length extension) {
+      this.targetRotations =
+          extension.getInches() / IntakeConstants.PINION_CIRCUMFERENCE.getInches();
     }
 
     @Override
@@ -38,9 +39,18 @@ public class IntakeDeploy extends TalonFXSubsystem {
     }
   }
 
+  public Length getMeasuredExtension() {
+    return Length.fromRotations(getPosition(), IntakeConstants.PINION_CIRCUMFERENCE);
+  }
+
+  public Length getSetpointExtension() {
+    return Length.fromRotations(getSetpoint(), IntakeConstants.PINION_CIRCUMFERENCE);
+  }
+
   @Override
   public void periodic() {
     super.periodic();
-    Logger.log(logPrefix + "Angle", getAngle());
+    Logger.log(logPrefix + "MeasuredExtension", getMeasuredExtension().getInches());
+    Logger.log(logPrefix + "SetpointExtension", getMeasuredExtension().getInches());
   }
 }

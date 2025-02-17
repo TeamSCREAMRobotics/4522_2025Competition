@@ -89,4 +89,9 @@ public class Robot extends TimedRobot {
   public void simulationInit() {
     DriverStationSim.setAllianceStationId(AllianceStationID.Blue1);
   }
+
+  @Override
+  public void simulationPeriodic() {
+    Dashboard.Sim.periodic();
+  }
 }

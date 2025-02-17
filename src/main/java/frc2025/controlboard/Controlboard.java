@@ -119,10 +119,6 @@ public class Controlboard {
     return driveController.b().and(driveController.leftStick().negate());
   }
 
-  public static Trigger goToTrough() {
-    return driveController.a().and(driveController.leftStick().negate());
-  }
-
   public static Trigger goToAlgaeClear1() {
     return driveController.x().and(driveController.leftStick());
   }
@@ -151,8 +147,8 @@ public class Controlboard {
     return driveController.povUp();
   }
 
-  public static Trigger outtake() {
-    return driveController.povRight();
+  public static Trigger lockToProcessor() {
+    return driveController.a();
   }
 
   public static Trigger testButton() {

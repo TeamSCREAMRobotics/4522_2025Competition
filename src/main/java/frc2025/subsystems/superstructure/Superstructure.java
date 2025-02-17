@@ -10,7 +10,7 @@ import frc2025.subsystems.superstructure.elevator.Elevator;
 import frc2025.subsystems.superstructure.elevator.Elevator.ElevatorGoal;
 import frc2025.subsystems.superstructure.wrist.Wrist;
 import frc2025.subsystems.superstructure.wrist.Wrist.WristGoal;
-import java.util.Set;
+import java.util.function.Supplier;
 import lombok.Getter;
 
 public class Superstructure extends SubsystemBase {
@@ -20,8 +20,7 @@ public class Superstructure extends SubsystemBase {
 
   private final String logPrefix = "Superstructure/";
 
-  public SuperstructureState currentState = SuperstructureState.HOME;
-  public SuperstructureState targetState = currentState;
+  @Getter private static SuperstructureState currentState = SuperstructureState.HOME;
 
   public Superstructure(
       TalonFXSubsystemConfiguration elevatorConfig, TalonFXSubsystemConfiguration wristConfig) {
@@ -30,47 +29,34 @@ public class Superstructure extends SubsystemBase {
   }
 
   public void logTelemetry() {
-    Logger.log(logPrefix + "CurrentState", currentState);
-    Logger.log(logPrefix + "TargetState", targetState);
+    Logger.log(logPrefix + "CurrentState", getCurrentState());
   }
 
   public Command applyTargetState(SuperstructureState state) {
-    return Commands.defer(
+    Supplier<Command> command =
         () -> {
-          targetState = state;
-          Command transition = Commands.none();
+          Command transition;
           switch (state) {
             case HOME:
               transition =
-                  Commands.sequence(
-                      wrist.applyUntilAtGoalCommand(WristGoal.STOW),
-                      elevator.applyUntilAtGoalCommand(ElevatorGoal.HOME));
-              break;
-            case REEF_ALGAE_L1:
-              transition =
-                  Commands.sequence(
-                      elevator.applyUntilAtGoalCommand(ElevatorGoal.CLEAR_ALGAE_L1),
-                      wrist.applyUntilAtGoalCommand(WristGoal.CLEAR_ALGAE));
-              break;
-            case REEF_ALGAE_L2:
-              transition =
-                  Commands.sequence(
-                      elevator.applyUntilAtGoalCommand(ElevatorGoal.CLEAR_ALGAE_L2),
-                      wrist.applyUntilAtGoalCommand(WristGoal.CLEAR_ALGAE));
+                  Commands.parallel(
+                      wrist.applyGoalCommand(WristGoal.STOW),
+                      Commands.sequence(
+                          Commands.waitUntil(() -> wrist.atGoal()),
+                          elevator.applyGoalCommand(ElevatorGoal.HOME)));
               break;
             default:
               transition =
                   Commands.parallel(
                       elevator.applyGoalCommand(state.elevatorGoal),
-                      wrist.applyGoalCommand(state.wristGoal));
+                      Commands.sequence(
+                          Commands.waitUntil(() -> elevator.atGoal()),
+                          wrist.applyGoalCommand(state.wristGoal)));
               break;
           }
-          return transition.andThen(
-              Commands.parallel(
-                  elevator.applyGoalCommand(state.elevatorGoal),
-                  wrist.applyGoalCommand(state.wristGoal),
-                  Commands.runOnce(() -> currentState = targetState)));
-        },
-        Set.of(this));
+          transition.addRequirements(this);
+          return transition;
+        };
+    return command.get().beforeStarting(() -> currentState = state);
   }
 }

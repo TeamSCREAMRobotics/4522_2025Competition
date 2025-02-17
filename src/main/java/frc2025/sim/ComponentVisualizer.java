@@ -9,18 +9,11 @@ import frc2025.subsystems.superstructure.elevator.ElevatorConstants;
 
 public class ComponentVisualizer {
 
-  public static final Pose3d INTAKE_ORIGIN_POSE =
-      new Pose3d(0.3175, -0.3175, 0.212725, new Rotation3d());
-
   public static final Pose3d WRIST_ORIGIN_POSE =
       new Pose3d(0.1651, 0.0, 0.2720975, new Rotation3d());
 
-  public static Pose3d getIntakePose(Rotation2d deployAngle) {
-    return new Pose3d(
-        INTAKE_ORIGIN_POSE.getX(),
-        INTAKE_ORIGIN_POSE.getY(),
-        INTAKE_ORIGIN_POSE.getZ(),
-        new Rotation3d(0, deployAngle.getRadians(), 0));
+  public static Pose3d getIntakePose(double intakeExtension) {
+    return new Pose3d(intakeExtension, 0, 0, new Rotation3d());
   }
 
   public static Pose3d getStage1Pose(double elevatorHeight) {

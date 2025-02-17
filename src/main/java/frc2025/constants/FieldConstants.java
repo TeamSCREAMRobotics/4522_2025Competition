@@ -55,15 +55,9 @@ public class FieldConstants {
       REEF_CENTER_TO_TOP_BRANCH.plus(BRANCH_TO_ROBOT);
   public static final Translation2d SCORE_LOCATION_2 =
       REEF_CENTER_TO_BOTTOM_BRANCH.plus(BRANCH_TO_ROBOT);
-  public static final Translation2d ALGAE_LOCATION =
-      new Translation2d(
-          5.268944 + BRANCH_TO_ROBOT.getX(),
-          (SCORE_LOCATION_1.getY() + SCORE_LOCATION_2.getY()) / 2.0);
+  public static final Translation2d ALGAE_LOCATION = new Translation2d(SCORE_LOCATION_1.getX(), 0);
 
   static {
-    Translation2d blueAlgaeLocation = ALGAE_LOCATION.minus(BLUE_REEF_CENTER);
-    Translation2d redAlgaeLocation = FIELD_DIMENSIONS.minus(ALGAE_LOCATION).minus(RED_REEF_CENTER);
-
     for (int i = 0; i < 6; i++) {
       Rotation2d rotation = Rotation2d.fromDegrees(i * 60);
       Rotation2d blueRotation = Rotation2d.fromDegrees(-180 + (i * 60));
@@ -83,10 +77,10 @@ public class FieldConstants {
               new Pose2d(RED_REEF_CENTER.minus(SCORE_LOCATION_2.rotateBy(rotation)), redRotation)));
 
       BLUE_ALGAE_LOCATIONS.put(
-          i, new Pose2d(blueAlgaeLocation.rotateBy(rotation).plus(BLUE_REEF_CENTER), blueRotation));
+          i, new Pose2d(BLUE_REEF_CENTER.plus(ALGAE_LOCATION.rotateBy(rotation)), blueRotation));
 
       RED_ALGAE_LOCATIONS.put(
-          i, new Pose2d(redAlgaeLocation.rotateBy(rotation).plus(RED_REEF_CENTER), redRotation));
+          i, new Pose2d(RED_REEF_CENTER.minus(ALGAE_LOCATION.rotateBy(rotation)), redRotation));
     }
   }
 }

@@ -1,22 +1,18 @@
 package frc2025.subsystems.superstructure.wrist;
 
 import drivers.TalonFXSubsystem;
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class Wrist extends TalonFXSubsystem {
 
-  private static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0, 1.1589, 0, 0);
-
-  private final ProfiledPIDController simController;
+  private final DigitalInput hasCoral = new DigitalInput(0);
 
   public Wrist(TalonFXSubsystemConfiguration config) {
     super(config, WristGoal.STOW);
-
-    simController = super.simController;
   }
 
   public enum WristGoal implements TalonFXSubsystemGoal {
@@ -59,6 +55,10 @@ public class Wrist extends TalonFXSubsystem {
 
   public void resetSimController() {
     simController.reset(getPosition(), getVelocity());
+  }
+
+  public BooleanSupplier hasCoral() {
+    return () -> hasCoral.get();
   }
 
   @Override
