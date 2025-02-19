@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.RobotContainer.Subsystems;
 import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard;
+import frc2025.controlboard.Controlboard.ScoringSide;
 import frc2025.logging.Logger;
 import frc2025.sim.ComponentVisualizer;
 import frc2025.subsystems.drivetrain.Drivetrain;
@@ -66,6 +67,24 @@ public class RobotState {
           return Commands.none();
       }
     };
+  }
+
+  public Pose2d getTargetBranchPose() {
+    return Controlboard.getScoringSide().get() == ScoringSide.LEFT
+        ? AllianceFlipUtil.get(
+                FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
+            .get(getReefZone().getAsInt())
+            .getFirst()
+        : AllianceFlipUtil.get(
+                FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
+            .get(getReefZone().getAsInt())
+            .getSecond();
+  }
+
+  public Pose2d getTargetAlgaePose() {
+    return AllianceFlipUtil.get(
+            FieldConstants.BLUE_ALGAE_LOCATIONS, FieldConstants.RED_ALGAE_LOCATIONS)
+        .get(getReefZone().getAsInt());
   }
 
   public OptionalInt getReefZone() {

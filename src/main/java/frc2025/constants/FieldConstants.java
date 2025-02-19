@@ -1,6 +1,8 @@
 package frc2025.constants;
 
 import data.Length;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -42,6 +44,34 @@ public class FieldConstants {
 
   public static final Map<Integer, Pose2d> BLUE_ALGAE_LOCATIONS = new HashMap<>();
   public static final Map<Integer, Pose2d> RED_ALGAE_LOCATIONS = new HashMap<>();
+
+  public static final Map<Integer, Pair<Integer, Pose2d>> BLUE_REEF_TAGS = new HashMap<>();
+  public static final Map<Integer, Pair<Integer, Pose2d>> RED_REEF_TAGS = new HashMap<>();
+
+  static {
+    BLUE_REEF_TAGS.put(0, getTagPair(21));
+    BLUE_REEF_TAGS.put(1, getTagPair(20));
+    BLUE_REEF_TAGS.put(2, getTagPair(19));
+    BLUE_REEF_TAGS.put(3, getTagPair(18));
+    BLUE_REEF_TAGS.put(4, getTagPair(17));
+    BLUE_REEF_TAGS.put(5, getTagPair(22));
+
+    RED_REEF_TAGS.put(0, getTagPair(7));
+    RED_REEF_TAGS.put(1, getTagPair(8));
+    RED_REEF_TAGS.put(2, getTagPair(9));
+    RED_REEF_TAGS.put(3, getTagPair(10));
+    RED_REEF_TAGS.put(4, getTagPair(11));
+    RED_REEF_TAGS.put(5, getTagPair(6));
+  }
+
+  private static Pair<Integer, Pose2d> getTagPair(int id) {
+    return Pair.of(
+        id,
+        AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded)
+            .getTagPose(id)
+            .get()
+            .toPose2d());
+  }
 
   public static final Translation2d REEF_CENTER_TO_TOP_BRANCH =
       new Translation2d(Units.inchesToMeters(30.738196), Units.inchesToMeters(6.633604));

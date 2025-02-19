@@ -1,17 +1,19 @@
 package frc2025.commands;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.drivetrain.DrivetrainConstants;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import util.GeomUtil;
@@ -23,13 +25,16 @@ public class DriveToPose extends Command {
 
   private final ProfiledPIDController driveController =
       DrivetrainConstants.DRIVE_ALIGNMENT_CONTROLLER;
-  private final PIDController headingController = DrivetrainConstants.HEADING_CONTROLLER;
+  private final ProfiledPIDController headingController =
+      new ProfiledPIDController(5.0, 0, 0, new Constraints(4, Units.degreesToRadians(720)));
 
   private double driveErrorAbs;
   private Translation2d lastSetpointTranslation;
 
   private Optional<DoubleSupplier> yOverride = Optional.empty();
   private Optional<Supplier<Translation2d>> translationOverride = Optional.empty();
+
+  private boolean firstRun;
 
   public DriveToPose(Drivetrain drivetrain, Supplier<Pose2d> targetPose) {
     this.drivetrain = drivetrain;
@@ -46,7 +51,8 @@ public class DriveToPose extends Command {
   public DriveToPose(
       Drivetrain drivetrain,
       Supplier<Pose2d> targetPose,
-      Supplier<Translation2d> translationOverride) {
+      Supplier<Translation2d> translationOverride,
+      BooleanSupplier useSpecializedPoseEstimate) {
     this(drivetrain, targetPose);
     this.translationOverride = Optional.of(translationOverride);
   }
@@ -57,7 +63,11 @@ public class DriveToPose extends Command {
 
   @Override
   public void initialize() {
+    firstRun = true;
     Pose2d currentPose = drivetrain.getGlobalPoseEstimate();
+    driveController.setTolerance(0.01);
+    headingController.setTolerance(Units.degreesToRadians(1));
+    headingController.enableContinuousInput(-Math.PI, Math.PI);
     driveController.reset(
         currentPose.getTranslation().getDistance(targetPose.get().getTranslation()),
         Math.min(
@@ -71,7 +81,8 @@ public class DriveToPose extends Command {
                         .getAngle()
                         .unaryMinus())
                 .getX()));
-    headingController.reset();
+    headingController.reset(
+        currentPose.getRotation().getRadians(), drivetrain.getYawRate().getRadians());
     lastSetpointTranslation = currentPose.getTranslation();
   }
 
@@ -79,6 +90,13 @@ public class DriveToPose extends Command {
   public void execute() {
     Pose2d currentPose = drivetrain.getGlobalPoseEstimate();
     Pose2d targetPose = this.targetPose.get();
+    if (((yOverride.isPresent() && Math.abs(targetPose.minus(currentPose).getX()) < 0.1)
+            || (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.1)
+                && !(translationOverride.isPresent()
+                    && translationOverride.get().get().getNorm() > 0.5))
+        && firstRun) {
+      return;
+    }
 
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
     double ffScaler = MathUtil.clamp((currentDistance - 0.2) / (0.8 - 0.2), 0.0, 1.0);
@@ -92,6 +110,9 @@ public class DriveToPose extends Command {
                 GeomUtil.translationToTransform(driveController.getSetpoint().position, 0.0))
             .getTranslation();
 
+    driveController.reset(
+        lastSetpointTranslation.getDistance(targetPose.getTranslation()),
+        driveController.getSetpoint().velocity);
     double driveVelocity =
         driveController.getSetpoint().velocity * ffScaler
             + driveController.calculate(driveErrorAbs, 0.0);
@@ -121,13 +142,26 @@ public class DriveToPose extends Command {
                     yOverride.isPresent() ? yOverride.get().getAsDouble() : velocity.getY(),
                     headingVelocity)));
 
+    firstRun = false;
+
     Logger.log("DriveToPose/MeasuredDistance", currentDistance);
     Logger.log("DriveToPose/DistanceSetpoint", driveController.getSetpoint().position);
     Logger.log("DriveToPose/MeasuredHeading", currentPose.getRotation().getDegrees());
     Logger.log("DriveToPose/SetpointHeading", targetPose.getRotation().getDegrees());
     Logger.log(
         "DriveToPose/Setpoint",
-        new Pose2d(lastSetpointTranslation, new Rotation2d(headingController.getSetpoint())));
+        new Pose2d(
+            lastSetpointTranslation, new Rotation2d(headingController.getSetpoint().position)));
     Logger.log("DriveToPose/TargetPose", targetPose);
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    drivetrain.stop();
+  }
+
+  @Override
+  public boolean isFinished() {
+    return driveController.atGoal() && headingController.atGoal();
   }
 }

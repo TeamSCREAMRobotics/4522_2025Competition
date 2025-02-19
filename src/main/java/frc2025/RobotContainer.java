@@ -13,7 +13,6 @@ import frc2025.autonomous.AutoSelector;
 import frc2025.commands.DriveToPose;
 import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard;
-import frc2025.controlboard.Controlboard.ScoringSide;
 import frc2025.subsystems.climber.Climber;
 import frc2025.subsystems.climber.ClimberConstants;
 import frc2025.subsystems.drivetrain.Drivetrain;
@@ -71,21 +70,16 @@ public class RobotContainer {
       Commands.defer(
           () ->
               new DriveToPose(
-                  drivetrain,
-                  () -> {
-                    return Controlboard.getScoringSide().get() == ScoringSide.LEFT
-                        ? AllianceFlipUtil.get(
-                                FieldConstants.BLUE_REEF_LOCATIONS,
-                                FieldConstants.RED_REEF_LOCATIONS)
-                            .get(robotState.getReefZone().getAsInt())
-                            .getFirst()
-                        : AllianceFlipUtil.get(
-                                FieldConstants.BLUE_REEF_LOCATIONS,
-                                FieldConstants.RED_REEF_LOCATIONS)
-                            .get(robotState.getReefZone().getAsInt())
-                            .getSecond();
-                  },
-                  Controlboard.getTranslation()),
+                      drivetrain,
+                      () -> robotState.getTargetBranchPose(),
+                      Controlboard.getTranslation(),
+                      () ->
+                          drivetrain
+                                  .getGlobalPoseEstimate()
+                                  .getTranslation()
+                                  .getDistance(robotState.getTargetBranchPose().getTranslation())
+                              < 1.5)
+                  .repeatedly(),
           Set.of(drivetrain));
 
   private final Command algaeAlign =
@@ -93,12 +87,14 @@ public class RobotContainer {
           () ->
               new DriveToPose(
                   drivetrain,
-                  () -> {
-                    return AllianceFlipUtil.get(
-                            FieldConstants.BLUE_ALGAE_LOCATIONS, FieldConstants.RED_ALGAE_LOCATIONS)
-                        .get(robotState.getReefZone().getAsInt());
-                  },
-                  Controlboard.getTranslation()),
+                  () -> robotState.getTargetAlgaePose(),
+                  Controlboard.getTranslation(),
+                  () ->
+                      drivetrain
+                              .getGlobalPoseEstimate()
+                              .getTranslation()
+                              .getDistance(robotState.getTargetBranchPose().getTranslation())
+                          < 1.5),
           Set.of(drivetrain));
 
   private final Command stationAlign =
@@ -203,7 +199,7 @@ public class RobotContainer {
                     stationAlign,
                     applyTargetStateFactory.apply(SuperstructureState.HOME).get(),
                     wristRollers.applyGoalCommand(WristRollersGoal.INTAKE))
-                .finallyDo(() -> Dashboard.Sim.setGamePiece(GamePiece.ALGAE)));
+                .finallyDo(() -> Dashboard.Sim.setGamePiece(GamePiece.CORAL)));
 
     Controlboard.groundIntake()
         .whileTrue(

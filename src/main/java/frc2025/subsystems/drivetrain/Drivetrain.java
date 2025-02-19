@@ -67,7 +67,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
             getKinematics(), getHeading(), getState().ModulePositions, getOdometryPose());
 
     odomThread = new OdometryThread();
-    odomThread.start();
+    // odomThread.start();
 
     helper =
         new PhoenixSwerveHelper(
@@ -129,6 +129,10 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     return globalPoseEstimate.getEstimatedPosition();
   }
 
+  public Pose2d getSpecializedPoseEstimate() {
+    return specializedPoseEstimate.getEstimatedPosition();
+  }
+
   public Rotation2d getHeading() {
     return getOdometryPose().getRotation();
   }
@@ -184,17 +188,17 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   @Override
   public void periodic() {
-    /* globalPoseEstimate.updateWithTime(
+    globalPoseEstimate.updateWithTime(
         Timer.getFPGATimestamp(), getHeading(), getState().ModulePositions);
-    specializedPoseEstimate.updateWithTime(
-        Timer.getFPGATimestamp(), getHeading(), getState().ModulePositions); */
+    /* specializedPoseEstimate.updateWithTime(
+    Timer.getFPGATimestamp(), getHeading(), getState().ModulePositions); */
 
     if (getCurrentCommand() != null) {
       Logger.log("Subsystems/Drivetrain/ActiveCommand", getCurrentCommand().getName());
     }
     Logger.log("RobotState/EstimatedPose", globalPoseEstimate.getEstimatedPosition());
-    Logger.log(
-        "RobotState/SpecializedPoseEstimate", specializedPoseEstimate.getEstimatedPosition());
+    // Logger.log("RobotState/SpecializedPoseEstimate",
+    // specializedPoseEstimate.getEstimatedPosition());
   }
 
   private class OdometryThread extends Thread {
