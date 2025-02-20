@@ -149,8 +149,8 @@ public class TunerConstants {
               .withSteerMotorInitialConfigs(STEER_CONFIG)
               .withEncoderInitialConfigs(new CANcoderConfiguration());
 
-  public static final Length WHEEL_BASE = Length.fromInches(23.25); // Front to back
-  public static final Length TRACK_WIDTH = Length.fromInches(22.75); // Side to side
+  public static final Length WHEEL_BASE = Length.fromInches(22.75); // Front to back
+  public static final Length TRACK_WIDTH = Length.fromInches(20.75); // Side to side
 
   public static final Translation2d FRONT_LEFT_POSITION =
       new Translation2d(WHEEL_BASE.getMeters() / 2.0, TRACK_WIDTH.getMeters() / 2.0);
