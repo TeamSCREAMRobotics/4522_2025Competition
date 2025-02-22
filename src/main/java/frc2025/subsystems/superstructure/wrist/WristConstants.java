@@ -34,8 +34,8 @@ public class WristConstants {
           WRIST_REDUCTION,
           0.00490209781964,
           Units.inchesToMeters(20.5),
-          -Double.MAX_VALUE,
-          Double.MAX_VALUE,
+          0.0,
+          Math.PI / 2.0,
           false,
           Math.PI / 2.0);
   public static final ScreamPIDConstants SIM_GAINS = new ScreamPIDConstants(50.0, 0.0, 50.0);
@@ -67,6 +67,9 @@ public class WristConstants {
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     WRIST_CONFIG.cancoderConstants = new CANCoderConstants(new CANDevice(4), config);
 
+    WRIST_CONFIG.maxUnitsLimit = 0.25;
+    WRIST_CONFIG.minUnitsLimit = 0.0;
+
     WRIST_CONFIG.neutralMode = NeutralModeValue.Brake;
     WRIST_CONFIG.rotorToSensorRatio = WRIST_REDUCTION;
     WRIST_CONFIG.feedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
@@ -90,7 +93,7 @@ public class WristConstants {
     ROLLERS_CONFIG.logTelemetry = false;
 
     ROLLERS_CONFIG.masterConstants =
-        new TalonFXConstants(new CANDevice(11), InvertedValue.CounterClockwise_Positive);
+        new TalonFXConstants(new CANDevice(11), InvertedValue.Clockwise_Positive);
 
     ROLLERS_CONFIG.enableSupplyCurrentLimit = true;
     ROLLERS_CONFIG.supplyCurrentLimit = 20;

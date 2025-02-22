@@ -13,7 +13,8 @@ public class SuperstructureConstants {
     REEF_ALGAE_L1(ElevatorGoal.CLEAR_ALGAE_L1, WristGoal.CLEAR_ALGAE),
     REEF_ALGAE_L2(ElevatorGoal.CLEAR_ALGAE_L2, WristGoal.CLEAR_ALGAE),
     FEEDING(ElevatorGoal.HOME, WristGoal.STOW),
-    BARGE_NET(ElevatorGoal.BARGE, WristGoal.STOW);
+    BARGE_NET(ElevatorGoal.BARGE, WristGoal.STOW),
+    INTAKE(ElevatorGoal.HOME, WristGoal.INTAKE);
     // PROCESSOR(ElevatorGoal.IDLE, WristGoal.STOW),
 
     public WristGoal wristGoal;

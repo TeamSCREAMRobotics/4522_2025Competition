@@ -20,10 +20,7 @@ public class DriveUntilAtPose extends DriveToPose {
 
   @Override
   public boolean isFinished() {
-    return drivetrain
-            .getGlobalPoseEstimate()
-            .getTranslation()
-            .getDistance(targetPose.getTranslation())
+    return drivetrain.getEstimatedPose().getTranslation().getDistance(targetPose.getTranslation())
         <= DrivetrainConstants.AT_POSE_DIST_THRESHOLD.getMeters();
   }
 }

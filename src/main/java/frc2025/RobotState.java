@@ -12,10 +12,6 @@ import frc2025.controlboard.Controlboard.ScoringSide;
 import frc2025.logging.Logger;
 import frc2025.sim.ComponentVisualizer;
 import frc2025.subsystems.drivetrain.Drivetrain;
-import frc2025.subsystems.intake.IntakeDeploy;
-import frc2025.subsystems.intake.IntakeDeploy.IntakeDeployGoal;
-import frc2025.subsystems.intake.IntakeRollers;
-import frc2025.subsystems.intake.IntakeRollers.IntakeRollersGoal;
 import frc2025.subsystems.superstructure.Superstructure;
 import frc2025.subsystems.superstructure.elevator.Elevator;
 import frc2025.subsystems.superstructure.wrist.Wrist;
@@ -30,16 +26,12 @@ public class RobotState {
   private final Elevator elevator;
   private final Wrist wrist;
   private final WristRollers wristRollers;
-  private final IntakeDeploy intakeDeploy;
-  private final IntakeRollers intakeRollers;
 
   public RobotState(Subsystems subsystems) {
     this.drivetrain = subsystems.drivetrain();
     this.elevator = subsystems.superstructure().getElevator();
     this.wrist = subsystems.superstructure().getWrist();
     this.wristRollers = subsystems.wristRollers();
-    this.intakeDeploy = subsystems.intakeDeploy();
-    this.intakeRollers = subsystems.intakeRollers();
   }
 
   public static Supplier<GamePiece> activeGamePiece = () -> Dashboard.Sim.selectedGamePiece();
@@ -54,11 +46,8 @@ public class RobotState {
     return () -> {
       switch (Superstructure.getCurrentState()) {
         case BARGE_NET:
-          return wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE);
         case HOME:
-          return Commands.parallel(
-              intakeDeploy.applyGoalCommand(IntakeDeployGoal.HOLDING),
-              intakeRollers.applyGoalCommand(IntakeRollersGoal.EJECT));
+          return wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE);
         case REEF_L2:
         case REEF_L3:
         case REEF_L4:
@@ -89,12 +78,12 @@ public class RobotState {
 
   public OptionalInt getReefZone() {
     return AllianceFlipUtil.get(FieldConstants.BLUE_REEF, FieldConstants.RED_REEF)
-        .contains(drivetrain.getGlobalPoseEstimate().getTranslation());
+        .contains(drivetrain.getEstimatedPose().getTranslation());
   }
 
   public Rotation2d getStationAlignAngle() {
     Rotation2d angle;
-    if (drivetrain.getGlobalPoseEstimate().getY() <= FieldConstants.FIELD_DIMENSIONS.getY() / 2.0) {
+    if (drivetrain.getEstimatedPose().getY() <= FieldConstants.FIELD_DIMENSIONS.getY() / 2.0) {
       angle = AllianceFlipUtil.get(Rotation2d.fromDegrees(55), Rotation2d.fromDegrees(125));
     } else {
       angle = AllianceFlipUtil.get(Rotation2d.fromDegrees(-55), Rotation2d.fromDegrees(-125));
@@ -133,8 +122,7 @@ public class RobotState {
           ComponentVisualizer.getStage2Pose(elevator.getMeasuredHeight().getMeters()),
           ComponentVisualizer.getCarriagePose(elevator.getMeasuredHeight().getMeters()),
           ComponentVisualizer.getWristPose(
-              elevator.getMeasuredHeight().getMeters(), wrist.getAngle()),
-          ComponentVisualizer.getIntakePose(intakeDeploy.getMeasuredExtension().getMeters())
+              elevator.getMeasuredHeight().getMeters(), wrist.getAngle())
           /* ComponentVisualizer.getCoralPose(
               elevator.getMeasuredHeight().getMeters()
                   - (activeGamePiece.get() == GamePiece.CORAL ? 0 : 4),
@@ -147,14 +135,12 @@ public class RobotState {
     Logger.log(
         "Components/SetpointComponents",
         new Pose3d[] {
-          // ComponentVisualizer.getIntakePose(Rotation2d.fromRotations(intakeDeploy.getSetpoint())),
           ComponentVisualizer.getStage1Pose(elevator.getSetpointHeight().getMeters()),
           ComponentVisualizer.getStage2Pose(elevator.getSetpointHeight().getMeters()),
           ComponentVisualizer.getCarriagePose(elevator.getSetpointHeight().getMeters()),
           ComponentVisualizer.getWristPose(
               elevator.getSetpointHeight().getMeters(),
-              Rotation2d.fromRotations(wrist.getSetpoint())),
-          ComponentVisualizer.getIntakePose(intakeDeploy.getSetpointExtension().getMeters())
+              Rotation2d.fromRotations(wrist.getSetpoint()))
         });
   }
 }

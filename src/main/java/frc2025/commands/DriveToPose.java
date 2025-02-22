@@ -64,7 +64,7 @@ public class DriveToPose extends Command {
   @Override
   public void initialize() {
     firstRun = true;
-    Pose2d currentPose = drivetrain.getGlobalPoseEstimate();
+    Pose2d currentPose = drivetrain.getEstimatedPose();
     driveController.setTolerance(0.01);
     headingController.setTolerance(Units.degreesToRadians(1));
     headingController.enableContinuousInput(-Math.PI, Math.PI);
@@ -77,7 +77,7 @@ public class DriveToPose extends Command {
                     targetPose
                         .get()
                         .getTranslation()
-                        .minus(drivetrain.getGlobalPoseEstimate().getTranslation())
+                        .minus(drivetrain.getEstimatedPose().getTranslation())
                         .getAngle()
                         .unaryMinus())
                 .getX()));
@@ -88,7 +88,7 @@ public class DriveToPose extends Command {
 
   @Override
   public void execute() {
-    Pose2d currentPose = drivetrain.getGlobalPoseEstimate();
+    Pose2d currentPose = drivetrain.getEstimatedPose();
     Pose2d targetPose = this.targetPose.get();
     if (((yOverride.isPresent() && Math.abs(targetPose.minus(currentPose).getX()) < 0.1)
             || (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.1)
@@ -99,7 +99,7 @@ public class DriveToPose extends Command {
     }
 
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
-    double ffScaler = MathUtil.clamp((currentDistance - 0.2) / (0.8 - 0.2), 0.0, 1.0);
+    double ffScaler = MathUtil.clamp((currentDistance - 0.1) / (0.8 - 0.1), 0.0, 1.0);
     driveErrorAbs = currentDistance;
 
     lastSetpointTranslation =

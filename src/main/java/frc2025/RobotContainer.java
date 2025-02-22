@@ -4,11 +4,12 @@
 
 package frc2025;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc2025.RobotState.GamePiece;
 import frc2025.autonomous.AutoSelector;
 import frc2025.commands.DriveToPose;
@@ -18,11 +19,6 @@ import frc2025.subsystems.climber.Climber;
 import frc2025.subsystems.climber.ClimberConstants;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.drivetrain.generated.TunerConstants;
-import frc2025.subsystems.intake.IntakeConstants;
-import frc2025.subsystems.intake.IntakeDeploy;
-import frc2025.subsystems.intake.IntakeDeploy.IntakeDeployGoal;
-import frc2025.subsystems.intake.IntakeRollers;
-import frc2025.subsystems.intake.IntakeRollers.IntakeRollersGoal;
 import frc2025.subsystems.superstructure.Superstructure;
 import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureState;
 import frc2025.subsystems.superstructure.elevator.ElevatorConstants;
@@ -43,25 +39,19 @@ public class RobotContainer {
       Drivetrain drivetrain,
       Superstructure superstructure,
       WristRollers wristRollers,
-      IntakeDeploy intakeDeploy,
-      IntakeRollers intakeRollers,
       Climber climber) {}
 
   private static final Drivetrain drivetrain = TunerConstants.DriveTrain;
   private static final Superstructure superstructure =
       new Superstructure(ElevatorConstants.CONFIGURATION, WristConstants.WRIST_CONFIG);
   private static final WristRollers wristRollers = new WristRollers(WristConstants.ROLLERS_CONFIG);
-  private static final IntakeDeploy intakeDeploy = new IntakeDeploy(IntakeConstants.DEPLOY_CONFIG);
-  private static final IntakeRollers intakeRollers =
-      new IntakeRollers(IntakeConstants.ROLLERS_CONFIG);
   private static final Climber climber = new Climber(ClimberConstants.CONFIGURATION);
 
   private static final VisionManager visionManager = new VisionManager(drivetrain);
 
   @Getter
   private final Subsystems subsystems =
-      new Subsystems(
-          drivetrain, superstructure, wristRollers, intakeDeploy, intakeRollers, climber);
+      new Subsystems(drivetrain, superstructure, wristRollers, climber);
 
   @Getter private final RobotState robotState = new RobotState(subsystems);
 
@@ -76,7 +66,7 @@ public class RobotContainer {
                       Controlboard.getTranslation(),
                       () ->
                           drivetrain
-                                  .getGlobalPoseEstimate()
+                                  .getEstimatedPose()
                                   .getTranslation()
                                   .getDistance(robotState.getTargetBranchPose().getTranslation())
                               < 1.5)
@@ -92,7 +82,7 @@ public class RobotContainer {
                   Controlboard.getTranslation(),
                   () ->
                       drivetrain
-                              .getGlobalPoseEstimate()
+                              .getEstimatedPose()
                               .getTranslation()
                               .getDistance(robotState.getTargetBranchPose().getTranslation())
                           < 1.5),
@@ -113,13 +103,9 @@ public class RobotContainer {
       Commands.defer(
           robotState.getScoreCommand(), robotState.getScoreCommand().get().getRequirements());
 
-  private final BooleanSupplier hasCoral =
-      () -> Dashboard.Sim.selectedGamePiece() == GamePiece.CORAL;
-  private final BooleanSupplier hasAlgae =
-      () -> Dashboard.Sim.selectedGamePiece() == GamePiece.ALGAE;
-
   public RobotContainer() {
     configureBindings();
+    configureManualOverrides();
     configureDefaultCommands();
 
     autoSelector = new AutoSelector(this);
@@ -127,7 +113,9 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    Controlboard.driveController.back().onTrue(Commands.runOnce(() -> drivetrain.resetRotation(AllianceFlipUtil.getFwdHeading())));
+    Controlboard.driveController
+        .back()
+        .onTrue(Commands.runOnce(() -> drivetrain.resetRotation(AllianceFlipUtil.getFwdHeading())));
 
     // Auto aligning controls
     Controlboard.alignToReef()
@@ -147,7 +135,7 @@ public class RobotContainer {
                 Commands.sequence(
                     Commands.waitUntil(
                         () ->
-                            drivetrain.getGlobalPoseEstimate().getX()
+                            drivetrain.getEstimatedPose().getX()
                                 > AllianceFlipUtil.get(
                                         FieldConstants.BLUE_BARGE_ALIGN
                                             .getTranslation()
@@ -160,19 +148,16 @@ public class RobotContainer {
 
     // Reef scoring/clearing controls
     Controlboard.goToLevel4()
-        .and(hasCoral)
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L4).get())
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(branchAlign);
 
     Controlboard.goToLevel3()
-        .and(hasCoral)
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L3).get())
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(branchAlign);
 
     Controlboard.goToLevel2()
-        .and(hasCoral)
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L2).get())
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(branchAlign);
@@ -196,33 +181,30 @@ public class RobotContainer {
         .whileTrue(algaeAlign);
 
     // Intake controls
-    /* Controlboard.stationIntake()
+    Controlboard.stationIntake()
         .whileTrue(
             Commands.parallel(
                     stationAlign,
                     applyTargetStateFactory.apply(SuperstructureState.HOME).get(),
-                    wristRollers.applyGoalCommand(WristRollersGoal.INTAKE))
-                .finallyDo(() -> Dashboard.Sim.setGamePiece(GamePiece.CORAL)));
+                    wristRollers.applyGoalCommand(WristRollersGoal.INTAKE)));
 
     Controlboard.groundIntake()
         .whileTrue(
             Commands.parallel(
-                intakeDeploy.applyGoalCommand(IntakeDeployGoal.MAX),
-                intakeRollers.applyGoalCommand(IntakeRollersGoal.INTAKE))); */
+                applyTargetStateFactory.apply(SuperstructureState.INTAKE).get(),
+                wristRollers.applyGoalCommand(WristRollersGoal.INTAKE)));
 
     Controlboard.lockToProcessor()
         .whileTrue(
-            Commands.parallel(
-                drivetrain.applyRequest(
-                    () ->
-                        drivetrain
-                            .getHelper()
-                            .getFacingAngle(
-                                Controlboard.getTranslation().get(),
-                                AllianceFlipUtil.get(
-                                    Rotation2d.kCW_90deg, Rotation2d.kCCW_90deg)))));
+            drivetrain.applyRequest(
+                () ->
+                    drivetrain
+                        .getHelper()
+                        .getFacingAngle(
+                            Controlboard.getTranslation().get(),
+                            AllianceFlipUtil.get(Rotation2d.kCW_90deg, Rotation2d.kCCW_90deg))));
 
-    Controlboard.score().whileTrue(wristRollers.applyVoltageCommand(() -> -6.0));//.whileTrue(scoreFactory);
+    Controlboard.score().whileTrue(scoreFactory);
   }
 
   private void configureDefaultCommands() {
@@ -233,9 +215,11 @@ public class RobotContainer {
                     Controlboard.getFieldCentric().getAsBoolean()
                         ? drivetrain
                             .getHelper()
-                            .getFieldCentric(
+                            .getPointingAt(
                                 Controlboard.getTranslation().get(),
-                                Controlboard.getRotation().getAsDouble())
+                                AllianceFlipUtil.get(
+                                    FieldConstants.BLUE_REEF_CENTER,
+                                    FieldConstants.RED_REEF_CENTER))
                         : drivetrain
                             .getHelper()
                             .getRobotCentric(
@@ -245,33 +229,31 @@ public class RobotContainer {
                                 Controlboard.getRotation().getAsDouble()))
             .beforeStarting(() -> drivetrain.getHelper().setLastAngle(drivetrain.getHeading())));
 
-    //superstructure.setDefaultCommand(applyTargetStateFactory.apply(SuperstructureState.HOME).get());
+    // superstructure.setDefaultCommand(applyTargetStateFactory.apply(SuperstructureState.HOME).get());
+  }
 
-    climber.setDefaultCommand(climber.applyVoltageCommand(() ->
-    (-Controlboard.driveController.getRightTriggerAxis()
-            + Controlboard.driveController.getLeftTriggerAxis())
-        * 9.0));
+  public void configureManualOverrides() {
+    new Trigger(() -> Dashboard.manualMode.get())
+        .whileTrue(
+            Commands.parallel(
+                    superstructure
+                        .getElevator()
+                        .applyVoltageCommand(() -> Dashboard.elevatorVoltage.get()),
+                    superstructure
+                        .getWrist()
+                        .applyVoltageCommand(() -> Dashboard.wristVoltage.get()),
+                    climber.applyVoltageCommand(() -> Dashboard.climberVoltage.get()),
+                    wristRollers.applyVoltageCommand(() -> Dashboard.wristRollersVoltage.get()))
+                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming))
+        .onFalse(Commands.runOnce(() -> Dashboard.resetVoltageOverrides()));
 
-    superstructure
-        .getElevator()
-        .setDefaultCommand(
-            superstructure
-                .getElevator()
-                .applyVoltageCommand(
-                    () ->
-                        (-MathUtil.applyDeadband(Controlboard.driveController.getRightY(), 0.15))
-                            * 12.0));
-
-    /* superstructure
-        .getWrist()
-        .setDefaultCommand(
-            superstructure
-                .getWrist()
-                .applyVoltageCommand(
-                    () ->
-                        (-Controlboard.driveController.getRightTriggerAxis()
-                                + Controlboard.driveController.getLeftTriggerAxis())
-                            * 3.0)); */
+    new Trigger(() -> Dashboard.resetVoltage.get())
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  Dashboard.resetVoltageOverrides();
+                  Dashboard.resetVoltage.set(false);
+                }));
   }
 
   public Command getAutonomousCommand() {

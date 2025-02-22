@@ -2,18 +2,16 @@ package frc2025.subsystems.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc2025.Robot;
@@ -85,7 +83,6 @@ public class VisionManager extends SubsystemBase {
   private PhotonCameraSim stationElevatorSim;
   private PhotonCameraSim[] simCameras;
   private VisionSystemSim visionSim;
-  private Notifier simThread = null;
 
   private final Drivetrain drivetrain;
   private final Limelight[] limelights =
@@ -144,18 +141,8 @@ public class VisionManager extends SubsystemBase {
         camera.enableProcessedStream(true);
         camera.enableDrawWireframe(false);
       }
-
-      /* simThread =
-          new Notifier(
-              () -> {
-
-              });
-      simThread.setName("Vision Thread");
-      simThread.startPeriodic(Constants.SIM_PERIOD_SEC); */
     }
   }
-
-  public record VisionMeasurement(PoseEstimate estimate, Matrix<N3, N1> stdDevs) {}
 
   private void addGlobalPoseEstimate(Limelight limelight) {
     LimelightHelpers.SetRobotOrientation(
@@ -172,15 +159,16 @@ public class VisionManager extends SubsystemBase {
 
     if (isValidEstimate(mtEstimate)) {
       Logger.log("Vision/" + limelight.name() + "/MegaTagEstimate", mtEstimate.pose);
-      /* if (DriverStation.isDisabled()) {
-        drivetrain.resetPose(mtEstimate.pose);
-      } */
+      if (DriverStation.isDisabled()) {
+        drivetrain.addVisionMeasurement(
+            mt2Estimate.pose, mt2Estimate.timestampSeconds, VecBuilder.fill(0.2, 0.2, 0.2));
+      }
     }
 
-    if (isValidEstimate(mt2Estimate)) {
+    if (isValidEstimate(mt2Estimate) && !DriverStation.isDisabled()) {
       Logger.log("Vision/" + limelight.name() + "/MegaTag2Estimate", mt2Estimate.pose);
       double xyStds = Math.pow(0.65, mt2Estimate.tagCount) * mt2Estimate.avgTagDist * 2;
-      drivetrain.globalPoseEstimate.addVisionMeasurement(
+      drivetrain.addVisionMeasurement(
           mt2Estimate.pose, mt2Estimate.timestampSeconds, VecBuilder.fill(xyStds, xyStds, 9999999));
       Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);
     }
@@ -244,9 +232,9 @@ public class VisionManager extends SubsystemBase {
     addSpecializedPoseEstimate(Limelights.REEF_RIGHT); */
   }
 
-  /* @Override
+  @Override
   public void simulationPeriodic() {
-    visionSim.update(drivetrain.getOdometryPose());
+    visionSim.update(drivetrain.getEstimatedPose());
     for (int i = 0; i < 4; i++) {
       for (PhotonPipelineResult result : cameras[i].getAllUnreadResults()) {
         writeToTable(
@@ -255,7 +243,7 @@ public class VisionManager extends SubsystemBase {
             GeomUtil.pose3dToTransform3d(limelights[i].relativePosition()).inverse());
       }
     }
-  } */
+  }
 
   private void writeToTable(
       PhotonPipelineResult result, NetworkTable table, Transform3d cameraToRobot) {
@@ -324,6 +312,6 @@ public class VisionManager extends SubsystemBase {
 
   public OptionalInt getReefZone() {
     return AllianceFlipUtil.get(FieldConstants.BLUE_REEF, FieldConstants.RED_REEF)
-        .contains(drivetrain.getGlobalPoseEstimate().getTranslation());
+        .contains(drivetrain.getEstimatedPose().getTranslation());
   }
 }
