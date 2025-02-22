@@ -4,6 +4,7 @@
 
 package frc2025;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -126,6 +127,8 @@ public class RobotContainer {
 
   private void configureBindings() {
 
+    Controlboard.driveController.back().onTrue(Commands.runOnce(() -> drivetrain.resetRotation(AllianceFlipUtil.getFwdHeading())));
+
     // Auto aligning controls
     Controlboard.alignToReef()
         .and(() -> robotState.getReefZone().isPresent())
@@ -193,7 +196,7 @@ public class RobotContainer {
         .whileTrue(algaeAlign);
 
     // Intake controls
-    Controlboard.stationIntake()
+    /* Controlboard.stationIntake()
         .whileTrue(
             Commands.parallel(
                     stationAlign,
@@ -205,7 +208,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.parallel(
                 intakeDeploy.applyGoalCommand(IntakeDeployGoal.MAX),
-                intakeRollers.applyGoalCommand(IntakeRollersGoal.INTAKE)));
+                intakeRollers.applyGoalCommand(IntakeRollersGoal.INTAKE))); */
 
     Controlboard.lockToProcessor()
         .whileTrue(
@@ -219,7 +222,7 @@ public class RobotContainer {
                                 AllianceFlipUtil.get(
                                     Rotation2d.kCW_90deg, Rotation2d.kCCW_90deg)))));
 
-    Controlboard.score().whileTrue(scoreFactory);
+    Controlboard.score().whileTrue(wristRollers.applyVoltageCommand(() -> -6.0));//.whileTrue(scoreFactory);
   }
 
   private void configureDefaultCommands() {
@@ -230,7 +233,7 @@ public class RobotContainer {
                     Controlboard.getFieldCentric().getAsBoolean()
                         ? drivetrain
                             .getHelper()
-                            .getHeadingCorrectedFieldCentric(
+                            .getFieldCentric(
                                 Controlboard.getTranslation().get(),
                                 Controlboard.getRotation().getAsDouble())
                         : drivetrain
@@ -242,9 +245,14 @@ public class RobotContainer {
                                 Controlboard.getRotation().getAsDouble()))
             .beforeStarting(() -> drivetrain.getHelper().setLastAngle(drivetrain.getHeading())));
 
-    superstructure.setDefaultCommand(applyTargetStateFactory.apply(SuperstructureState.HOME).get());
+    //superstructure.setDefaultCommand(applyTargetStateFactory.apply(SuperstructureState.HOME).get());
 
-    /* superstructure
+    climber.setDefaultCommand(climber.applyVoltageCommand(() ->
+    (-Controlboard.driveController.getRightTriggerAxis()
+            + Controlboard.driveController.getLeftTriggerAxis())
+        * 9.0));
+
+    superstructure
         .getElevator()
         .setDefaultCommand(
             superstructure
@@ -254,7 +262,7 @@ public class RobotContainer {
                         (-MathUtil.applyDeadband(Controlboard.driveController.getRightY(), 0.15))
                             * 12.0));
 
-    superstructure
+    /* superstructure
         .getWrist()
         .setDefaultCommand(
             superstructure
@@ -263,7 +271,7 @@ public class RobotContainer {
                     () ->
                         (-Controlboard.driveController.getRightTriggerAxis()
                                 + Controlboard.driveController.getLeftTriggerAxis())
-                            * 24.0)); */
+                            * 3.0)); */
   }
 
   public Command getAutonomousCommand() {

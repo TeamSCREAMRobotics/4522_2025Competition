@@ -83,7 +83,7 @@ public class Controlboard {
 
   public static DoubleSupplier getRotation() {
     return () ->
-        applyPower(-MathUtil.applyDeadband(driveController.getRightX(), STICK_DEADBAND), 3)
+        -applyPower(-MathUtil.applyDeadband(driveController.getRightX(), STICK_DEADBAND), 3)
             * DrivetrainConstants.MAX_ANGULAR_SPEED_RADS;
   }
 

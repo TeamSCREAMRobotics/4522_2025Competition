@@ -3,15 +3,12 @@ package frc2025.subsystems.vision;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -38,8 +35,6 @@ import util.AllianceFlipUtil;
 import util.GeomUtil;
 import vision.LimelightHelpers;
 import vision.LimelightHelpers.PoseEstimate;
-import vision.LimelightHelpers.RawFiducial;
-import vision.LimelightVision;
 import vision.LimelightVision.Limelight;
 
 public class VisionManager extends SubsystemBase {
@@ -191,7 +186,7 @@ public class VisionManager extends SubsystemBase {
     }
   }
 
-  private void addSpecializedPoseEstimate(Limelight limelight) {
+  /*   private void addSpecializedPoseEstimate(Limelight limelight) {
     if (getReefZone().isEmpty()) {
       return;
     }
@@ -229,7 +224,7 @@ public class VisionManager extends SubsystemBase {
                   Timer.getFPGATimestamp() - (LimelightVision.getLatency(limelight) / 1000.0),
                   VecBuilder.fill(10.0, 10.0, 999999999));
             });
-  }
+  } */
 
   private boolean isValidEstimate(PoseEstimate estimate) {
     return estimate != null

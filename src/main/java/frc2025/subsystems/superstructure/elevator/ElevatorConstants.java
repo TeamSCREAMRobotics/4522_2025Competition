@@ -53,7 +53,7 @@ public final class ElevatorConstants {
     CONFIGURATION.name = "Elevator";
 
     CONFIGURATION.codeEnabled = true;
-    CONFIGURATION.logTelemetry = true;
+    CONFIGURATION.logTelemetry = false;
     CONFIGURATION.debugMode = false;
 
     CONFIGURATION.simConstants =
@@ -79,8 +79,8 @@ public final class ElevatorConstants {
     CONFIGURATION.sensorToMechRatio = REDUCTION;
     CONFIGURATION.enableSupplyCurrentLimit = true;
     CONFIGURATION.supplyCurrentLimit = 40;
-    CONFIGURATION.minUnitsLimit = ENCODER_MIN;
-    CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
+    //CONFIGURATION.minUnitsLimit = ENCODER_MIN;
+    //CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
     CONFIGURATION.cruiseVelocity = 3.0 * REDUCTION;
     CONFIGURATION.acceleration = CONFIGURATION.cruiseVelocity * 0.8;
     CONFIGURATION.slot0 =

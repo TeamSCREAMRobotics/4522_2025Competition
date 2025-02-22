@@ -45,7 +45,7 @@ public class IntakeConstants {
   static {
     DEPLOY_CONFIG.name = "IntakeDeploy";
 
-    DEPLOY_CONFIG.codeEnabled = true;
+    DEPLOY_CONFIG.codeEnabled = false;
     DEPLOY_CONFIG.logTelemetry = false;
 
     DEPLOY_CONFIG.simConstants =

@@ -1,9 +1,16 @@
 package frc2025.subsystems.climber;
 
 import drivers.TalonFXSubsystem;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+
 import java.util.function.DoubleSupplier;
 
 public class Climber extends TalonFXSubsystem {
+
+  Servo servo = new Servo(0);
+  // AnalogOutput servo = new AnalogOutput(0);
 
   public Climber(TalonFXSubsystemConfiguration config) {
     super(config, defaultGoal);
@@ -34,5 +41,9 @@ public class Climber extends TalonFXSubsystem {
     public DoubleSupplier target() {
       return () -> targetRotations;
     }
+  }
+
+  public Command retractServo(){
+    return Commands.runOnce(() -> servo.set(0.0));
   }
 }

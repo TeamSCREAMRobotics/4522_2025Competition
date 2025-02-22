@@ -47,7 +47,7 @@ public class WristConstants {
     WRIST_CONFIG.name = "Wrist";
 
     WRIST_CONFIG.codeEnabled = true;
-    WRIST_CONFIG.logTelemetry = true;
+    WRIST_CONFIG.logTelemetry = false;
     WRIST_CONFIG.debugMode = false;
 
     WRIST_CONFIG.simConstants =
@@ -59,7 +59,7 @@ public class WristConstants {
             true);
 
     WRIST_CONFIG.masterConstants =
-        new TalonFXConstants(new CANDevice(12), InvertedValue.CounterClockwise_Positive);
+        new TalonFXConstants(new CANDevice(10), InvertedValue.CounterClockwise_Positive);
 
     CANcoderConfiguration config = new CANcoderConfiguration();
     config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.625;
@@ -90,7 +90,7 @@ public class WristConstants {
     ROLLERS_CONFIG.logTelemetry = false;
 
     ROLLERS_CONFIG.masterConstants =
-        new TalonFXConstants(new CANDevice(13), InvertedValue.CounterClockwise_Positive);
+        new TalonFXConstants(new CANDevice(11), InvertedValue.CounterClockwise_Positive);
 
     ROLLERS_CONFIG.enableSupplyCurrentLimit = true;
     ROLLERS_CONFIG.supplyCurrentLimit = 20;

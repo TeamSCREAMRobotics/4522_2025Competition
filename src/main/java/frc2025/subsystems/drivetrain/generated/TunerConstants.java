@@ -40,16 +40,16 @@ public class TunerConstants {
       new Slot0Configs()
           .withKP(75) // 100
           .withKI(0)
-          .withKD(0) // 0.2
-          .withKS(0)
-          .withKV(0) // 1.5
+          .withKD(0.5) // 0.2
+          .withKS(0.1)
+          .withKV(2.33) // 1.5
           .withKA(0)
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
   private static final Slot0Configs DRIVE_GAINS =
       new Slot0Configs()
-          .withKP(0.3) // 0.12
+          .withKP(0.1) // 0.12
           .withKI(0)
           .withKD(0) // 3
           .withKS(0)
@@ -81,10 +81,10 @@ public class TunerConstants {
 
   // Every 1 rotation of the azimuth results in COUPLE_RATIO drive motor turns;
   // This may need to be tuned to your individual robot
-  private static final double COUPLE_RATIO = 3.5714285714285716;
+  private static final double COUPLE_RATIO = 3.125;
 
-  private static final double DRIVE_GEAR_RATIO = 6.746031746031747;
-  private static final double STEER_GEAR_RATIO = 21.428571428571427;
+  private static final double DRIVE_GEAR_RATIO = 7.125;
+  private static final double STEER_GEAR_RATIO = 18.75;
   private static final Distance WHEEL_RADIUS = Inches.of(2); // inches
 
   private static final boolean STEER_INVERTED = true;
@@ -166,22 +166,26 @@ public class TunerConstants {
   private static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       MODULE_0 =
-          CONSTANT_FACTORY.createModuleConstants(0, 1, 0, 0.0, 0, 0, false, STEER_INVERTED, false);
+          CONSTANT_FACTORY.createModuleConstants(
+              0, 1, 0, -0.409912109375, 0, 0, true, STEER_INVERTED, false);
 
   private static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       MODULE_1 =
-          CONSTANT_FACTORY.createModuleConstants(2, 3, 1, 0.0, 0, 0, false, STEER_INVERTED, false);
+          CONSTANT_FACTORY.createModuleConstants(
+              2, 3, 1, 0.019775390625, 0, 0, false, STEER_INVERTED, false);
 
   private static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       MODULE_2 =
-          CONSTANT_FACTORY.createModuleConstants(4, 5, 2, 0.0, 0, 0, false, STEER_INVERTED, false);
+          CONSTANT_FACTORY.createModuleConstants(
+              4, 5, 2, 0.368408203125, 0, 0, true, STEER_INVERTED, false);
 
   private static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       MODULE_3 =
-          CONSTANT_FACTORY.createModuleConstants(6, 7, 3, 0.0, 0, 0, false, STEER_INVERTED, false);
+          CONSTANT_FACTORY.createModuleConstants(
+              6, 7, 3, -0.29736328125, 0, 0, false, STEER_INVERTED, false);
 
   private static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
