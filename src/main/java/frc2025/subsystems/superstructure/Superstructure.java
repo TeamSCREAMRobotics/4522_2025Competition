@@ -59,6 +59,6 @@ public class Superstructure extends SubsystemBase {
           transition.addRequirements(this, wrist, elevator);
           return transition;
         };
-    return command.get().beforeStarting(() -> currentState = state);
+    return command.get().beforeStarting(() -> currentState = state).withName("ApplyTargetState");
   }
 }

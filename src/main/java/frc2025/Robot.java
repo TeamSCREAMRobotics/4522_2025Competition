@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc2025.logging.Logger;
+import frc2025.subsystems.vision.VisionManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class Robot extends TimedRobot {
   private final RobotContainer robotContainer;
 
   public Robot() {
+    super(0.03);
     robotContainer = new RobotContainer();
 
     Logger.setOptions(
@@ -34,6 +36,8 @@ public class Robot extends TimedRobot {
     Logger.setEnabled(true);
 
     CommandScheduler.getInstance().onCommandInitialize((command) -> allCommands.add(command));
+    CommandScheduler.getInstance().onCommandFinish((command) -> allCommands.remove(command));
+    CommandScheduler.getInstance().onCommandInterrupt((command) -> allCommands.remove(command));
   }
 
   @Override
@@ -58,6 +62,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    VisionManager.hasEnabled = true;
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     if (autonomousCommand != null) {
@@ -73,6 +78,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    VisionManager.hasEnabled = true;
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }

@@ -23,7 +23,7 @@ public class Elevator extends TalonFXSubsystem {
     L4(Length.fromInches(59.85)),
     CLEAR_ALGAE_L1(Length.fromInches(9.1)),
     CLEAR_ALGAE_L2(Length.fromInches(24.611)),
-    BARGE(ElevatorConstants.MAX_HEIGHT),
+    BARGE(ElevatorConstants.MAX_HEIGHT.minus(Length.fromInches(8.0))),
     MAX(ElevatorConstants.MAX_HEIGHT);
 
     public DoubleSupplier targetRotations;
@@ -70,6 +70,10 @@ public class Elevator extends TalonFXSubsystem {
     return Length.fromRotations(getSetpoint(), ElevatorConstants.PULLEY_CIRCUMFERENCE);
   }
 
+  private double rotationsToHeightInches(double rotations) {
+    return rotations * (2.256 * Math.PI);
+  }
+
   public static double heightToRotations(Length height) {
     return Conversions.linearDistanceToRotations(height, ElevatorConstants.PULLEY_CIRCUMFERENCE);
   }
@@ -85,12 +89,8 @@ public class Elevator extends TalonFXSubsystem {
   @Override
   public void periodic() {
     super.periodic();
-    Logger.log(logPrefix + "Height", getMeasuredHeight().getInches());
-    Logger.log(
-        logPrefix + "AbsHeight",
-        getMeasuredHeight().plus(ElevatorConstants.MIN_HEIGHT_FROM_FLOOR).getInches());
-    Logger.log(
-        logPrefix + "ErrorHeight",
-        Length.fromRotations(getError(), ElevatorConstants.PULLEY_CIRCUMFERENCE).getInches());
+    Logger.log(logPrefix + "Height", rotationsToHeightInches(getPosition()));
+    Logger.log(logPrefix + "AbsHeight", rotationsToHeightInches(getPosition()) + 10.7125);
+    Logger.log(logPrefix + "ErrorHeight", rotationsToHeightInches(getError()));
   }
 }

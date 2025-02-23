@@ -23,7 +23,7 @@ public class FieldConstants {
   public static final Length BRANCH_TO_REEF_EDGE = Length.fromInches(2.111249);
 
   public static final Pose2d BLUE_BARGE_ALIGN =
-      new Pose2d(7.5, FIELD_DIMENSIONS.getY() * 0.75, Rotation2d.fromDegrees(0));
+      new Pose2d(7.55, FIELD_DIMENSIONS.getY() * 0.75, Rotation2d.fromDegrees(0));
   public static final Pose2d RED_BARGE_ALIGN =
       new Pose2d(
           FIELD_DIMENSIONS.getX() - 7.5,
@@ -79,7 +79,9 @@ public class FieldConstants {
       new Translation2d(Units.inchesToMeters(30.738196), -Units.inchesToMeters(6.633604));
 
   public static final Translation2d BRANCH_TO_ROBOT =
-      new Translation2d(Units.inchesToMeters(17.307500 + BRANCH_TO_REEF_EDGE.getInches()), 0);
+      new Translation2d(
+          Units.inchesToMeters(17.307500 + BRANCH_TO_REEF_EDGE.getInches()),
+          -Units.inchesToMeters(1));
 
   public static final Translation2d SCORE_LOCATION_1 =
       REEF_CENTER_TO_TOP_BRANCH.plus(BRANCH_TO_ROBOT);

@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc2025.autonomous.AutoSelector;
 import frc2025.commands.DriveToPose;
-import frc2025.commands.Feed;
 import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard;
 import frc2025.subsystems.climber.Climber;
@@ -61,7 +60,7 @@ public class RobotContainer {
       Commands.defer(
           () ->
               new DriveToPose(
-                      drivetrain,
+                      subsystems,
                       () -> robotState.getTargetBranchPose(),
                       Controlboard.getTranslation(),
                       () ->
@@ -77,7 +76,7 @@ public class RobotContainer {
       Commands.defer(
           () ->
               new DriveToPose(
-                  drivetrain,
+                  subsystems,
                   () -> robotState.getTargetAlgaePose(),
                   Controlboard.getTranslation(),
                   () ->
@@ -108,6 +107,8 @@ public class RobotContainer {
     configureManualOverrides();
     configureDefaultCommands();
 
+    Controlboard.elevHeightSup = () -> superstructure.getElevator().getMeasuredHeight().getInches();
+
     autoSelector = new AutoSelector(this);
   }
 
@@ -135,7 +136,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.parallel(
                 new DriveToPose(
-                    drivetrain,
+                    subsystems,
                     () ->
                         AllianceFlipUtil.get(
                             FieldConstants.BLUE_BARGE_ALIGN, FieldConstants.RED_BARGE_ALIGN),
@@ -189,8 +190,8 @@ public class RobotContainer {
     // Intake controls
     Controlboard.stationIntake()
         .whileTrue(
-            Commands.deadline(
-                new Feed(wristRollers),
+            Commands.parallel(
+                wristRollers.feed(),
                 stationAlign,
                 applyTargetStateFactory.apply(SuperstructureState.HOME).get()));
 
@@ -219,11 +220,11 @@ public class RobotContainer {
             .applyRequest(
                 () ->
                     Controlboard.getFieldCentric().getAsBoolean()
-                            ? drivetrain
-                                .getHelper()
-                                .getHeadingCorrectedFieldCentric(
-                                    Controlboard.getTranslation().get(),
-                                    Controlboard.getRotation().getAsDouble())
+                        ? drivetrain
+                            .getHelper()
+                            .getHeadingCorrectedFieldCentric(
+                                Controlboard.getTranslation().get(),
+                                Controlboard.getRotation().getAsDouble())
                         : drivetrain
                             .getHelper()
                             .getRobotCentric(

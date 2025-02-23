@@ -9,9 +9,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc2025.RobotContainer.Subsystems;
 import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.drivetrain.DrivetrainConstants;
+import frc2025.subsystems.superstructure.elevator.Elevator;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -21,6 +23,7 @@ import util.GeomUtil;
 public class DriveToPose extends Command {
 
   private final Drivetrain drivetrain;
+  private final Elevator elevator;
   private final Supplier<Pose2d> targetPose;
 
   private final ProfiledPIDController driveController =
@@ -36,38 +39,39 @@ public class DriveToPose extends Command {
 
   private boolean firstRun;
 
-  public DriveToPose(Drivetrain drivetrain, Supplier<Pose2d> targetPose) {
-    this.drivetrain = drivetrain;
+  public DriveToPose(Subsystems subsystems, Supplier<Pose2d> targetPose) {
+    this.drivetrain = subsystems.drivetrain();
+    this.elevator = subsystems.superstructure().getElevator();
     this.targetPose = targetPose;
     addRequirements(drivetrain);
     setName("DriveToPose");
+    driveController.setTolerance(0.01);
+    headingController.setTolerance(Units.degreesToRadians(1));
+    headingController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
-  public DriveToPose(Drivetrain drivetrain, Supplier<Pose2d> targetPose, DoubleSupplier yOverride) {
-    this(drivetrain, targetPose);
+  public DriveToPose(Subsystems subsystems, Supplier<Pose2d> targetPose, DoubleSupplier yOverride) {
+    this(subsystems, targetPose);
     this.yOverride = Optional.of(yOverride);
   }
 
   public DriveToPose(
-      Drivetrain drivetrain,
+      Subsystems subsystems,
       Supplier<Pose2d> targetPose,
       Supplier<Translation2d> translationOverride,
       BooleanSupplier useSpecializedPoseEstimate) {
-    this(drivetrain, targetPose);
+    this(subsystems, targetPose);
     this.translationOverride = Optional.of(translationOverride);
   }
 
-  public DriveToPose(Drivetrain drivetrain, Pose2d targetPose) {
-    this(drivetrain, () -> targetPose);
+  public DriveToPose(Subsystems subsystems, Pose2d targetPose) {
+    this(subsystems, () -> targetPose);
   }
 
   @Override
   public void initialize() {
     firstRun = true;
     Pose2d currentPose = drivetrain.getEstimatedPose();
-    driveController.setTolerance(0.01);
-    headingController.setTolerance(Units.degreesToRadians(1));
-    headingController.enableContinuousInput(-Math.PI, Math.PI);
     driveController.reset(
         currentPose.getTranslation().getDistance(targetPose.get().getTranslation()),
         Math.min(
@@ -90,8 +94,8 @@ public class DriveToPose extends Command {
   public void execute() {
     Pose2d currentPose = drivetrain.getEstimatedPose();
     Pose2d targetPose = this.targetPose.get();
-    if (((yOverride.isPresent() && Math.abs(targetPose.minus(currentPose).getX()) < 0.1)
-            || (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.1)
+    if (((yOverride.isPresent() && Math.abs(targetPose.minus(currentPose).getX()) < 0.03)
+            || (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.03)
                 && !(translationOverride.isPresent()
                     && translationOverride.get().get().getNorm() > 0.5))
         && firstRun) {
@@ -99,7 +103,15 @@ public class DriveToPose extends Command {
     }
 
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
-    double ffScaler = MathUtil.clamp((currentDistance - 0.2) / (0.8 - 0.2), 0.0, 1.0);
+    double ffScalar = MathUtil.clamp((currentDistance - 0.2) / (0.8 - 0.2), 0.0, 1.0);
+    double elevHeightScalar;
+    if (elevator.getMeasuredHeight().getInches() == 0.0) {
+      elevHeightScalar = 1.0;
+    } else {
+      elevHeightScalar =
+          MathUtil.clamp(((1.0 / elevator.getMeasuredHeight().getInches()) * 25.0), 0.0, 1.0);
+    }
+
     driveErrorAbs = currentDistance;
 
     lastSetpointTranslation =
@@ -114,8 +126,8 @@ public class DriveToPose extends Command {
         lastSetpointTranslation.getDistance(targetPose.getTranslation()),
         driveController.getSetpoint().velocity);
     double driveVelocity =
-        driveController.getSetpoint().velocity * ffScaler
-            + driveController.calculate(driveErrorAbs, 0.0);
+        driveController.getSetpoint().velocity * ffScalar
+            + driveController.calculate(driveErrorAbs, 0.0) * elevHeightScalar;
     double headingVelocity =
         headingController.calculate(
             currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());

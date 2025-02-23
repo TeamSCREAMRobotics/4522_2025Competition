@@ -29,6 +29,8 @@ public class Controlboard {
   public static final double TRIGGER_DEADBAND = 0.1;
   public static final Rotation2d SNAP_TO_POLE_THRESHOLD = Rotation2d.fromDegrees(4.0);
 
+  public static DoubleSupplier elevHeightSup;
+
   public static boolean fieldCentric = true;
   public static boolean leftSide = true;
 
@@ -64,7 +66,8 @@ public class Controlboard {
                         applyPower(
                             -MathUtil.applyDeadband(driveController.getLeftX(), STICK_DEADBAND), 2))
                     .times(DrivetrainConstants.MAX_SPEED))
-            .times(AllianceFlipUtil.getDirectionCoefficient());
+            .times(AllianceFlipUtil.getDirectionCoefficient())
+            .times(MathUtil.clamp((1.0 / elevHeightSup.getAsDouble()) * 20.0, 0, 1));
   }
 
   public static Translation2d snapTranslationToPole(Translation2d translation) {

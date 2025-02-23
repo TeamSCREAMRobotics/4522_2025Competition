@@ -118,8 +118,8 @@ public class TunerConstants {
     STEER_CONFIG.CurrentLimits.StatorCurrentLimit = 60;
     STEER_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
     STEER_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
-    STEER_CONFIG.MotionMagic.MotionMagicAcceleration = 10;
-    STEER_CONFIG.MotionMagic.MotionMagicCruiseVelocity = 50;
+    STEER_CONFIG.MotionMagic.MotionMagicAcceleration = 1;
+    STEER_CONFIG.MotionMagic.MotionMagicCruiseVelocity = 2;
   }
 
   private static final Pigeon2Configuration PIGEON_CONFIG = new Pigeon2Configuration();

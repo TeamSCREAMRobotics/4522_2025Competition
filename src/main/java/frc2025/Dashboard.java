@@ -23,7 +23,7 @@ public class Dashboard {
 
   public static DashboardBoolean disableVisionUpdates;
 
-  public static DashboardBoolean disableLockToReef;
+  public static DashboardBoolean disableAutoFeatures;
 
   public static DashboardBoolean zeroElevator;
 
@@ -43,7 +43,7 @@ public class Dashboard {
 
     disableVisionUpdates = new DashboardBoolean(overrides, "Disable Vision Updates", false);
 
-    disableLockToReef = new DashboardBoolean(overrides, "Disable Lock To Reef", false);
+    disableAutoFeatures = new DashboardBoolean(overrides, "Disable Auto Features", false);
 
     zeroElevator = new DashboardBoolean(overrides, "Zero Elevator", false);
   }

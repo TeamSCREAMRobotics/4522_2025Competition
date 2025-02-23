@@ -159,6 +159,12 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   @Override
+  public void resetRotation(Rotation2d rotation) {
+    helper.setLastAngle(rotation);
+    super.resetRotation(rotation);
+  }
+
+  @Override
   public void addVisionMeasurement(
       Pose2d visionRobotPoseMeters,
       double timestampSeconds,

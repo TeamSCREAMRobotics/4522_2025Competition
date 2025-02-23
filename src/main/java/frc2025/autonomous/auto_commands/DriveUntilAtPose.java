@@ -12,7 +12,7 @@ public class DriveUntilAtPose extends DriveToPose {
   private final Pose2d targetPose;
 
   public DriveUntilAtPose(Pose2d pose, RobotContainer container) {
-    super(container.getSubsystems().drivetrain(), pose);
+    super(container.getSubsystems(), pose);
     drivetrain = container.getSubsystems().drivetrain();
     targetPose = pose;
     addRequirements(drivetrain);

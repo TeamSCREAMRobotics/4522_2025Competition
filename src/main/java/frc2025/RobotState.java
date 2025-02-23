@@ -53,7 +53,7 @@ public class RobotState {
         case REEF_L4:
           return wristRollers
               .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
-              .finallyDo(() -> WristRollers.hasGamePiece = false);
+              .finallyDo(() -> WristRollers.resetBeam());
         default:
           return Commands.none();
       }
@@ -95,23 +95,23 @@ public class RobotState {
   }
 
   public void logTelemetry() {
-    /* getReefZone()
-    .ifPresent(
-        reefZone -> {
-          Logger.log(
-              "Field/ScoringLocations",
-              new Pose2d[] {
-                AllianceFlipUtil.get(
-                        FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                    .get(reefZone)
-                    .getFirst(),
-                AllianceFlipUtil.get(
-                        FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                    .get(reefZone)
-                    .getSecond()
-              });
-          Logger.log("Field/ReefZone", reefZone);
-        }); */
+    getReefZone()
+        .ifPresent(
+            reefZone -> {
+              Logger.log(
+                  "Field/ScoringLocations",
+                  new Pose2d[] {
+                    AllianceFlipUtil.get(
+                            FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
+                        .get(reefZone)
+                        .getFirst(),
+                    AllianceFlipUtil.get(
+                            FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
+                        .get(reefZone)
+                        .getSecond()
+                  });
+              Logger.log("Field/ReefZone", reefZone);
+            });
     Logger.log("Controls/ScoringSide", Controlboard.getScoringSide().get());
     // visualizeComponents();
   }

@@ -92,7 +92,7 @@ public class WristConstants {
     ROLLERS_CONFIG.name = "WristRollers";
 
     ROLLERS_CONFIG.codeEnabled = true;
-    ROLLERS_CONFIG.logTelemetry = true;
+    ROLLERS_CONFIG.logTelemetry = false;
 
     ROLLERS_CONFIG.masterConstants =
         new TalonFXConstants(new CANDevice(11), InvertedValue.Clockwise_Positive);
