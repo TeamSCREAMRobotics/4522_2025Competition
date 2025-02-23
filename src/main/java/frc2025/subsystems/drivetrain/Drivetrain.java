@@ -9,7 +9,6 @@ import drivers.PhoenixSwerveHelper;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -22,7 +21,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc2025.Dashboard;
 import frc2025.Robot;
 import frc2025.constants.Constants;
 import frc2025.logging.Logger;
@@ -167,7 +165,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       Matrix<N3, N1> visionMeasurementStdDevs) {
     Logger.log("Vision/ActiveVisionMeasurement", visionRobotPoseMeters);
     // Logger.log("Vision/ActiveStdDevs", visionMeasurementStdDevs);
-    super.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+    super.addVisionMeasurement(
+        visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
   }
 
   public void stop() {
@@ -175,11 +174,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public void logTelemetry(SwerveDriveState state) {
-    Logger.log("RobotState/EstimatedPose", state.Pose);
+    Logger.log("RobotState/EstimatedPose", state.Pose); /*
     Logger.log("Subsystems/Drivetrain/MeasuredStates", state.ModuleStates);
     Logger.log("Subsystems/Drivetrain/SetpointStates", state.ModuleTargets);
 
-    Dashboard.publishPose(getEstimatedPose());
+    Dashboard.publishPose(getEstimatedPose()); */
   }
 
   @Override

@@ -25,6 +25,8 @@ public class Dashboard {
 
   public static DashboardBoolean disableLockToReef;
 
+  public static DashboardBoolean zeroElevator;
+
   private static Field2d field = new Field2d();
 
   static {
@@ -42,6 +44,8 @@ public class Dashboard {
     disableVisionUpdates = new DashboardBoolean(overrides, "Disable Vision Updates", false);
 
     disableLockToReef = new DashboardBoolean(overrides, "Disable Lock To Reef", false);
+
+    zeroElevator = new DashboardBoolean(overrides, "Zero Elevator", false);
   }
 
   public static void resetVoltageOverrides() {
@@ -56,7 +60,7 @@ public class Dashboard {
   }
 
   public static void periodic() {
-    SmartDashboard.putData("Field", field);
+    // SmartDashboard.putData("Field", field);
 
     if (Robot.isSimulation()) {
       Sim.periodic();

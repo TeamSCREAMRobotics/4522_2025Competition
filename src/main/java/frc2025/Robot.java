@@ -11,9 +11,13 @@ import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc2025.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
+
+  private List<Command> allCommands = new ArrayList<>();
 
   private final RobotContainer robotContainer;
 
@@ -28,6 +32,8 @@ public class Robot extends TimedRobot {
             .withNtPublish(true)
             .withLogEntryQueueCapacity(5000));
     Logger.setEnabled(true);
+
+    CommandScheduler.getInstance().onCommandInitialize((command) -> allCommands.add(command));
   }
 
   @Override
@@ -35,6 +41,10 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     robotContainer.logTelemetry();
     Dashboard.periodic();
+
+    Logger.log(
+        "AllCommands",
+        allCommands.stream().map((command) -> command.getName()).toArray(String[]::new));
   }
 
   @Override

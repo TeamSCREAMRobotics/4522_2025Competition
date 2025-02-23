@@ -40,7 +40,7 @@ public class VisionManager extends SubsystemBase {
   public static class Limelights {
     public static final Limelight REEF_LEFT =
         new Limelight(
-            "limelight-reefB",
+            "limelight-reefb",
             new Pose3d(
                 Units.inchesToMeters(8.194093),
                 Units.inchesToMeters(10.687941),
@@ -48,7 +48,7 @@ public class VisionManager extends SubsystemBase {
                 new Rotation3d(0, -Units.degreesToRadians(28.1), -Units.degreesToRadians(30))));
     public static final Limelight REEF_RIGHT =
         new Limelight(
-            "limelight-reefA",
+            "limelight-reefa",
             new Pose3d(
                 Units.inchesToMeters(8.194093),
                 -Units.inchesToMeters(10.687941),
@@ -56,7 +56,7 @@ public class VisionManager extends SubsystemBase {
                 new Rotation3d(0, -Units.degreesToRadians(28.1), Units.degreesToRadians(30))));
     public static final Limelight FRONT_ELEVATOR =
         new Limelight(
-            "limelight-elevator",
+            "limelight-front",
             new Pose3d(
                 Units.inchesToMeters(6.223684),
                 Units.inchesToMeters(11.834409),
@@ -160,14 +160,16 @@ public class VisionManager extends SubsystemBase {
     if (isValidEstimate(mtEstimate)) {
       Logger.log("Vision/" + limelight.name() + "/MegaTagEstimate", mtEstimate.pose);
       if (DriverStation.isDisabled()) {
+        double stds = 0.1;
         drivetrain.addVisionMeasurement(
-            mt2Estimate.pose, mt2Estimate.timestampSeconds, VecBuilder.fill(0.2, 0.2, 0.2));
+            mt2Estimate.pose, mt2Estimate.timestampSeconds, VecBuilder.fill(stds, stds, stds));
+        Logger.log("Vision/" + limelight.name() + "/XyStds", stds);
       }
     }
 
     if (isValidEstimate(mt2Estimate) && !DriverStation.isDisabled()) {
       Logger.log("Vision/" + limelight.name() + "/MegaTag2Estimate", mt2Estimate.pose);
-      double xyStds = Math.pow(0.65, mt2Estimate.tagCount) * mt2Estimate.avgTagDist * 2;
+      double xyStds = Math.pow(0.7, mt2Estimate.tagCount) * mt2Estimate.avgTagDist * 2;
       drivetrain.addVisionMeasurement(
           mt2Estimate.pose, mt2Estimate.timestampSeconds, VecBuilder.fill(xyStds, xyStds, 9999999));
       Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);

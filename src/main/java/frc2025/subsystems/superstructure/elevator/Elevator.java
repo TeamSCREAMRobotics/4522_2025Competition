@@ -11,6 +11,8 @@ public class Elevator extends TalonFXSubsystem {
 
   public Elevator(TalonFXSubsystemConfiguration config) {
     super(config, ElevatorGoal.HOME);
+
+    resetPosition(0.0);
   }
 
   public enum ElevatorGoal implements TalonFXSubsystemGoal {

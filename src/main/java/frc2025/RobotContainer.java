@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc2025.RobotState.GamePiece;
 import frc2025.autonomous.AutoSelector;
 import frc2025.commands.DriveToPose;
+import frc2025.commands.Feed;
 import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard;
 import frc2025.subsystems.climber.Climber;
@@ -27,11 +27,11 @@ import frc2025.subsystems.superstructure.wrist.WristRollers;
 import frc2025.subsystems.superstructure.wrist.WristRollers.WristRollersGoal;
 import frc2025.subsystems.vision.VisionManager;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.Getter;
 import util.AllianceFlipUtil;
+import vision.LimelightHelpers;
 
 public class RobotContainer {
 
@@ -117,6 +117,14 @@ public class RobotContainer {
         .back()
         .onTrue(Commands.runOnce(() -> drivetrain.resetRotation(AllianceFlipUtil.getFwdHeading())));
 
+    Controlboard.driveController
+        .povDown()
+        .onTrue(
+            Commands.runOnce(
+                () ->
+                    drivetrain.resetPose(
+                        LimelightHelpers.getBotPose2d_wpiBlue("limelight-station"))));
+
     // Auto aligning controls
     Controlboard.alignToReef()
         .and(() -> robotState.getReefZone().isPresent())
@@ -139,10 +147,10 @@ public class RobotContainer {
                                 > AllianceFlipUtil.get(
                                         FieldConstants.BLUE_BARGE_ALIGN
                                             .getTranslation()
-                                            .minus(new Translation2d(1.215, 0)),
+                                            .minus(new Translation2d(2.0, 0)),
                                         FieldConstants.RED_BARGE_ALIGN
                                             .getTranslation()
-                                            .plus(new Translation2d(1.215, 0)))
+                                            .plus(new Translation2d(2.0, 0)))
                                     .getX()),
                     applyTargetStateFactory.apply(SuperstructureState.BARGE_NET).get())));
 
@@ -164,29 +172,27 @@ public class RobotContainer {
 
     Controlboard.goToAlgaeClear2()
         .whileTrue(
-            applyTargetStateFactory
-                .apply(SuperstructureState.REEF_ALGAE_L2)
-                .get()
-                .finallyDo(() -> Dashboard.Sim.setGamePiece(GamePiece.ALGAE)))
+            Commands.parallel(
+                applyTargetStateFactory.apply(SuperstructureState.REEF_ALGAE_L2).get(),
+                wristRollers.applyGoalCommand(WristRollersGoal.INTAKE)))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(algaeAlign);
 
     Controlboard.goToAlgaeClear1()
         .whileTrue(
-            applyTargetStateFactory
-                .apply(SuperstructureState.REEF_ALGAE_L1)
-                .get()
-                .finallyDo(() -> Dashboard.Sim.setGamePiece(GamePiece.ALGAE)))
+            Commands.parallel(
+                applyTargetStateFactory.apply(SuperstructureState.REEF_ALGAE_L1).get(),
+                wristRollers.applyGoalCommand(WristRollersGoal.INTAKE)))
         .and(() -> robotState.getReefZone().isPresent())
         .whileTrue(algaeAlign);
 
     // Intake controls
     Controlboard.stationIntake()
         .whileTrue(
-            Commands.parallel(
-                    stationAlign,
-                    applyTargetStateFactory.apply(SuperstructureState.HOME).get(),
-                    wristRollers.applyGoalCommand(WristRollersGoal.INTAKE)));
+            Commands.deadline(
+                new Feed(wristRollers),
+                stationAlign,
+                applyTargetStateFactory.apply(SuperstructureState.HOME).get()));
 
     Controlboard.groundIntake()
         .whileTrue(
@@ -213,13 +219,11 @@ public class RobotContainer {
             .applyRequest(
                 () ->
                     Controlboard.getFieldCentric().getAsBoolean()
-                        ? drivetrain
-                            .getHelper()
-                            .getPointingAt(
-                                Controlboard.getTranslation().get(),
-                                AllianceFlipUtil.get(
-                                    FieldConstants.BLUE_REEF_CENTER,
-                                    FieldConstants.RED_REEF_CENTER))
+                            ? drivetrain
+                                .getHelper()
+                                .getHeadingCorrectedFieldCentric(
+                                    Controlboard.getTranslation().get(),
+                                    Controlboard.getRotation().getAsDouble())
                         : drivetrain
                             .getHelper()
                             .getRobotCentric(
@@ -229,7 +233,7 @@ public class RobotContainer {
                                 Controlboard.getRotation().getAsDouble()))
             .beforeStarting(() -> drivetrain.getHelper().setLastAngle(drivetrain.getHeading())));
 
-    // superstructure.setDefaultCommand(applyTargetStateFactory.apply(SuperstructureState.HOME).get());
+    superstructure.setDefaultCommand(applyTargetStateFactory.apply(SuperstructureState.HOME).get());
   }
 
   public void configureManualOverrides() {
@@ -244,8 +248,9 @@ public class RobotContainer {
                         .applyVoltageCommand(() -> Dashboard.wristVoltage.get()),
                     climber.applyVoltageCommand(() -> Dashboard.climberVoltage.get()),
                     wristRollers.applyVoltageCommand(() -> Dashboard.wristRollersVoltage.get()))
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming))
-        .onFalse(Commands.runOnce(() -> Dashboard.resetVoltageOverrides()));
+                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+                .ignoringDisable(true))
+        .onFalse(Commands.runOnce(() -> Dashboard.resetVoltageOverrides()).ignoringDisable(true));
 
     new Trigger(() -> Dashboard.resetVoltage.get())
         .onTrue(
@@ -253,6 +258,14 @@ public class RobotContainer {
                 () -> {
                   Dashboard.resetVoltageOverrides();
                   Dashboard.resetVoltage.set(false);
+                }));
+
+    new Trigger(() -> Dashboard.zeroElevator.get())
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  superstructure.getElevator().resetPosition(0.0);
+                  Dashboard.zeroElevator.set(false);
                 }));
   }
 

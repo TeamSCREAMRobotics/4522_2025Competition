@@ -29,7 +29,7 @@ public final class DrivetrainConstants {
       new ScreamPIDConstants(8.0, 0.0, 0.0);
 
   public static final ProfiledPIDController DRIVE_ALIGNMENT_CONTROLLER =
-      new ProfiledPIDController(6, 0.0, 0.0, new Constraints(4.3, 5));
+      new ProfiledPIDController(6, 0.0, 0.0, new Constraints(3.8, 4));
 
   public static final PIDController HEADING_CONTROLLER =
       HEADING_CORRECTION_CONSTANTS.getPIDController(-Math.PI, Math.PI);

@@ -3,6 +3,7 @@ package frc2025.subsystems.drivetrain.generated;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -38,11 +39,11 @@ public class TunerConstants {
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
   private static final Slot0Configs STEER_GAINS =
       new Slot0Configs()
-          .withKP(75) // 100
+          .withKP(100) // 100
           .withKI(0)
-          .withKD(0.5) // 0.2
+          .withKD(0.2) // 0.2
           .withKS(0.1)
-          .withKV(2.33) // 1.5
+          .withKV(2.33) // 2.33
           .withKA(0)
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
@@ -77,7 +78,7 @@ public class TunerConstants {
 
   // Theoretical free speed (m/s) at 12v applied output;
   // This needs to be tuned to your individual robot
-  public static final LinearVelocity SPEED_12V_MPS = MetersPerSecond.of(4.73);
+  public static final LinearVelocity SPEED_12V_MPS = MetersPerSecond.of(4.48056);
 
   // Every 1 rotation of the azimuth results in COUPLE_RATIO drive motor turns;
   // This may need to be tuned to your individual robot
@@ -117,10 +118,21 @@ public class TunerConstants {
     STEER_CONFIG.CurrentLimits.StatorCurrentLimit = 60;
     STEER_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
     STEER_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
+    STEER_CONFIG.MotionMagic.MotionMagicAcceleration = 10;
+    STEER_CONFIG.MotionMagic.MotionMagicCruiseVelocity = 50;
   }
 
+  private static final Pigeon2Configuration PIGEON_CONFIG = new Pigeon2Configuration();
+
+  /* static{
+    PIGEON_CONFIG.MountPose.MountPoseYaw = 180;
+  } */
+
   private static final SwerveDrivetrainConstants DRIVETRAIN_CONSTANTS =
-      new SwerveDrivetrainConstants().withPigeon2Id(PIGEON_ID).withCANBusName(CANBUS);
+      new SwerveDrivetrainConstants()
+          .withPigeon2Id(PIGEON_ID)
+          .withCANBusName(CANBUS)
+          .withPigeon2Configs(PIGEON_CONFIG);
 
   private static final SwerveModuleConstantsFactory<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
@@ -167,25 +179,25 @@ public class TunerConstants {
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       MODULE_0 =
           CONSTANT_FACTORY.createModuleConstants(
-              0, 1, 0, -0.409912109375, 0, 0, true, STEER_INVERTED, false);
+              0, 1, 0, -0.409912109375, 0, 0, false, STEER_INVERTED, false);
 
   private static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       MODULE_1 =
           CONSTANT_FACTORY.createModuleConstants(
-              2, 3, 1, 0.019775390625, 0, 0, false, STEER_INVERTED, false);
+              2, 3, 1, 0.019775390625, 0, 0, true, STEER_INVERTED, false);
 
   private static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       MODULE_2 =
           CONSTANT_FACTORY.createModuleConstants(
-              4, 5, 2, 0.368408203125, 0, 0, true, STEER_INVERTED, false);
+              4, 5, 2, 0.368408203125, 0, 0, false, STEER_INVERTED, false);
 
   private static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       MODULE_3 =
           CONSTANT_FACTORY.createModuleConstants(
-              6, 7, 3, -0.29736328125, 0, 0, false, STEER_INVERTED, false);
+              6, 7, 3, -0.29736328125, 0, 0, true, STEER_INVERTED, false);
 
   private static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>

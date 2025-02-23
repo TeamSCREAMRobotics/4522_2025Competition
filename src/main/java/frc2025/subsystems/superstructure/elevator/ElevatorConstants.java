@@ -32,7 +32,7 @@ public final class ElevatorConstants {
   public static final Length PULLEY_DIAMETER = Length.fromInches(2.256);
   public static final Length PULLEY_CIRCUMFERENCE = PULLEY_DIAMETER.times(Math.PI);
 
-  public static final double REDUCTION = (40.0 / 14.0) * (50.0 / 40.0);
+  public static final double REDUCTION = (50.0 / 20.0) * (38.0 / 12.0);
 
   public static final ElevatorSim SIM =
       new ElevatorSim(
@@ -77,16 +77,16 @@ public final class ElevatorConstants {
 
     CONFIGURATION.neutralMode = NeutralModeValue.Brake;
     CONFIGURATION.sensorToMechRatio = REDUCTION;
-    CONFIGURATION.enableSupplyCurrentLimit = true;
-    CONFIGURATION.supplyCurrentLimit = 40;
+    // CONFIGURATION.enableSupplyCurrentLimit = true;
+    // CONFIGURATION.supplyCurrentLimit = 40;
     // CONFIGURATION.minUnitsLimit = ENCODER_MIN;
     // CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
-    CONFIGURATION.cruiseVelocity = 3.0 * REDUCTION;
-    CONFIGURATION.acceleration = CONFIGURATION.cruiseVelocity * 0.8;
+    CONFIGURATION.cruiseVelocity = 7.5 * REDUCTION;
+    CONFIGURATION.acceleration = CONFIGURATION.cruiseVelocity * 2.5;
     CONFIGURATION.slot0 =
-        new ScreamPIDConstants(50.0, 0, 0)
+        new ScreamPIDConstants(60.0, 0, 0)
             .getSlot0Configs(
                 new FeedforwardConstants(0, 0, 0.3, 0, GravityTypeValue.Elevator_Static));
-    CONFIGURATION.positionThreshold = Elevator.heightToRotations(Length.fromInches(1.0));
+    CONFIGURATION.positionThreshold = Elevator.heightToRotations(Length.fromInches(4.0));
   }
 }

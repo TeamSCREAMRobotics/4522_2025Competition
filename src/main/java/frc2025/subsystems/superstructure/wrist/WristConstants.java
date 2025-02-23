@@ -2,6 +2,7 @@ package frc2025.subsystems.superstructure.wrist;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -63,7 +64,7 @@ public class WristConstants {
 
     CANcoderConfiguration config = new CANcoderConfiguration();
     config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.625;
-    config.MagnetSensor.MagnetOffset = 0.0;
+    config.MagnetSensor.MagnetOffset = -0.5185546875 + 0.25;
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     WRIST_CONFIG.cancoderConstants = new CANCoderConstants(new CANDevice(4), config);
 
@@ -76,11 +77,12 @@ public class WristConstants {
     WRIST_CONFIG.feedbackRemoteSensorId = 4;
     WRIST_CONFIG.enableSupplyCurrentLimit = true;
     WRIST_CONFIG.supplyCurrentLimit = 40;
-    WRIST_CONFIG.cruiseVelocity = 1.0;
-    WRIST_CONFIG.acceleration = 1.0;
+    WRIST_CONFIG.cruiseVelocity = 50.0;
+    WRIST_CONFIG.acceleration = 25.0;
     WRIST_CONFIG.slot0 =
-        new ScreamPIDConstants(1.0, 0, 0).getSlot0Configs(new FeedforwardConstants());
-    WRIST_CONFIG.positionThreshold = Units.degreesToRotations(22.5);
+        new ScreamPIDConstants(50.0, 0, 0)
+            .getSlot0Configs(new FeedforwardConstants(0, 0, 0.35, 0, GravityTypeValue.Arm_Cosine));
+    WRIST_CONFIG.positionThreshold = Units.degreesToRotations(4.0);
   }
 
   public static final TalonFXSubsystemConfiguration ROLLERS_CONFIG =
@@ -90,7 +92,7 @@ public class WristConstants {
     ROLLERS_CONFIG.name = "WristRollers";
 
     ROLLERS_CONFIG.codeEnabled = true;
-    ROLLERS_CONFIG.logTelemetry = false;
+    ROLLERS_CONFIG.logTelemetry = true;
 
     ROLLERS_CONFIG.masterConstants =
         new TalonFXConstants(new CANDevice(11), InvertedValue.Clockwise_Positive);

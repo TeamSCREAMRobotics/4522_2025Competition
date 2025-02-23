@@ -99,7 +99,7 @@ public class DriveToPose extends Command {
     }
 
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
-    double ffScaler = MathUtil.clamp((currentDistance - 0.1) / (0.8 - 0.1), 0.0, 1.0);
+    double ffScaler = MathUtil.clamp((currentDistance - 0.2) / (0.8 - 0.2), 0.0, 1.0);
     driveErrorAbs = currentDistance;
 
     lastSetpointTranslation =
