@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.13,
+        "y": 5.165089498253719
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.28275895995112,
+        "y": 5.429675778200438
+      },
+      "isLocked": false,
+      "linkedName": "Algae_5"
+    },
+    {
+      "anchor": {
+        "x": 7.145,
+        "y": 6.51
+      },
+      "prevControl": {
+        "x": 6.698799524611274,
+        "y": 6.51
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "BargeScore2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.5,
+    "maxAcceleration": 5.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "Algae_Score",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -119.99999999999999
+  },
+  "useDefaultConstraints": true
+}

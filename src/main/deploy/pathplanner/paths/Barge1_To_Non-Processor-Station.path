@@ -1,0 +1,70 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.145,
+        "y": 5.415
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.999303278688523,
+        "y": 6.571014344262295
+      },
+      "isLocked": false,
+      "linkedName": "BargeScore1"
+    },
+    {
+      "anchor": {
+        "x": 5.885963114754098,
+        "y": 6.979969262295082
+      },
+      "prevControl": {
+        "x": 6.7337372356059735,
+        "y": 6.561972984950036
+      },
+      "nextControl": {
+        "x": 4.98647541797842,
+        "y": 7.42346299431901
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.544,
+        "y": 7.293145453632877
+      },
+      "prevControl": {
+        "x": 2.543671187158009,
+        "y": 7.239477336636479
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Non-Processor_Station"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.5,
+    "maxAcceleration": 5.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -54.0
+  },
+  "reversed": false,
+  "folder": "z~Misc",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

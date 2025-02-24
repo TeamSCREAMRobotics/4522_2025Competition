@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Mid-Starting_To_H.2"
+            "pathName": "Mid-Starting_To_H"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "H.2_To_4"
+            "pathName": "H_To_4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "4_To_Net1"
+            "pathName": "4_To_Barge1"
           }
         }
       ]

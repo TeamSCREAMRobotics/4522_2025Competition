@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.335,
-        "y": 0.522
+        "x": 5.99,
+        "y": 0.51
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.179064433439143,
-        "y": 0.898797329797969
+        "x": 4.9621282890910114,
+        "y": 1.409681342146348
       },
       "isLocked": false,
-      "linkedName": "Processor"
+      "linkedName": "ProcessorScore"
     },
     {
       "anchor": {
-        "x": 5.1419100983154244,
-        "y": 2.875
+        "x": 5.13,
+        "y": 2.886
       },
       "prevControl": {
-        "x": 5.26366030152705,
-        "y": 2.6489871370434837
+        "x": 5.283759383322547,
+        "y": 2.649190949544302
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -150.0
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "Processor_To_Algae",
+  "folder": "Score_Algae",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -90.0
   },
   "useDefaultConstraints": true
 }

@@ -1,0 +1,438 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.178,
+        "y": 4.192
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.1759184735286707,
+        "y": 5.313319310284322
+      },
+      "isLocked": false,
+      "linkedName": "Coral_A"
+    },
+    {
+      "anchor": {
+        "x": 3.178,
+        "y": 4.026833216351986
+      },
+      "prevControl": {
+        "x": 2.534329695364097,
+        "y": 4.010230030850995
+      },
+      "nextControl": {
+        "x": 3.589462967130486,
+        "y": 4.03744671820356
+      },
+      "isLocked": false,
+      "linkedName": "Algae_1"
+    },
+    {
+      "anchor": {
+        "x": 3.178,
+        "y": 3.868
+      },
+      "prevControl": {
+        "x": 0.5158142086806174,
+        "y": 3.362540676937563
+      },
+      "nextControl": {
+        "x": 5.537827974880505,
+        "y": 4.31605176806828
+      },
+      "isLocked": false,
+      "linkedName": "Coral_B"
+    },
+    {
+      "anchor": {
+        "x": 3.686,
+        "y": 2.976
+      },
+      "prevControl": {
+        "x": 4.901885835221641,
+        "y": 3.3452629599030304
+      },
+      "nextControl": {
+        "x": 2.65399965795734,
+        "y": 2.662582827199277
+      },
+      "isLocked": false,
+      "linkedName": "Coral_C"
+    },
+    {
+      "anchor": {
+        "x": 3.8358895586657242,
+        "y": 2.89
+      },
+      "prevControl": {
+        "x": 3.9863286313540054,
+        "y": 3.135384608196065
+      },
+      "nextControl": {
+        "x": 3.642133605008966,
+        "y": 2.5739602376954682
+      },
+      "isLocked": false,
+      "linkedName": "Algae_2"
+    },
+    {
+      "anchor": {
+        "x": 3.9744693469206807,
+        "y": 2.812
+      },
+      "prevControl": {
+        "x": 3.0606298026944057,
+        "y": 2.474809804258587
+      },
+      "nextControl": {
+        "x": 4.793289137619681,
+        "y": 3.11412963232676
+      },
+      "isLocked": false,
+      "linkedName": "Coral_D"
+    },
+    {
+      "anchor": {
+        "x": 5.002,
+        "y": 2.812
+      },
+      "prevControl": {
+        "x": 6.309865855244029,
+        "y": 1.9239868205402284
+      },
+      "nextControl": {
+        "x": 3.7749748748938474,
+        "y": 3.645124038106516
+      },
+      "isLocked": false,
+      "linkedName": "Coral_E"
+    },
+    {
+      "anchor": {
+        "x": 5.13,
+        "y": 2.886
+      },
+      "prevControl": {
+        "x": 3.786890727713133,
+        "y": 3.2507277078671892
+      },
+      "nextControl": {
+        "x": 6.621979476126924,
+        "y": 2.4808458805692486
+      },
+      "isLocked": false,
+      "linkedName": "Algae_3"
+    },
+    {
+      "anchor": {
+        "x": 5.286,
+        "y": 2.976
+      },
+      "prevControl": {
+        "x": 5.579594688657506,
+        "y": 2.702526868454818
+      },
+      "nextControl": {
+        "x": 4.951689462306964,
+        "y": 3.2873985136090798
+      },
+      "isLocked": false,
+      "linkedName": "Coral_F"
+    },
+    {
+      "anchor": {
+        "x": 5.798,
+        "y": 4.027
+      },
+      "prevControl": {
+        "x": 5.37379083580389,
+        "y": 4.280786940705698
+      },
+      "nextControl": {
+        "x": 6.305939307035489,
+        "y": 3.723120749675472
+      },
+      "isLocked": false,
+      "linkedName": "Algae_4"
+    },
+    {
+      "anchor": {
+        "x": 5.798,
+        "y": 3.868
+      },
+      "prevControl": {
+        "x": 6.34060326974658,
+        "y": 2.9574288716040056
+      },
+      "nextControl": {
+        "x": 5.152412674211665,
+        "y": 4.951394097488187
+      },
+      "isLocked": false,
+      "linkedName": "Coral_G"
+    },
+    {
+      "anchor": {
+        "x": 5.798,
+        "y": 4.192
+      },
+      "prevControl": {
+        "x": 4.734731517826562,
+        "y": 3.8887759458491615
+      },
+      "nextControl": {
+        "x": 6.823171920563851,
+        "y": 4.484359635564056
+      },
+      "isLocked": false,
+      "linkedName": "Coral_H"
+    },
+    {
+      "anchor": {
+        "x": 5.286,
+        "y": 5.076447176504663
+      },
+      "prevControl": {
+        "x": 6.302512203126984,
+        "y": 6.496635662266903
+      },
+      "nextControl": {
+        "x": 4.115595662573732,
+        "y": 3.4412530700436266
+      },
+      "isLocked": false,
+      "linkedName": "Coral_I"
+    },
+    {
+      "anchor": {
+        "x": 5.13,
+        "y": 5.165089498253719
+      },
+      "prevControl": {
+        "x": 5.572827760277619,
+        "y": 3.137357067026567
+      },
+      "nextControl": {
+        "x": 4.682056159619432,
+        "y": 7.216248738899962
+      },
+      "isLocked": false,
+      "linkedName": "Algae_5"
+    },
+    {
+      "anchor": {
+        "x": 5.002,
+        "y": 5.240436161434125
+      },
+      "prevControl": {
+        "x": 4.986225614704145,
+        "y": 6.390920893216364
+      },
+      "nextControl": {
+        "x": 5.022911277943245,
+        "y": 3.7152986968332495
+      },
+      "isLocked": false,
+      "linkedName": "Coral_J"
+    },
+    {
+      "anchor": {
+        "x": 3.9744693469206807,
+        "y": 5.24
+      },
+      "prevControl": {
+        "x": 4.5027488114758505,
+        "y": 5.587184173792396
+      },
+      "nextControl": {
+        "x": 3.7655482583706803,
+        "y": 5.102697491796097
+      },
+      "isLocked": false,
+      "linkedName": "Coral_K"
+    },
+    {
+      "anchor": {
+        "x": 3.836,
+        "y": 5.158
+      },
+      "prevControl": {
+        "x": 3.877274411667094,
+        "y": 5.721791831508807
+      },
+      "nextControl": {
+        "x": 3.7683714374149115,
+        "y": 4.234221086573282
+      },
+      "isLocked": false,
+      "linkedName": "Algae_6"
+    },
+    {
+      "anchor": {
+        "x": 3.686,
+        "y": 5.076
+      },
+      "prevControl": {
+        "x": 2.1301986876844676,
+        "y": 4.754610061213448
+      },
+      "nextControl": {
+        "x": 5.152678592881172,
+        "y": 5.378979396825463
+      },
+      "isLocked": false,
+      "linkedName": "Coral_L"
+    },
+    {
+      "anchor": {
+        "x": 7.145,
+        "y": 5.415
+      },
+      "prevControl": {
+        "x": 9.938642803338324,
+        "y": 6.152306020369035
+      },
+      "nextControl": {
+        "x": 4.3929232642566,
+        "y": 4.68866421241956
+      },
+      "isLocked": false,
+      "linkedName": "BargeScore1"
+    },
+    {
+      "anchor": {
+        "x": 7.145,
+        "y": 6.51
+      },
+      "prevControl": {
+        "x": 6.078684019809068,
+        "y": 5.784073379058743
+      },
+      "nextControl": {
+        "x": 8.303522559068561,
+        "y": 7.298699018126195
+      },
+      "isLocked": false,
+      "linkedName": "BargeScore2"
+    },
+    {
+      "anchor": {
+        "x": 7.145,
+        "y": 5.83
+      },
+      "prevControl": {
+        "x": 8.072636891020089,
+        "y": 6.560021348515846
+      },
+      "nextControl": {
+        "x": 6.455630380660087,
+        "y": 5.287487575140563
+      },
+      "isLocked": false,
+      "linkedName": "Non-Processor_Starting"
+    },
+    {
+      "anchor": {
+        "x": 1.544,
+        "y": 7.293145453632877
+      },
+      "prevControl": {
+        "x": 1.6788153988902037,
+        "y": 7.503680030892944
+      },
+      "nextControl": {
+        "x": 1.3585167654560684,
+        "y": 7.003485409639384
+      },
+      "isLocked": false,
+      "linkedName": "Non-Processor_Station"
+    },
+    {
+      "anchor": {
+        "x": 1.544349989890233,
+        "y": 0.7339318631278252
+      },
+      "prevControl": {
+        "x": 0.6350190284313328,
+        "y": 1.6413286855379456
+      },
+      "nextControl": {
+        "x": 2.39608011667978,
+        "y": -0.11598664108746937
+      },
+      "isLocked": false,
+      "linkedName": "Processor_Station"
+    },
+    {
+      "anchor": {
+        "x": 5.99,
+        "y": 0.51
+      },
+      "prevControl": {
+        "x": 5.0003045216875925,
+        "y": -0.13072825886007267
+      },
+      "nextControl": {
+        "x": 7.183998979189763,
+        "y": 1.282994222749668
+      },
+      "isLocked": false,
+      "linkedName": "ProcessorScore"
+    },
+    {
+      "anchor": {
+        "x": 7.145,
+        "y": 2.245
+      },
+      "prevControl": {
+        "x": 7.182336453456054,
+        "y": 1.517500184478663
+      },
+      "nextControl": {
+        "x": 7.095917142074495,
+        "y": 3.2013781982692313
+      },
+      "isLocked": false,
+      "linkedName": "Processor_Starting"
+    },
+    {
+      "anchor": {
+        "x": 7.145,
+        "y": 3.935
+      },
+      "prevControl": {
+        "x": 7.274837317858895,
+        "y": 3.72135948209385
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Middle_Starting"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.5,
+    "maxAcceleration": 5.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0.6,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Processor-Starting1_To_E"
+            "pathName": "Processor-Starting_To_E"
           }
         },
         {
@@ -43,13 +43,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Processor-Station_To_B.2"
+            "pathName": "Processor-Station_To_B"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "B.2_To_Processor-Station"
+            "pathName": "B_To_Processor-Station"
           }
         },
         {
@@ -61,7 +61,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "A.2_To_Non-Processor-Station"
+            "pathName": "A_To_Non-Processor-Station"
           }
         },
         {
@@ -115,13 +115,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Non-Processor-Station_To_H.2"
+            "pathName": "Non-Processor-Station_To_H"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "H.2_To_Non-Processor-Station"
+            "pathName": "H_To_Non-Processor-Station"
           }
         },
         {

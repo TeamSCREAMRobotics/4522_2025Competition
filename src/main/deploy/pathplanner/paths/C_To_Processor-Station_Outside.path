@@ -1,0 +1,70 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.686,
+        "y": 2.976
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.677786167164159,
+        "y": 2.3468048259933343
+      },
+      "isLocked": false,
+      "linkedName": "Coral_C"
+    },
+    {
+      "anchor": {
+        "x": 4.567315573770491,
+        "y": 1.3457479508196706
+      },
+      "prevControl": {
+        "x": 4.712486977020375,
+        "y": 1.6462130347529458
+      },
+      "nextControl": {
+        "x": 4.297327296541515,
+        "y": 0.7869460892783248
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.544349989890233,
+        "y": 0.7339318631278252
+      },
+      "prevControl": {
+        "x": 2.8530737704918034,
+        "y": 0.6864241803278684
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Processor_Station"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.5,
+    "maxAcceleration": 5.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 54.0
+  },
+  "reversed": false,
+  "folder": "z~Junior-Senior",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 59.99999999999999
+  },
+  "useDefaultConstraints": true
+}

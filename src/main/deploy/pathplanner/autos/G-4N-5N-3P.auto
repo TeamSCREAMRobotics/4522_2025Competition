@@ -19,25 +19,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "4_To_Net1"
+            "pathName": "4_To_Barge1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Net1_To_5.2"
+            "pathName": "Barge1_To_5"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "5.2_To_Net1"
+            "pathName": "5_To_Barge1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Net1_To_3"
+            "pathName": "Barge1_To_3"
           }
         },
         {

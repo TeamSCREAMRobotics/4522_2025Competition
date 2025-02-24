@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.178,
+        "y": 3.868
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.122133116741899,
+        "y": 3.6243221566185677
+      },
+      "isLocked": false,
+      "linkedName": "Coral_B"
+    },
+    {
+      "anchor": {
+        "x": 3.178,
+        "y": 4.026833216351986
+      },
+      "prevControl": {
+        "x": 3.2205492406021023,
+        "y": 4.27318573232084
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Algae_1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.5,
+    "maxAcceleration": 5.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "Coral_Algae",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

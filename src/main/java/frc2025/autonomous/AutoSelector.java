@@ -4,12 +4,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.RobotContainer;
+
 import java.util.function.Function;
 
 public class AutoSelector {
 
   private enum AutoMode {
-    DO_NOTHING(container -> Commands.none());
+    DO_NOTHING(container -> Commands.none()),
+    TEST(container -> Routines.testPath(container)),
+    PROCESSOR_E_D(container -> Routines.processor_Side_Test(container));
 
     private final Function<RobotContainer, Command> factory;
 

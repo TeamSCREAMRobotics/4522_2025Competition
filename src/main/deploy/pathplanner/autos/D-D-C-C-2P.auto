@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Processor-Starting_To_D"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "D_To_Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Processor-Station_To_D"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "D_To_Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Processor-Station_To_C"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C_To_Processor-Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Processor-Station_To_C"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C_To_2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2_To_Processor"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Processor Station",
+  "choreoAuto": false
+}
