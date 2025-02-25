@@ -1,6 +1,7 @@
 package frc2025.autonomous;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.RobotContainer;
@@ -36,6 +37,7 @@ public class AutoSelector {
       chooser.addOption(mode.name(), mode);
     }
     chooser.setDefaultOption(AutoMode.DO_NOTHING.name(), AutoMode.DO_NOTHING);
+    SmartDashboard.putData("AutoSelector", chooser);
   }
 
   public Command getAutonomousCommand() {

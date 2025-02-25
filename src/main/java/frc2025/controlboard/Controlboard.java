@@ -154,6 +154,10 @@ public class Controlboard {
     return driveController.a();
   }
 
+  public static Trigger climb() {
+    return driveController.start();
+  }
+
   public static Trigger testButton() {
     return driveController.povDown();
   }

@@ -5,6 +5,8 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
+
 import drivers.PhoenixSwerveHelper;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -25,7 +27,12 @@ import frc2025.Robot;
 import frc2025.constants.Constants;
 import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.generated.TunerConstants.TunerSwerveDrivetrain;
+
+import java.io.IOException;
 import java.util.function.Supplier;
+
+import org.json.simple.parser.ParseException;
+
 import lombok.Getter;
 import util.RunnableUtil.RunOnce;
 import util.ScreamUtil;
@@ -67,6 +74,14 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
             DrivetrainConstants.HEADING_CORRECTION_CONSTANTS,
             DrivetrainConstants.HEADING_CORRECTION_CONSTANTS);
 
+    RobotConfig config = DrivetrainConstants.ROBOT_CONFIG;
+    try {
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
     AutoBuilder.configure(
         this::getEstimatedPose,
         this::resetPose,
@@ -78,7 +93,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
                     .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
                     .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
         DrivetrainConstants.PATH_FOLLOWING_CONTROLLER,
-        DrivetrainConstants.ROBOT_CONFIG,
+        config,
         () -> false,
         this);
 

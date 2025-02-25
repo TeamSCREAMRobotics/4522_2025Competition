@@ -1,9 +1,14 @@
 package frc2025.autonomous;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc2025.RobotContainer;
 import frc2025.subsystems.drivetrain.Drivetrain;
@@ -17,6 +22,11 @@ public class Routines {
     private static PathSequence currentSequence;
     private static double eject_TimeOut = 0.25;
     private static double intakeAlgae_TimeOut = 0.25;
+
+
+
+  private static final BiFunction<SuperstructureState, RobotContainer, Supplier<Command>> applyTargetStateFactory =
+      (state, robotContainer) -> () -> robotContainer.getSubsystems().superstructure().applyTargetState(state);
 
     /* 
     * Paths are created using the FMS naming convention (A-L, rotating counter-clockwise from the pov of the driver stations)
@@ -66,7 +76,7 @@ public class Routines {
         Drivetrain drivetrain = container.getSubsystems().drivetrain();
 
         return new SequentialCommandGroup(
-            Commands.runOnce(() -> drivetrain.resetPose(currentSequence.getStartingPose())),
+            //Commands.runOnce(() -> drivetrain.resetPose(currentSequence.getStartingPose())),
             currentSequence.getIndex(0),
             currentSequence.getIndex(1),
             currentSequence.getIndex(2)
@@ -80,23 +90,23 @@ public class Routines {
         Superstructure superstructure = container.getSubsystems().superstructure();
 
         return new SequentialCommandGroup(
-            Commands.runOnce(() -> drivetrain.resetPose(currentSequence.getStartingPose())),
+            // Commands.runOnce(() -> drivetrain.resetPose(currentSequence.getStartingPose())),
             new ParallelRaceGroup(
                 currentSequence.getIndex(0),
-                setElevator(superstructure, SuperstructureState.REEF_L4)
+                setElevator(container, SuperstructureState.REEF_L4)
             ),
             wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut),
-            setElevator(superstructure, SuperstructureState.HOME),
+            setElevator(container, SuperstructureState.HOME).withTimeout(0.25),
             new ParallelRaceGroup(
                 currentSequence.getNext()
                 // new Feed_Auto(container)
             ),
             new ParallelRaceGroup(
                 currentSequence.getNext(),
-                setElevator(superstructure, SuperstructureState.REEF_L4)
+                setElevator(container, SuperstructureState.REEF_L4)
             ),
             wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut),
-            setElevator(superstructure, SuperstructureState.HOME)
+            setElevator(container, SuperstructureState.HOME).withTimeout(0.25)
         );
     }
 
@@ -114,10 +124,10 @@ public class Routines {
             Commands.runOnce(() -> drivetrain.resetPose(currentSequence.getStartingPose())),
             new ParallelRaceGroup(
                 currentSequence.getStart(),
-                setElevator(superstructure, SuperstructureState.REEF_L4)
+                setElevator(container, SuperstructureState.REEF_L4)
             ),
             wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score Coral
-            setElevator(superstructure, SuperstructureState.HOME),
+            setElevator(container, SuperstructureState.HOME),
             _4N_5N_3N(container, sequence)
         );
     }
@@ -132,10 +142,10 @@ public class Routines {
             Commands.runOnce(() -> drivetrain.resetPose(currentSequence.getStartingPose())),
             new ParallelRaceGroup(
                 currentSequence.getStart(),
-                setElevator(superstructure, SuperstructureState.REEF_L4)
+                setElevator(container, SuperstructureState.REEF_L4)
             ),
             wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score Coral
-            setElevator(superstructure, SuperstructureState.HOME),
+            setElevator(container, SuperstructureState.HOME),
             _4N_5N_3N(container, sequence)
         );
     }
@@ -149,38 +159,38 @@ public class Routines {
         return new SequentialCommandGroup(
             new ParallelRaceGroup(
                 currentSequence.getNext(),
-                setElevator(superstructure, SuperstructureState.REEF_ALGAE_L1)
+                setElevator(container, SuperstructureState.REEF_ALGAE_L1)
             ),
             wristRollers.applyGoalCommand(WristRollersGoal.INTAKE).withTimeout(intakeAlgae_TimeOut), // Algae 4 Grabbed
-            setElevator(superstructure, SuperstructureState.HOME),
+            setElevator(container, SuperstructureState.HOME),
             new ParallelRaceGroup(
                 currentSequence.getNext(),
-                setElevator(superstructure, SuperstructureState.BARGE_NET)
+                setElevator(container, SuperstructureState.BARGE_NET)
             ),
             wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Algae 4 Scored
-            setElevator(superstructure, SuperstructureState.HOME),
+            setElevator(container, SuperstructureState.HOME),
             new ParallelRaceGroup(
                 currentSequence.getNext(),
-                setElevator(superstructure, SuperstructureState.REEF_ALGAE_L2)
+                setElevator(container, SuperstructureState.REEF_ALGAE_L2)
             ),
             wristRollers.applyGoalCommand(WristRollersGoal.INTAKE).withTimeout(intakeAlgae_TimeOut), // Algae 5 Grabbed
-            setElevator(superstructure, SuperstructureState.HOME),
+            setElevator(container, SuperstructureState.HOME),
             new ParallelRaceGroup(
                 currentSequence.getNext(),
-                setElevator(superstructure, SuperstructureState.BARGE_NET)
+                setElevator(container, SuperstructureState.BARGE_NET)
             ).andThen(
                 wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE).withTimeout(eject_TimeOut) // Algae 5 Scored
             ),
-            setElevator(superstructure, SuperstructureState.HOME),
+            setElevator(container, SuperstructureState.HOME),
             new ParallelRaceGroup(
                 currentSequence.getNext(),
-                setElevator(superstructure, SuperstructureState.REEF_ALGAE_L2)
+                setElevator(container, SuperstructureState.REEF_ALGAE_L2)
             ),
             wristRollers.applyGoalCommand(WristRollersGoal.INTAKE).withTimeout(intakeAlgae_TimeOut), // Algae 3 Grabbed
-            setElevator(superstructure, SuperstructureState.HOME),
+            setElevator(container, SuperstructureState.HOME),
             new ParallelRaceGroup(
                 currentSequence.getNext(),
-                setElevator(superstructure, SuperstructureState.BARGE_NET)
+                setElevator(container, SuperstructureState.BARGE_NET)
             ).andThen(
                 wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE).withTimeout(eject_TimeOut) // Algae 3 Scored
             )
@@ -191,7 +201,7 @@ public class Routines {
 
 
     /* Helper Commands */
-    public static final Command setElevator(Superstructure superstructure, SuperstructureState goalState) {
-        return new InstantCommand(() -> superstructure.applyTargetState(goalState));
+    public static final Command setElevator(RobotContainer container, SuperstructureState goalState) {
+        return applyTargetStateFactory.apply(goalState, container).get();
     }
 }

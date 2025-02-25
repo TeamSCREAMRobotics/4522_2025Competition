@@ -184,9 +184,9 @@ public class VisionManager {
     if (isValidEstimate(mtEstimate)) {
       Logger.log("Vision/" + limelight.name() + "/MegaTagEstimate", mtEstimate.pose);
       if (!hasEnabled) {
-        double stds = 0.1;
+        double stds = 0.3;
         drivetrain.addVisionMeasurement(
-            mt2Estimate.pose, mt2Estimate.timestampSeconds, VecBuilder.fill(stds, stds, stds));
+            mtEstimate.pose, mtEstimate.timestampSeconds, VecBuilder.fill(stds, stds, stds));
         Logger.log("Vision/" + limelight.name() + "/XyStds", stds);
       }
     }

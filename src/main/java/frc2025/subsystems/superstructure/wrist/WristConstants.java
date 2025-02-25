@@ -47,7 +47,7 @@ public class WristConstants {
   static {
     WRIST_CONFIG.name = "Wrist";
 
-    WRIST_CONFIG.codeEnabled = true;
+    WRIST_CONFIG.codeEnabled = false;
     WRIST_CONFIG.logTelemetry = false;
     WRIST_CONFIG.debugMode = false;
 
@@ -64,7 +64,7 @@ public class WristConstants {
 
     CANcoderConfiguration config = new CANcoderConfiguration();
     config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.625;
-    config.MagnetSensor.MagnetOffset = -0.5185546875 + 0.25;
+    config.MagnetSensor.MagnetOffset = -0.421630859375 + 0.25;
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     WRIST_CONFIG.cancoderConstants = new CANCoderConstants(new CANDevice(4), config);
 
@@ -91,7 +91,7 @@ public class WristConstants {
   static {
     ROLLERS_CONFIG.name = "WristRollers";
 
-    ROLLERS_CONFIG.codeEnabled = true;
+    ROLLERS_CONFIG.codeEnabled = false;
     ROLLERS_CONFIG.logTelemetry = false;
 
     ROLLERS_CONFIG.masterConstants =

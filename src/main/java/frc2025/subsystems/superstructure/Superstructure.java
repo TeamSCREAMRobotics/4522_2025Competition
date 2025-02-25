@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc2025.logging.Logger;
 import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureState;
 import frc2025.subsystems.superstructure.elevator.Elevator;
@@ -44,16 +43,15 @@ public class Superstructure extends SubsystemBase {
                   new ParallelCommandGroup(
                       wrist.applyGoalCommand(WristGoal.STOW),
                       new SequentialCommandGroup(
-                          new WaitUntilCommand(() -> wrist.atGoal()),
+                          // new WaitUntilCommand(() -> wrist.atGoal()),
                           elevator.applyGoalCommand(ElevatorGoal.HOME)));
               break;
             default:
               transition =
-                  new ParallelCommandGroup(
-                      elevator.applyGoalCommand(state.elevatorGoal),
+                  new ParallelCommandGroup(elevator.applyGoalCommand(state.elevatorGoal) /* ,
                       new SequentialCommandGroup(
                           new WaitUntilCommand(() -> elevator.atGoal()),
-                          wrist.applyGoalCommand(state.wristGoal)));
+                          wrist.applyGoalCommand(state.wristGoal)) */);
               break;
           }
           transition.addRequirements(this, wrist, elevator);

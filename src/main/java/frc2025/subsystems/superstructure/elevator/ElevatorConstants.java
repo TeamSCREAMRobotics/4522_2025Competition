@@ -26,11 +26,13 @@ public final class ElevatorConstants {
   public static final Length MAX_HEIGHT =
       MAX_HEIGHT_FROM_FLOOR.minus(MIN_HEIGHT_FROM_FLOOR); // 79.1125
 
-  // Theoretically MAX_HEIGHT / PULLEY_CIRCUMFERENCE, but needs to actually be measured
-  public static final double ENCODER_MAX = 11.16236297;
-  public static final double ENCODER_MIN = 0.0;
   public static final Length PULLEY_DIAMETER = Length.fromInches(2.256);
   public static final Length PULLEY_CIRCUMFERENCE = PULLEY_DIAMETER.times(Math.PI);
+
+  // Theoretically MAX_HEIGHT / PULLEY_CIRCUMFERENCE, but needs to actually be measured
+  public static final double ENCODER_MAX =
+      MAX_HEIGHT.getInches() / PULLEY_CIRCUMFERENCE.getInches();
+  public static final double ENCODER_MIN = 0.0;
 
   public static final double REDUCTION = (50.0 / 20.0) * (38.0 / 12.0);
 
@@ -79,14 +81,14 @@ public final class ElevatorConstants {
     CONFIGURATION.sensorToMechRatio = REDUCTION;
     // CONFIGURATION.enableSupplyCurrentLimit = true;
     // CONFIGURATION.supplyCurrentLimit = 40;
-    // CONFIGURATION.minUnitsLimit = ENCODER_MIN;
-    // CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
-    CONFIGURATION.cruiseVelocity = 7.5 * REDUCTION;
-    CONFIGURATION.acceleration = CONFIGURATION.cruiseVelocity * 2.5;
+    CONFIGURATION.minUnitsLimit = ENCODER_MIN;
+    CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
+    CONFIGURATION.cruiseVelocity = 60.0; // 30.0
+    CONFIGURATION.acceleration = 45.0;
     CONFIGURATION.slot0 =
-        new ScreamPIDConstants(60.0, 0, 0)
+        new ScreamPIDConstants(50.0, 0, 0) // 60.0
             .getSlot0Configs(
-                new FeedforwardConstants(0, 0, 0.3, 0, GravityTypeValue.Elevator_Static));
+                new FeedforwardConstants(0, 0.0, 0.65, 0, GravityTypeValue.Elevator_Static));
     CONFIGURATION.positionThreshold = Elevator.heightToRotations(Length.fromInches(4.0));
   }
 }

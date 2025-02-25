@@ -8,12 +8,12 @@ import java.util.function.DoubleSupplier;
 
 public class Climber extends TalonFXSubsystem {
 
-  Servo servo = new Servo(0);
-
-  // AnalogOutput servo = new AnalogOutput(0);
+  private final Servo servo = new Servo(9);
 
   public Climber(TalonFXSubsystemConfiguration config) {
     super(config, defaultGoal);
+
+    servo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
   }
 
   public enum ClimberGoal implements TalonFXSubsystemGoal {
@@ -44,6 +44,10 @@ public class Climber extends TalonFXSubsystem {
   }
 
   public Command retractServo() {
-    return Commands.runOnce(() -> servo.set(0.0));
+    return Commands.run(() -> servo.setSpeed(-1.0));
+  }
+
+  public Command extendServo() {
+    return Commands.run(() -> servo.setSpeed(1.0));
   }
 }

@@ -35,7 +35,7 @@ public class WristRollers extends TalonFXSubsystem {
     STAGE(() -> -1.75, ControlType.VOLTAGE),
     INTAKE(() -> 7.5, ControlType.VOLTAGE),
     EJECT_CORAL(() -> 12.0, ControlType.VOLTAGE),
-    EJECT_ALGAE(() -> -10.0, ControlType.VOLTAGE);
+    EJECT_ALGAE(() -> -13.0, ControlType.VOLTAGE);
 
     public final DoubleSupplier voltage;
     public final ControlType controlType;
@@ -71,16 +71,14 @@ public class WristRollers extends TalonFXSubsystem {
 
   public Command feed() {
     return Commands.defer(
-        () -> 
-          Commands.deadline(
-                  Commands.waitUntil(hasGamePiece()), applyGoalCommand(WristRollersGoal.INTAKE))
-              .andThen(Commands.runOnce(() -> idleVoltage = 0.0))
-              .withInterruptBehavior(
-                  acquiredGamePiece()
-                      ? InterruptionBehavior.kCancelIncoming
-                      : InterruptionBehavior.kCancelSelf)
-
-        ,
+        () ->
+            Commands.deadline(
+                    Commands.waitUntil(hasGamePiece()), applyGoalCommand(WristRollersGoal.INTAKE))
+                .andThen(Commands.runOnce(() -> idleVoltage = 0.0))
+                .withInterruptBehavior(
+                    acquiredGamePiece()
+                        ? InterruptionBehavior.kCancelIncoming
+                        : InterruptionBehavior.kCancelSelf),
         Set.of(this));
   }
 

@@ -13,6 +13,7 @@ public class Elevator extends TalonFXSubsystem {
     super(config, ElevatorGoal.HOME);
 
     resetPosition(0.0);
+    master.getClosedLoopReferenceSlope().setUpdateFrequency(100.0);
   }
 
   public enum ElevatorGoal implements TalonFXSubsystemGoal {
@@ -89,8 +90,11 @@ public class Elevator extends TalonFXSubsystem {
   @Override
   public void periodic() {
     super.periodic();
-    Logger.log(logPrefix + "Height", rotationsToHeightInches(getPosition()));
+    /* Logger.log(logPrefix + "Height", rotationsToHeightInches(getPosition()));
     Logger.log(logPrefix + "AbsHeight", rotationsToHeightInches(getPosition()) + 10.7125);
-    Logger.log(logPrefix + "ErrorHeight", rotationsToHeightInches(getError()));
+    Logger.log(logPrefix + "ErrorHeight", rotationsToHeightInches(getError())); */
+    Logger.log(logPrefix + "AppliedVolts", master.getMotorVoltage().getValueAsDouble());
+    Logger.log(logPrefix + "Vel", getVelocity());
+    Logger.log(logPrefix + "ReferenceVel", master.getClosedLoopReferenceSlope().getValueAsDouble());
   }
 }
