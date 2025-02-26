@@ -72,6 +72,9 @@ public class RobotContainer {
                   .repeatedly(),
           Set.of(drivetrain));
 
+  private final Command troughAlign =
+          drivetrain.applyRequest(() -> drivetrain.getHelper().getFacingAngle(Controlboard.getTranslation().get(), getRobotState().getTargetAlgaePose().getRotation()));
+
   private final Command algaeAlign =
       Commands.defer(
           () ->
@@ -94,6 +97,14 @@ public class RobotContainer {
                   .getHelper()
                   .getFacingAngle(
                       Controlboard.getTranslation().get(), robotState.getStationAlignAngle()));
+
+                      private final Command troughFeedAlign =
+                      drivetrain.applyRequest(
+                          () ->
+                              drivetrain
+                                  .getHelper()
+                                  .getFacingAngle(
+                                      Controlboard.getTranslation().get(), robotState.getStationAlignAngle().plus(new Rotation2d(Math.PI))));
 
   private final Function<SuperstructureState, Supplier<Command>> applyTargetStateFactory =
       (state) -> () -> superstructure.applyTargetState(state);
@@ -172,6 +183,11 @@ public class RobotContainer {
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
         .whileTrue(branchAlign);
 
+    Controlboard.goToTrough()
+        .whileTrue(applyTargetStateFactory.apply(SuperstructureState.TROUGH).get())
+        .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
+        .whileTrue(troughAlign);
+
     Controlboard.goToAlgaeClear2()
         .whileTrue(
             Commands.parallel(
@@ -196,6 +212,11 @@ public class RobotContainer {
                 wristRollers.feed(),
                 stationAlign,
                 applyTargetStateFactory.apply(SuperstructureState.FEEDING).get()));
+
+    Controlboard.troughFeed()
+        .whileTrue(Commands.parallel(applyTargetStateFactory.apply(SuperstructureState.TROUGH_FEED).get(), wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_TROUGH)))
+        .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
+        .whileTrue(troughFeedAlign);
 
     Controlboard.groundIntake()
         .whileTrue(
@@ -251,7 +272,7 @@ public class RobotContainer {
                         .applyVoltageCommand(() -> Dashboard.elevatorVoltage.get()),
                     superstructure
                         .getWrist()
-                        .applyVoltageCommand(() -> Dashboard.wristVoltage.get()),
+                        .applyVoltageCommand(() -> (Dashboard.wristVoltage.get() + superstructure.getWrist().getAngle().getCos())),
                     climber.applyVoltageCommand(() -> Dashboard.climberVoltage.get()),
                     wristRollers.applyVoltageCommand(() -> Dashboard.wristRollersVoltage.get()))
                 .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)

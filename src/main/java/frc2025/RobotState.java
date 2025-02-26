@@ -47,6 +47,7 @@ public class RobotState {
       switch (Superstructure.getCurrentState()) {
         case BARGE_NET:
         case HOME:
+        case FEEDING:
           return wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE);
         case REEF_L2:
         case REEF_L3:
@@ -54,6 +55,9 @@ public class RobotState {
           return wristRollers
               .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
               .finallyDo(() -> WristRollers.resetBeam());
+        case TROUGH:
+          return wristRollers
+              .applyGoalCommand(WristRollersGoal.EJECT_CORAL);
         default:
           return Commands.none();
       }

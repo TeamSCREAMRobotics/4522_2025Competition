@@ -102,6 +102,10 @@ public class Controlboard {
     return driveController.leftTrigger(TRIGGER_DEADBAND).or(driveController.leftBumper());
   }
 
+  public static Trigger alternateControls(){
+    return driveController.leftStick();
+  }
+
   public static Trigger resetGyro() {
     return driveController.back();
   }
@@ -111,23 +115,27 @@ public class Controlboard {
   }
 
   public static Trigger goToLevel4() {
-    return driveController.y().and(driveController.leftStick().negate());
+    return driveController.y().and(alternateControls().negate());
   }
 
   public static Trigger goToLevel3() {
-    return driveController.x().and(driveController.leftStick().negate());
+    return driveController.x().and(alternateControls().negate());
   }
 
   public static Trigger goToLevel2() {
-    return driveController.b().and(driveController.leftStick().negate());
+    return driveController.b().and(alternateControls().negate());
+  }
+
+  public static Trigger goToTrough() {
+    return driveController.a();
   }
 
   public static Trigger goToAlgaeClear1() {
-    return driveController.x().and(driveController.leftStick());
+    return driveController.x().and(alternateControls());
   }
 
   public static Trigger goToAlgaeClear2() {
-    return driveController.y().and(driveController.leftStick());
+    return driveController.y().and(alternateControls());
   }
 
   public static Trigger groundIntake() {
@@ -146,16 +154,16 @@ public class Controlboard {
     return driveController.povLeft();
   }
 
-  public static Trigger handoff() {
-    return driveController.povUp();
-  }
-
   public static Trigger lockToProcessor() {
-    return driveController.a();
+    return driveController.a().and(alternateControls());
   }
 
   public static Trigger climb() {
     return driveController.start();
+  }
+
+  public static Trigger troughFeed(){
+    return driveController.leftTrigger().and(alternateControls());
   }
 
   public static Trigger testButton() {
