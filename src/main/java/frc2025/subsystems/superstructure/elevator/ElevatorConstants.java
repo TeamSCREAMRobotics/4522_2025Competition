@@ -86,9 +86,9 @@ public final class ElevatorConstants {
     CONFIGURATION.cruiseVelocity = 60.0; // 30.0
     CONFIGURATION.acceleration = 45.0;
     CONFIGURATION.slot0 =
-        new ScreamPIDConstants(50.0, 0, 0) // 60.0
+        new ScreamPIDConstants(60.0, 0, 0) // 60.0
             .getSlot0Configs(
-                new FeedforwardConstants(0, 0.0, 0.65, 0, GravityTypeValue.Elevator_Static));
+                new FeedforwardConstants(0, 0.65, 0.0, 0, GravityTypeValue.Elevator_Static));
     CONFIGURATION.positionThreshold = Elevator.heightToRotations(Length.fromInches(4.0));
   }
 }

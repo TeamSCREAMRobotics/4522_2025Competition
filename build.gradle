@@ -151,4 +151,5 @@ spotless {
     }
 }
 
+//deploy.dependsOn(spotlessApply)
 build.dependsOn(spotlessApply)

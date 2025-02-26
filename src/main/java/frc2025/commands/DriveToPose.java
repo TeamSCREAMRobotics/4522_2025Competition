@@ -102,6 +102,14 @@ public class DriveToPose extends Command {
       return;
     }
 
+    if(yOverride.isPresent() && Math.abs(targetPose.minus(currentPose).getX()) < 0.03){
+      return;
+    } else if(currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.03){
+      return;
+    } else if (!(translationOverride.isPresent() && translationOverride.get().get().getNorm() > 0.5)){
+      return;
+    } 
+
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
     double ffScalar = MathUtil.clamp((currentDistance - 0.2) / (0.8 - 0.2), 0.0, 1.0);
     double elevHeightScalar;
@@ -109,7 +117,7 @@ public class DriveToPose extends Command {
       elevHeightScalar = 1.0;
     } else {
       elevHeightScalar =
-          MathUtil.clamp(((1.0 / elevator.getMeasuredHeight().getInches()) * 25.0), 0.0, 1.0);
+          MathUtil.clamp(((1.0 / elevator.getMeasuredHeight().getInches()) * 30.0), 0.0, 1.0);
     }
 
     driveErrorAbs = currentDistance;
@@ -136,6 +144,8 @@ public class DriveToPose extends Command {
 
     if (translationOverride.isPresent() && translationOverride.get().get().getNorm() > 0.5) {
       velocity = translationOverride.get().get();
+    } else if(yOverride.isPresent()){
+      velocity = new Translation2d(driveVelocity, yOverride.get().getAsDouble());
     } else {
       velocity =
           new Pose2d(

@@ -176,7 +176,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.parallel(
                 applyTargetStateFactory.apply(SuperstructureState.REEF_ALGAE_L2).get(),
-                wristRollers.applyGoalCommand(WristRollersGoal.INTAKE)))
+                wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)))
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
         .whileTrue(algaeAlign);
 
@@ -184,23 +184,24 @@ public class RobotContainer {
         .whileTrue(
             Commands.parallel(
                 applyTargetStateFactory.apply(SuperstructureState.REEF_ALGAE_L1).get(),
-                wristRollers.applyGoalCommand(WristRollersGoal.INTAKE)))
+                wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)))
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
         .whileTrue(algaeAlign);
 
     // Intake controls
-    Controlboard.stationIntake()
+    Controlboard.feed()
+        .and(new Trigger(wristRollers.hasGamePiece()).negate())
         .whileTrue(
             Commands.parallel(
                 wristRollers.feed(),
                 stationAlign,
-                applyTargetStateFactory.apply(SuperstructureState.HOME).get()));
+                applyTargetStateFactory.apply(SuperstructureState.FEEDING).get()));
 
     Controlboard.groundIntake()
         .whileTrue(
             Commands.parallel(
                 applyTargetStateFactory.apply(SuperstructureState.INTAKE).get(),
-                wristRollers.applyGoalCommand(WristRollersGoal.INTAKE)));
+                wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)));
 
     Controlboard.lockToProcessor()
         .whileTrue(
@@ -237,7 +238,8 @@ public class RobotContainer {
                                 Controlboard.getRotation().getAsDouble()))
             .beforeStarting(() -> drivetrain.getHelper().setLastAngle(drivetrain.getHeading())));
 
-    superstructure.setDefaultCommand(applyTargetStateFactory.apply(SuperstructureState.HOME).get());
+    superstructure.setDefaultCommand(
+        applyTargetStateFactory.apply(SuperstructureState.FEEDING).get());
   }
 
   public void configureManualOverrides() {
@@ -265,12 +267,8 @@ public class RobotContainer {
                 }));
 
     new Trigger(() -> Dashboard.zeroElevator.get())
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  superstructure.getElevator().resetPosition(0.0);
-                  Dashboard.zeroElevator.set(false);
-                }));
+        .whileTrue(
+            superstructure.getElevator().rezero().andThen(() -> Dashboard.zeroElevator.set(false)));
   }
 
   public Command getAutonomousCommand() {

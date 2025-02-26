@@ -134,7 +134,7 @@ public class Controlboard {
     return driveController.rightTrigger(TRIGGER_DEADBAND);
   }
 
-  public static Trigger stationIntake() {
+  public static Trigger feed() {
     return driveController.leftTrigger(TRIGGER_DEADBAND);
   }
 

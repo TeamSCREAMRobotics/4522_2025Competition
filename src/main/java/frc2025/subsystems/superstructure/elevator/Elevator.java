@@ -2,7 +2,14 @@ package frc2025.subsystems.superstructure.elevator;
 
 import data.Length;
 import drivers.TalonFXSubsystem;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc2025.logging.Logger;
 import java.util.function.DoubleSupplier;
 import math.Conversions;
@@ -10,7 +17,7 @@ import math.Conversions;
 public class Elevator extends TalonFXSubsystem {
 
   public Elevator(TalonFXSubsystemConfiguration config) {
-    super(config, ElevatorGoal.HOME);
+    super(config, ElevatorGoal.FEED);
 
     resetPosition(0.0);
     master.getClosedLoopReferenceSlope().setUpdateFrequency(100.0);
@@ -18,13 +25,14 @@ public class Elevator extends TalonFXSubsystem {
 
   public enum ElevatorGoal implements TalonFXSubsystemGoal {
     HOME(Length.kZero),
-    TROUGH(Length.fromInches(10.5)),
-    L2(Length.fromInches(18.95)),
-    L3(Length.fromInches(35.0)),
-    L4(Length.fromInches(59.85)),
-    CLEAR_ALGAE_L1(Length.fromInches(9.1)),
-    CLEAR_ALGAE_L2(Length.fromInches(24.611)),
-    BARGE(ElevatorConstants.MAX_HEIGHT.minus(Length.fromInches(8.0))),
+    FEED(Length.fromInches(2.3)),
+    TROUGH(Length.fromInches(11.5)),
+    L2(Length.fromInches(21.95)),
+    L3(Length.fromInches(38.0)),
+    L4(Length.fromInches(62.85)),
+    CLEAR_ALGAE_L1(Length.fromInches(14.1)),
+    CLEAR_ALGAE_L2(Length.fromInches(29.611)),
+    BARGE(Length.fromInches(69.203)),
     MAX(ElevatorConstants.MAX_HEIGHT);
 
     public DoubleSupplier targetRotations;
@@ -79,6 +87,15 @@ public class Elevator extends TalonFXSubsystem {
     return Conversions.linearDistanceToRotations(height, ElevatorConstants.PULLEY_CIRCUMFERENCE);
   }
 
+  private double startTime = 0.0;
+
+  public Command rezero() {
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+        new ParallelDeadlineGroup(new WaitUntilCommand(() -> ((Timer.getFPGATimestamp() - startTime) > 2.0) && master.getSupplyCurrent().getValueAsDouble() > 15.0), new RunCommand(() -> setVoltage(-2.0))),
+        new InstantCommand(() -> resetPosition(0.0)));
+  }
+
   public void resetSimController() {
     simController.reset(getPosition(), getVelocity());
   }
@@ -90,11 +107,8 @@ public class Elevator extends TalonFXSubsystem {
   @Override
   public void periodic() {
     super.periodic();
-    /* Logger.log(logPrefix + "Height", rotationsToHeightInches(getPosition()));
+    Logger.log(logPrefix + "Height", rotationsToHeightInches(getPosition()));
     Logger.log(logPrefix + "AbsHeight", rotationsToHeightInches(getPosition()) + 10.7125);
-    Logger.log(logPrefix + "ErrorHeight", rotationsToHeightInches(getError())); */
-    Logger.log(logPrefix + "AppliedVolts", master.getMotorVoltage().getValueAsDouble());
-    Logger.log(logPrefix + "Vel", getVelocity());
-    Logger.log(logPrefix + "ReferenceVel", master.getClosedLoopReferenceSlope().getValueAsDouble());
+    Logger.log(logPrefix + "ErrorHeight", rotationsToHeightInches(getError()));
   }
 }

@@ -43,7 +43,7 @@ public class Dashboard {
 
     disableVisionUpdates = new DashboardBoolean(overrides, "Disable Vision Updates", false);
 
-    disableAutoFeatures = new DashboardBoolean(overrides, "Disable Auto Features", true);
+    disableAutoFeatures = new DashboardBoolean(overrides, "Disable Auto Features", false);
 
     zeroElevator = new DashboardBoolean(overrides, "Zero Elevator", false);
   }

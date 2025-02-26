@@ -21,7 +21,7 @@ public class WristRollers extends TalonFXSubsystem {
 
   @Setter private static double idleVoltage = 1.0;
 
-  private final Debouncer beamDebouncer = new Debouncer(0.12);
+  private final Debouncer beamDebouncer = new Debouncer(0.025);
 
   public WristRollers(TalonFXSubsystemConfiguration config) {
     super(config, WristRollersGoal.IDLE);
@@ -30,12 +30,13 @@ public class WristRollers extends TalonFXSubsystem {
   }
 
   public enum WristRollersGoal implements TalonFXSubsystemGoal {
-    IDLE(() -> idleVoltage, ControlType.VOLTAGE),
+    IDLE(() -> hasGamePiece ? 0.0 : -1.0, ControlType.VOLTAGE),
     ZERO(() -> 0.0, ControlType.VOLTAGE),
     STAGE(() -> -1.75, ControlType.VOLTAGE),
-    INTAKE(() -> 7.5, ControlType.VOLTAGE),
+    INTAKE(() -> 9.0, ControlType.VOLTAGE),
+    INTAKE_ALGAE(() -> -9.0, ControlType.VOLTAGE),
     EJECT_CORAL(() -> 12.0, ControlType.VOLTAGE),
-    EJECT_ALGAE(() -> -13.0, ControlType.VOLTAGE);
+    EJECT_ALGAE(() -> 12.0, ControlType.VOLTAGE);
 
     public final DoubleSupplier voltage;
     public final ControlType controlType;
@@ -83,7 +84,7 @@ public class WristRollers extends TalonFXSubsystem {
   }
 
   public BooleanSupplier hasGamePiece() {
-    return () -> beamDebouncer.calculate(hasGamePiece);
+    return () -> beamDebouncer.calculate(acquiredGamePiece());
   }
 
   public static void resetBeam() {

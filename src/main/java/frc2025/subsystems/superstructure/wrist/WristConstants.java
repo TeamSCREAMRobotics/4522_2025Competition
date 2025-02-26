@@ -47,7 +47,7 @@ public class WristConstants {
   static {
     WRIST_CONFIG.name = "Wrist";
 
-    WRIST_CONFIG.codeEnabled = false;
+    WRIST_CONFIG.codeEnabled = true;
     WRIST_CONFIG.logTelemetry = false;
     WRIST_CONFIG.debugMode = false;
 
@@ -64,7 +64,7 @@ public class WristConstants {
 
     CANcoderConfiguration config = new CANcoderConfiguration();
     config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.625;
-    config.MagnetSensor.MagnetOffset = -0.421630859375 + 0.25;
+    config.MagnetSensor.MagnetOffset = -0.589111328125 + 0.25;
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     WRIST_CONFIG.cancoderConstants = new CANCoderConstants(new CANDevice(4), config);
 
@@ -77,11 +77,11 @@ public class WristConstants {
     WRIST_CONFIG.feedbackRemoteSensorId = 4;
     WRIST_CONFIG.enableSupplyCurrentLimit = true;
     WRIST_CONFIG.supplyCurrentLimit = 40;
-    WRIST_CONFIG.cruiseVelocity = 50.0;
-    WRIST_CONFIG.acceleration = 25.0;
+    WRIST_CONFIG.cruiseVelocity = 30.0;
+    WRIST_CONFIG.acceleration = 30.0;
     WRIST_CONFIG.slot0 =
-        new ScreamPIDConstants(50.0, 0, 0)
-            .getSlot0Configs(new FeedforwardConstants(0, 0, 0.35, 0, GravityTypeValue.Arm_Cosine));
+        new ScreamPIDConstants(25.0, 0, 0)
+            .getSlot0Configs(new FeedforwardConstants(0, 0, 0.6, 0, GravityTypeValue.Arm_Cosine));
     WRIST_CONFIG.positionThreshold = Units.degreesToRotations(4.0);
   }
 
@@ -91,7 +91,7 @@ public class WristConstants {
   static {
     ROLLERS_CONFIG.name = "WristRollers";
 
-    ROLLERS_CONFIG.codeEnabled = false;
+    ROLLERS_CONFIG.codeEnabled = true;
     ROLLERS_CONFIG.logTelemetry = false;
 
     ROLLERS_CONFIG.masterConstants =
