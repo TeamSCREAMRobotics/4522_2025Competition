@@ -56,14 +56,13 @@ public class Routines {
           "Processor-Station_To_D",
           "D_To_2");
   private static final PathSequence E_C_D_2 =
-       new PathSequence(
+      new PathSequence(
           "Processor-Starting_To_E",
           "E_To_Processor-Station",
           "Processor-Station_To_C",
           "C_To_Processor-Station",
           "Processor-Station_To_D",
-          "D_To_2"
-       );
+          "D_To_2");
   private static final PathSequence D_D_C_C_2P =
       new PathSequence(
           "Processor-Starting_To_D",
@@ -90,20 +89,16 @@ public class Routines {
 
   /* Middle Starting Side Sequences */
   /* Initial Move is G */
-  private static final PathSequence G_4N = new PathSequence(
-    "Mid-Starting_To_G",
-    "G_To_4",
-    "4_To_Barge1");
+  private static final PathSequence G_4N =
+      new PathSequence("Mid-Starting_To_G", "G_To_4", "4_To_Barge1");
   // private static final PathSequence G_4P = new PathSequence();
   private static final PathSequence G_4N_5N_3N = new PathSequence();
   // private static final PathSequence G_4N_5N_3P = new PathSequence();
   private static final PathSequence G_4N_3N_5N = new PathSequence();
   // private static final PathSequence G_4N_3P_5N = new PathSequence();
   /* Initial Move is H */
-  private static final PathSequence H_4N = new PathSequence(
-    "Mid-Starting_To_H",
-    "H_To_4",
-    "4_To_Barge1");
+  private static final PathSequence H_4N =
+      new PathSequence("Mid-Starting_To_H", "H_To_4", "4_To_Barge1");
   // private static final PathSequence H_4P = new PathSequence();
   private static final PathSequence H_4N_5N_3N = new PathSequence();
   // private static final PathSequence H_4N_5N_3P = new PathSequence();
@@ -164,8 +159,7 @@ public class Routines {
     currentSequence = test;
 
     return new SequentialCommandGroup(
-        currentSequence.getStart(), currentSequence.getNext(), currentSequence.getNext()
-    );
+        currentSequence.getStart(), currentSequence.getNext(), currentSequence.getNext());
   }
 
   /* Processor Starting Side Autos */
@@ -174,36 +168,41 @@ public class Routines {
     WristRollers wristRollers = container.getSubsystems().wristRollers();
 
     return new SequentialCommandGroup(
-        new ParallelRaceGroup(currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score pre-load E-L4
+        new ParallelRaceGroup(
+            currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
+            .withTimeout(eject_TimeOut), // Score pre-load E-L4
         setElevator(container, SuperstructureState.HOME).withTimeout(0.25),
         wristRollers.applyGoalCommand(WristRollersGoal.IDLE).withTimeout(0.1),
         new ParallelRaceGroup(currentSequence.getNext() /*, Feed Command */),
         new WaitCommand(feederStation_TimeOut),
-        new ParallelRaceGroup(currentSequence.getNext(), 
+        new ParallelRaceGroup(
+            currentSequence.getNext(),
             new SequentialCommandGroup(
                 new WaitCommand(elevatorAfterFeed_TimeOut),
-                setElevator(container, SuperstructureState.REEF_L4)
-            )
-        ),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score pre-load C-L4
+                setElevator(container, SuperstructureState.REEF_L4))),
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
+            .withTimeout(eject_TimeOut), // Score pre-load C-L4
         setElevator(container, SuperstructureState.HOME).withTimeout(0.25),
         wristRollers.applyGoalCommand(WristRollersGoal.IDLE).withTimeout(0.1),
         new ParallelRaceGroup(currentSequence.getNext() /*, Feed Command */),
         new WaitCommand(feederStation_TimeOut),
-        new ParallelRaceGroup(currentSequence.getNext(), 
+        new ParallelRaceGroup(
+            currentSequence.getNext(),
             new SequentialCommandGroup(
                 new WaitCommand(elevatorAfterFeed_TimeOut),
-                setElevator(container, SuperstructureState.REEF_L4)
-            )
-        ),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score pre-load D-L4
+                setElevator(container, SuperstructureState.REEF_L4))),
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
+            .withTimeout(eject_TimeOut), // Score pre-load D-L4
         wristRollers.applyGoalCommand(WristRollersGoal.IDLE).withTimeout(0.1),
         currentSequence.getNext(), // Move to algae
         // setElevator(container, SuperstructureState.REEF_ALGAE_L1).withTimeout(0.25),
-        // wristRollers.applyGoalCommand(WristRollersGoal.INTAKE).withTimeout(intakeAlgae_TimeOut), // Grab algae 2
-        setElevator(container, SuperstructureState.HOME).withTimeout(0.25)
-    );
+        // wristRollers.applyGoalCommand(WristRollersGoal.INTAKE).withTimeout(intakeAlgae_TimeOut),
+        // // Grab algae 2
+        setElevator(container, SuperstructureState.HOME).withTimeout(0.25));
   }
 
   public static Command processor_Side_E_B_C_D_2(RobotContainer container) {
@@ -211,32 +210,44 @@ public class Routines {
     WristRollers wristRollers = container.getSubsystems().wristRollers();
 
     return new SequentialCommandGroup(
-        new ParallelRaceGroup(currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score pre-load E-L4
+        new ParallelRaceGroup(
+            currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
+            .withTimeout(eject_TimeOut), // Score pre-load E-L4
         setElevator(container, SuperstructureState.HOME).withTimeout(0.25),
         wristRollers.applyGoalCommand(WristRollersGoal.IDLE).withTimeout(0.1),
         new ParallelRaceGroup(currentSequence.getNext() /*, Feed Command */),
         new WaitCommand(feederStation_TimeOut),
-        new ParallelRaceGroup(currentSequence.getNext(), setElevator(container, SuperstructureState.REEF_L4)),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score pre-load B-L4
+        new ParallelRaceGroup(
+            currentSequence.getNext(), setElevator(container, SuperstructureState.REEF_L4)),
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
+            .withTimeout(eject_TimeOut), // Score pre-load B-L4
         setElevator(container, SuperstructureState.HOME).withTimeout(0.25),
         wristRollers.applyGoalCommand(WristRollersGoal.IDLE).withTimeout(0.1),
         new ParallelRaceGroup(currentSequence.getNext() /*, Feed Command */),
         new WaitCommand(feederStation_TimeOut),
-        new ParallelRaceGroup(currentSequence.getNext(), setElevator(container, SuperstructureState.REEF_L4)),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score pre-load C-L4
+        new ParallelRaceGroup(
+            currentSequence.getNext(), setElevator(container, SuperstructureState.REEF_L4)),
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
+            .withTimeout(eject_TimeOut), // Score pre-load C-L4
         setElevator(container, SuperstructureState.HOME).withTimeout(0.25),
         wristRollers.applyGoalCommand(WristRollersGoal.IDLE).withTimeout(0.1),
         new ParallelRaceGroup(currentSequence.getNext() /*, Feed Command */),
         new WaitCommand(feederStation_TimeOut),
-        new ParallelRaceGroup(currentSequence.getNext(), setElevator(container, SuperstructureState.REEF_L4)),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score D-L4
+        new ParallelRaceGroup(
+            currentSequence.getNext(), setElevator(container, SuperstructureState.REEF_L4)),
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
+            .withTimeout(eject_TimeOut), // Score D-L4
         wristRollers.applyGoalCommand(WristRollersGoal.IDLE).withTimeout(0.1),
         currentSequence.getNext(), // Move to algae
         // setElevator(container, SuperstructureState.REEF_ALGAE_L1).withTimeout(0.25),
-        // wristRollers.applyGoalCommand(WristRollersGoal.INTAKE).withTimeout(intakeAlgae_TimeOut), // Grab algae 2
-        setElevator(container, SuperstructureState.HOME).withTimeout(0.25)
-    );
+        // wristRollers.applyGoalCommand(WristRollersGoal.INTAKE).withTimeout(intakeAlgae_TimeOut),
+        // // Grab algae 2
+        setElevator(container, SuperstructureState.HOME).withTimeout(0.25));
   }
 
   /* Middle Starting Side Autos */
@@ -247,15 +258,19 @@ public class Routines {
     return new SequentialCommandGroup(
         currentSequence.getIndex(0),
         setElevator(container, SuperstructureState.REEF_L4).withTimeout(0.25),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score pre-load G-L4
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
+            .withTimeout(eject_TimeOut), // Score pre-load G-L4
         currentSequence.getNext(),
-        setElevator(container, SuperstructureState.REEF_ALGAE_L2).withTimeout(intakeAlgae_TimeOut), // Grab algae 4
+        setElevator(container, SuperstructureState.REEF_ALGAE_L2)
+            .withTimeout(intakeAlgae_TimeOut), // Grab algae 4
         setElevator(container, SuperstructureState.HOME).withTimeout(0.25),
         currentSequence.getNext(),
         setElevator(container, SuperstructureState.BARGE_NET).withTimeout(0.25),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE).withTimeout(0.25), // Score algae 4 in barge
-        setElevator(container, SuperstructureState.HOME).withTimeout(0.25)
-    );
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.EJECT_ALGAE)
+            .withTimeout(0.25), // Score algae 4 in barge
+        setElevator(container, SuperstructureState.HOME).withTimeout(0.25));
   }
 
   /* Non-Processor Starting Side Autos */
@@ -264,25 +279,38 @@ public class Routines {
     WristRollers wristRollers = container.getSubsystems().wristRollers();
 
     return new SequentialCommandGroup(
-        new ParallelRaceGroup(currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score pre-load J-L4
+        new ParallelRaceGroup(
+            currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
+            .withTimeout(eject_TimeOut), // Score pre-load J-L4
         setElevator(container, SuperstructureState.HOME).withTimeout(0.25),
         new ParallelRaceGroup(currentSequence.getNext() /*, Feed Command */),
-        new ParallelRaceGroup(currentSequence.getNext(), setElevator(container, SuperstructureState.REEF_L4)),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score A-L4
+        new ParallelRaceGroup(
+            currentSequence.getNext(), setElevator(container, SuperstructureState.REEF_L4)),
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
+            .withTimeout(eject_TimeOut), // Score A-L4
         setElevator(container, SuperstructureState.HOME).withTimeout(0.25),
         new ParallelRaceGroup(currentSequence.getNext() /*, Feed Command */),
-        new ParallelRaceGroup(currentSequence.getNext(), setElevator(container, SuperstructureState.REEF_L4)),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score L-L4
+        new ParallelRaceGroup(
+            currentSequence.getNext(), setElevator(container, SuperstructureState.REEF_L4)),
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
+            .withTimeout(eject_TimeOut), // Score L-L4
         setElevator(container, SuperstructureState.HOME).withTimeout(0.25),
         new ParallelRaceGroup(currentSequence.getNext() /*, Feed Command */),
-        new ParallelRaceGroup(currentSequence.getNext(), setElevator(container, SuperstructureState.REEF_L4)),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL).withTimeout(eject_TimeOut), // Score K-L4
+        new ParallelRaceGroup(
+            currentSequence.getNext(), setElevator(container, SuperstructureState.REEF_L4)),
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
+            .withTimeout(eject_TimeOut), // Score K-L4
         currentSequence.getNext(), // Move to algae
         setElevator(container, SuperstructureState.REEF_ALGAE_L1).withTimeout(0.25),
-        wristRollers.applyGoalCommand(WristRollersGoal.INTAKE).withTimeout(intakeAlgae_TimeOut), // Grab algae 6
-        setElevator(container, SuperstructureState.HOME).withTimeout(0.25)
-    );
+        wristRollers
+            .applyGoalCommand(WristRollersGoal.INTAKE)
+            .withTimeout(intakeAlgae_TimeOut), // Grab algae 6
+        setElevator(container, SuperstructureState.HOME).withTimeout(0.25));
   }
 
   /* Helper Commands */

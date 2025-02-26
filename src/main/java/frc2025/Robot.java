@@ -4,9 +4,9 @@
 
 package frc2025;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.hal.AllianceStationID;
-import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,10 +15,6 @@ import frc2025.logging.Logger;
 import frc2025.subsystems.vision.VisionManager;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.pathplanner.lib.commands.FollowPathCommand;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class Robot extends TimedRobot {
   private Command autonomousCommand;

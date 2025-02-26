@@ -109,6 +109,8 @@ public class TunerConstants {
     DRIVE_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 80;
     DRIVE_CONFIG.CurrentLimits.SupplyCurrentLimit = 90;
     DRIVE_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 0.5;
+
+    DRIVE_CONFIG.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;
   }
 
   private static final TalonFXConfiguration STEER_CONFIG = new TalonFXConfiguration();
@@ -122,17 +124,11 @@ public class TunerConstants {
     STEER_CONFIG.MotionMagic.MotionMagicCruiseVelocity = 2;
   }
 
-  private static final Pigeon2Configuration PIGEON_CONFIG = new Pigeon2Configuration();
-
-  /* static{
-    PIGEON_CONFIG.MountPose.MountPoseYaw = 180;
-  } */
-
   private static final SwerveDrivetrainConstants DRIVETRAIN_CONSTANTS =
       new SwerveDrivetrainConstants()
           .withPigeon2Id(PIGEON_ID)
           .withCANBusName(CANBUS)
-          .withPigeon2Configs(PIGEON_CONFIG);
+          .withPigeon2Configs(new Pigeon2Configuration());
 
   private static final SwerveModuleConstantsFactory<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>

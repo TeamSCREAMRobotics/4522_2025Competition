@@ -36,10 +36,6 @@ public class Controlboard {
 
   static {
     driveController.leftBumper().onTrue(Commands.runOnce(() -> leftSide = !leftSide));
-    driveController
-        .start()
-        .whileTrue(
-            Commands.waitSeconds(2).andThen(Commands.runOnce(() -> fieldCentric = !fieldCentric)));
   }
 
   public static Command driverRumbleCommand(Supplier<RumbleType> type, double value, double time) {
@@ -102,7 +98,7 @@ public class Controlboard {
     return driveController.leftTrigger(TRIGGER_DEADBAND).or(driveController.leftBumper());
   }
 
-  public static Trigger alternateControls(){
+  public static Trigger alternateControls() {
     return driveController.leftStick();
   }
 
@@ -127,14 +123,10 @@ public class Controlboard {
   }
 
   public static Trigger goToTrough() {
-    return driveController.a();
+    return driveController.a().and(alternateControls().negate());
   }
 
-  public static Trigger goToAlgaeClear1() {
-    return driveController.x().and(alternateControls());
-  }
-
-  public static Trigger goToAlgaeClear2() {
+  public static Trigger goToAlgaeClear() {
     return driveController.y().and(alternateControls());
   }
 
@@ -162,7 +154,7 @@ public class Controlboard {
     return driveController.start();
   }
 
-  public static Trigger troughFeed(){
+  public static Trigger troughFeed() {
     return driveController.leftTrigger().and(alternateControls());
   }
 

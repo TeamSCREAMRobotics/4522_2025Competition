@@ -15,7 +15,6 @@ public class Wrist extends TalonFXSubsystem {
     STOW(Rotation2d.fromDegrees(90.0)),
     INTAKE(Rotation2d.fromDegrees(25.0)),
     CLEAR_ALGAE(Rotation2d.fromDegrees(62.64)),
-    HANDOFF(Rotation2d.fromDegrees(0.0)),
     TROUGH_FEED(Rotation2d.fromDegrees(85.0)),
     TROUGH(Rotation2d.fromDegrees(70.0));
 

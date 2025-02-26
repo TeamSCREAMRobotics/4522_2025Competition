@@ -189,11 +189,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public void logTelemetry(SwerveDriveState state) {
-    Logger.log("RobotState/EstimatedPose", state.Pose); /*
+    Logger.log("RobotState/EstimatedPose", state.Pose);
     Logger.log("Subsystems/Drivetrain/MeasuredStates", state.ModuleStates);
     Logger.log("Subsystems/Drivetrain/SetpointStates", state.ModuleTargets);
 
-    Dashboard.publishPose(getEstimatedPose()); */
+    // Dashboard.publishPose(getEstimatedPose());
   }
 
   @Override

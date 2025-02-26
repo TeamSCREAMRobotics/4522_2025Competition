@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc2025.logging.Logger;
 import java.util.function.DoubleSupplier;
@@ -93,7 +92,12 @@ public class Elevator extends TalonFXSubsystem {
   public Command rezero() {
     return new SequentialCommandGroup(
         new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
-        new ParallelDeadlineGroup(new WaitUntilCommand(() -> ((Timer.getFPGATimestamp() - startTime) > 2.0) && master.getSupplyCurrent().getValueAsDouble() > 15.0), new RunCommand(() -> setVoltage(-2.0))),
+        new ParallelDeadlineGroup(
+            new WaitUntilCommand(
+                () ->
+                    ((Timer.getFPGATimestamp() - startTime) > 2.0)
+                        && master.getSupplyCurrent().getValueAsDouble() > 15.0),
+            new RunCommand(() -> setVoltage(-2.0))),
         new InstantCommand(() -> resetPosition(0.0)));
   }
 

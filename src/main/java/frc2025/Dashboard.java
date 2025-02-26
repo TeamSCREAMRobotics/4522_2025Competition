@@ -27,6 +27,8 @@ public class Dashboard {
 
   public static DashboardBoolean zeroElevator;
 
+  public static DashboardBoolean fieldCentric;
+
   private static Field2d field = new Field2d();
 
   static {
@@ -46,6 +48,8 @@ public class Dashboard {
     disableAutoFeatures = new DashboardBoolean(overrides, "Disable Auto Features", false);
 
     zeroElevator = new DashboardBoolean(overrides, "Zero Elevator", false);
+
+    fieldCentric = new DashboardBoolean(overrides, "Field Centric", true);
   }
 
   public static void resetVoltageOverrides() {

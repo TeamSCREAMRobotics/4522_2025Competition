@@ -7,6 +7,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc2025.Robot;
 import frc2025.logging.Logger;
 import frc2025.subsystems.superstructure.wrist.WristRollers.WristRollersGoal;
 import java.util.Set;
@@ -31,8 +32,7 @@ public class WristRollers extends TalonFXSubsystem {
 
   public enum WristRollersGoal implements TalonFXSubsystemGoal {
     IDLE(() -> hasGamePiece ? 0.0 : -1.0, ControlType.VOLTAGE),
-    ZERO(() -> 0.0, ControlType.VOLTAGE),
-    STAGE(() -> -1.75, ControlType.VOLTAGE),
+    HOLD(() -> 0.0, ControlType.VOLTAGE),
     INTAKE(() -> 9.0, ControlType.VOLTAGE),
     INTAKE_ALGAE(() -> -9.0, ControlType.VOLTAGE),
     INTAKE_TROUGH(() -> -9.0, ControlType.VOLTAGE),
@@ -71,21 +71,12 @@ public class WristRollers extends TalonFXSubsystem {
     return getBeamDistanceInches() < 2.0;
   }
 
-  public Command feed() {
-    return Commands.defer(
-        () ->
-            Commands.deadline(
-                    Commands.waitUntil(hasGamePiece()), applyGoalCommand(WristRollersGoal.INTAKE))
-                .andThen(Commands.runOnce(() -> idleVoltage = 0.0))
-                .withInterruptBehavior(
-                    acquiredGamePiece()
-                        ? InterruptionBehavior.kCancelIncoming
-                        : InterruptionBehavior.kCancelSelf),
-        Set.of(this));
-  }
-
   public BooleanSupplier hasGamePiece() {
-    return () -> beamDebouncer.calculate(acquiredGamePiece());
+    if (Robot.isSimulation()) {
+      return () -> false;
+    } else {
+      return () -> beamDebouncer.calculate(acquiredGamePiece());
+    }
   }
 
   public static void resetBeam() {
@@ -99,9 +90,5 @@ public class WristRollers extends TalonFXSubsystem {
     Logger.log(logPrefix + "HasGamePiece", hasGamePiece);
     Logger.log(logPrefix + "AcquiredGamePiece", acquiredGamePiece());
     Logger.log(logPrefix + "BeamDistance", getBeamDistanceInches());
-
-    if (acquiredGamePiece()) {
-      hasGamePiece = true;
-    }
   }
 }

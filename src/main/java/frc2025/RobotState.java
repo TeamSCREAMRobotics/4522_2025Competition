@@ -1,5 +1,6 @@
 package frc2025;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -7,12 +8,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.RobotContainer.Subsystems;
 import frc2025.constants.FieldConstants;
+import frc2025.constants.FieldConstants.AlgaeLevel;
 import frc2025.controlboard.Controlboard;
 import frc2025.controlboard.Controlboard.ScoringSide;
 import frc2025.logging.Logger;
 import frc2025.sim.ComponentVisualizer;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.superstructure.Superstructure;
+import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureState;
 import frc2025.subsystems.superstructure.elevator.Elevator;
 import frc2025.subsystems.superstructure.wrist.Wrist;
 import frc2025.subsystems.superstructure.wrist.WristRollers;
@@ -56,8 +59,7 @@ public class RobotState {
               .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
               .finallyDo(() -> WristRollers.resetBeam());
         case TROUGH:
-          return wristRollers
-              .applyGoalCommand(WristRollersGoal.EJECT_CORAL);
+          return wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL);
         default:
           return Commands.none();
       }
@@ -76,10 +78,16 @@ public class RobotState {
             .getSecond();
   }
 
-  public Pose2d getTargetAlgaePose() {
-    return AllianceFlipUtil.get(
-            FieldConstants.BLUE_ALGAE_LOCATIONS, FieldConstants.RED_ALGAE_LOCATIONS)
-        .get(getReefZone().getAsInt());
+  public Pair<Pose2d, SuperstructureState> getTargetAlgaePose() {
+    var pair =
+        AllianceFlipUtil.get(
+                FieldConstants.BLUE_ALGAE_LOCATIONS, FieldConstants.RED_ALGAE_LOCATIONS)
+            .get(getReefZone().getAsInt());
+    return Pair.of(
+        pair.getFirst(),
+        pair.getSecond() == AlgaeLevel.L1
+            ? SuperstructureState.REEF_ALGAE_L1
+            : SuperstructureState.REEF_ALGAE_L2);
   }
 
   public OptionalInt getReefZone() {
@@ -90,9 +98,9 @@ public class RobotState {
   public Rotation2d getStationAlignAngle() {
     Rotation2d angle;
     if (drivetrain.getEstimatedPose().getY() <= FieldConstants.FIELD_DIMENSIONS.getY() / 2.0) {
-      angle = AllianceFlipUtil.get(Rotation2d.fromDegrees(55), Rotation2d.fromDegrees(125));
+      angle = AllianceFlipUtil.get(Rotation2d.fromDegrees(54), Rotation2d.fromDegrees(126));
     } else {
-      angle = AllianceFlipUtil.get(Rotation2d.fromDegrees(-55), Rotation2d.fromDegrees(-125));
+      angle = AllianceFlipUtil.get(Rotation2d.fromDegrees(-54), Rotation2d.fromDegrees(-126));
     }
     Logger.log("RobotState/StationAlignAngle", angle.getDegrees());
     return angle;
@@ -117,7 +125,9 @@ public class RobotState {
               Logger.log("Field/ReefZone", reefZone);
             });
     Logger.log("Controls/ScoringSide", Controlboard.getScoringSide().get());
-    // visualizeComponents();
+    if (Robot.isSimulation()) {
+      visualizeComponents();
+    }
   }
 
   public void visualizeComponents() {
