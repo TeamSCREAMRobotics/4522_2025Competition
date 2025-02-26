@@ -12,7 +12,7 @@ public class AutoSelector {
   private enum AutoMode {
     DO_NOTHING(container -> Commands.none()),
     TEST(container -> Routines.testPath(container)),
-    PROCESSOR_E_D(container -> Routines.processor_Side_Test(container));
+    PROCESSOR_MORE(container -> Routines.processor_Side_E_C_D_2(container));
 
     private final Function<RobotContainer, Command> factory;
 

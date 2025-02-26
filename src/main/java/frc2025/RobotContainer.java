@@ -226,7 +226,7 @@ public class RobotContainer {
                     Controlboard.getFieldCentric().getAsBoolean()
                         ? drivetrain
                             .getHelper()
-                            .getHeadingCorrectedFieldCentric(
+                            .getFieldCentric(
                                 Controlboard.getTranslation().get(),
                                 Controlboard.getRotation().getAsDouble())
                         : drivetrain
