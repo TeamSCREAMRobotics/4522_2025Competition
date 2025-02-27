@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 public class AutoSelector {
 
-  private enum AutoMode {
+  public enum AutoMode {
     DO_NOTHING(container -> Commands.none()),
     TEST(container -> Routines.testPath(container)),
     PROCESSOR_MORE(container -> Routines.processor_Side_E_C_D_2(container));
@@ -37,6 +37,10 @@ public class AutoSelector {
     }
     chooser.setDefaultOption(AutoMode.DO_NOTHING.name(), AutoMode.DO_NOTHING);
     SmartDashboard.putData("AutoSelector", chooser);
+  }
+
+  public AutoMode getSelected() {
+    return chooser.getSelected();
   }
 
   public Command getAutonomousCommand() {

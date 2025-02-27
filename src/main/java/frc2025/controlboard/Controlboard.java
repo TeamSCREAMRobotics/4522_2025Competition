@@ -34,8 +34,17 @@ public class Controlboard {
   public static boolean fieldCentric = true;
   public static boolean leftSide = true;
 
+  public static boolean isSwitchingSide = false;
+
   static {
-    driveController.leftBumper().onTrue(Commands.runOnce(() -> leftSide = !leftSide));
+    driveController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  leftSide = !leftSide;
+                  isSwitchingSide = true;
+                }));
   }
 
   public static Command driverRumbleCommand(Supplier<RumbleType> type, double value, double time) {
@@ -146,7 +155,7 @@ public class Controlboard {
     return driveController.povLeft();
   }
 
-  public static Trigger lockToProcessor() {
+  public static Trigger processor() {
     return driveController.a().and(alternateControls());
   }
 

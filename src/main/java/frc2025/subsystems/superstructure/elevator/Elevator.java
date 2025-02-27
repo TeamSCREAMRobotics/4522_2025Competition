@@ -19,7 +19,6 @@ public class Elevator extends TalonFXSubsystem {
     super(config, ElevatorGoal.FEED);
 
     resetPosition(0.0);
-    master.getClosedLoopReferenceSlope().setUpdateFrequency(100.0);
   }
 
   public enum ElevatorGoal implements TalonFXSubsystemGoal {
@@ -27,9 +26,9 @@ public class Elevator extends TalonFXSubsystem {
     FEED(Length.fromInches(2.3)),
     TROUGH_FEED(Length.fromInches(14.5)),
     TROUGH(Length.fromInches(2.0)),
-    L2(Length.fromInches(21.95)),
-    L3(Length.fromInches(38.0)),
-    L4(Length.fromInches(62.85)),
+    L2(Length.fromInches(23.0)),
+    L3(Length.fromInches(39.0)),
+    L4(Length.fromInches(63.25)),
     CLEAR_ALGAE_L1(Length.fromInches(14.1)),
     CLEAR_ALGAE_L2(Length.fromInches(29.611)),
     BARGE(Length.fromInches(69.203)),

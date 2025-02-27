@@ -16,8 +16,8 @@ public class SuperstructureConstants {
     FEEDING(ElevatorGoal.FEED, WristGoal.STOW),
     TROUGH_FEED(ElevatorGoal.TROUGH_FEED, WristGoal.TROUGH_FEED),
     BARGE_NET(ElevatorGoal.BARGE, WristGoal.STOW),
-    INTAKE(ElevatorGoal.HOME, WristGoal.INTAKE);
-    // PROCESSOR(ElevatorGoal.IDLE, WristGoal.STOW),
+    INTAKE(ElevatorGoal.HOME, WristGoal.INTAKE),
+    PROCESSOR(ElevatorGoal.HOME, WristGoal.CLEAR_ALGAE);
 
     public WristGoal wristGoal;
     public ElevatorGoal elevatorGoal;

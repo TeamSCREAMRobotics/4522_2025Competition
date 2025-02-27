@@ -4,27 +4,38 @@
 
 package frc2025;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc2025.autonomous.AutoSelector.AutoMode;
 import frc2025.logging.Logger;
 import frc2025.subsystems.vision.VisionManager;
 import java.util.ArrayList;
 import java.util.List;
+import util.RunnableUtil.RunOnce;
 
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
 
   private List<Command> allCommands = new ArrayList<>();
 
+  private RunOnce autoCommandReloader = new RunOnce();
+
+  private boolean hasScheduledAutoInit = false;
+
   private final RobotContainer robotContainer;
 
   public Robot() {
-    super(0.03);
+    // super(0.03);
     robotContainer = new RobotContainer();
 
     Logger.setOptions(
@@ -52,10 +63,22 @@ public class Robot extends TimedRobot {
     Logger.log(
         "AllCommands",
         allCommands.stream().map((command) -> command.getName()).toArray(String[]::new));
+
+    /* autoCommandReloader.runOnceWhenChanged(
+        () -> {
+          autonomousCommand = robotContainer.getAutonomousCommand();
+        },
+        robotContainer.getAutoSelector().getSelected()); */
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    if(!hasScheduledAutoInit){
+      Command initAutoCommand = AutoMode.DO_NOTHING.getCommand(robotContainer).ignoringDisable(true);
+      initAutoCommand.schedule();
+      hasScheduledAutoInit = true;
+    }
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -66,7 +89,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     VisionManager.hasEnabled = true;
-    autonomousCommand = robotContainer.getAutonomousCommand();
+    autonomousCommand = robotContainer.getAutonomousCommand().beforeStarting(Commands.waitSeconds(0.01));
 
     if (autonomousCommand != null) {
       autonomousCommand.schedule();

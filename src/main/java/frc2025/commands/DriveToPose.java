@@ -10,12 +10,14 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc2025.RobotContainer.Subsystems;
+import frc2025.controlboard.Controlboard;
 import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.drivetrain.DrivetrainConstants;
 import frc2025.subsystems.superstructure.elevator.Elevator;
 import frc2025.subsystems.superstructure.elevator.ElevatorConstants;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import math.ScreamMath;
@@ -32,11 +34,13 @@ public class DriveToPose extends Command {
   private final ProfiledPIDController headingController =
       new ProfiledPIDController(5.0, 0, 0, new Constraints(4, Units.degreesToRadians(720)));
 
-  private double driveErrorAbs;
+  public static double driveErrorAbs;
   private Translation2d lastSetpointTranslation;
 
   private Optional<DoubleSupplier> yOverride = Optional.empty();
   private Optional<Supplier<Translation2d>> translationOverride = Optional.empty();
+
+  private BooleanSupplier slowMode = () -> false;
 
   private final double driveTolerance = 0.01;
 
@@ -59,9 +63,11 @@ public class DriveToPose extends Command {
   public DriveToPose(
       Subsystems subsystems,
       Supplier<Pose2d> targetPose,
-      Supplier<Translation2d> translationOverride) {
+      Supplier<Translation2d> translationOverride,
+      BooleanSupplier slowMode) {
     this(subsystems, targetPose);
     this.translationOverride = Optional.of(translationOverride);
+    this.slowMode = slowMode;
   }
 
   public DriveToPose(Subsystems subsystems, Pose2d targetPose) {
@@ -102,7 +108,6 @@ public class DriveToPose extends Command {
     elevHeightScalar =
         ScreamMath.mapRange(
             elevHeightScalar, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 1.0, 0.75);
-    elevHeightScalar = 1.0;
 
     driveErrorAbs = currentDistance;
 
@@ -153,11 +158,16 @@ public class DriveToPose extends Command {
               < driveTolerance
           && Math.abs(targetPose.getTranslation().minus(currentPose.getTranslation()).getY())
               < driveTolerance) {
+        Controlboard.isSwitchingSide = false;
         velocity = new Translation2d();
       }
     }
 
     velocity = velocity.times(elevHeightScalar);
+
+    if (slowMode.getAsBoolean()) {
+      GeomUtil.normalize(velocity);
+    }
 
     drivetrain.setControl(
         drivetrain

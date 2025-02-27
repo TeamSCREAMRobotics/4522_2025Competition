@@ -60,9 +60,15 @@ public class RobotState {
               .finallyDo(() -> WristRollers.resetBeam());
         case TROUGH:
           return wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL);
-        default:
+        case PROCESSOR:
+          return wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE);
+        case INTAKE:
+        case REEF_ALGAE_L1:
+        case REEF_ALGAE_L2:
+        case TROUGH_FEED:
           return Commands.none();
       }
+      return Commands.none();
     };
   }
 
@@ -125,6 +131,7 @@ public class RobotState {
               Logger.log("Field/ReefZone", reefZone);
             });
     Logger.log("Controls/ScoringSide", Controlboard.getScoringSide().get());
+    Logger.log("Controls/IsSwitchingSide", Controlboard.isSwitchingSide);
     if (Robot.isSimulation()) {
       visualizeComponents();
     }

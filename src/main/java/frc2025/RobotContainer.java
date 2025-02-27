@@ -55,7 +55,7 @@ public class RobotContainer {
 
   @Getter private final RobotState robotState = new RobotState(subsystems);
 
-  private final AutoSelector autoSelector;
+  @Getter private final AutoSelector autoSelector;
 
   private final Command branchAlign =
       Commands.defer(
@@ -63,7 +63,8 @@ public class RobotContainer {
               new DriveToPose(
                   subsystems,
                   () -> robotState.getTargetBranchPose(),
-                  Controlboard.getTranslation()),
+                  Controlboard.getTranslation(),
+                  () -> (Controlboard.isSwitchingSide && DriveToPose.driveErrorAbs < 0.5)),
           Set.of(drivetrain));
 
   private final Command troughAlign =
@@ -102,7 +103,8 @@ public class RobotContainer {
                   new DriveToPose(
                       subsystems,
                       () -> robotState.getTargetAlgaePose().getFirst(),
-                      Controlboard.getTranslation()),
+                      Controlboard.getTranslation(),
+                      () -> false),
                   applyTargetStateFactory.apply(robotState.getTargetAlgaePose().getSecond()).get()),
           Set.of(drivetrain));
 
@@ -216,15 +218,17 @@ public class RobotContainer {
                 applyTargetStateFactory.apply(SuperstructureState.INTAKE).get(),
                 wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)));
 
-    Controlboard.lockToProcessor()
+    Controlboard.processor()
         .whileTrue(
-            drivetrain.applyRequest(
-                () ->
-                    drivetrain
-                        .getHelper()
-                        .getFacingAngle(
-                            Controlboard.getTranslation().get(),
-                            AllianceFlipUtil.get(Rotation2d.kCW_90deg, Rotation2d.kCCW_90deg))));
+            Commands.parallel(
+                drivetrain.applyRequest(
+                    () ->
+                        drivetrain
+                            .getHelper()
+                            .getFacingAngle(
+                                Controlboard.getTranslation().get(),
+                                AllianceFlipUtil.get(Rotation2d.kCW_90deg, Rotation2d.kCCW_90deg))),
+                applyTargetStateFactory.apply(SuperstructureState.PROCESSOR).get()));
 
     Controlboard.score().whileTrue(scoreFactory);
 
