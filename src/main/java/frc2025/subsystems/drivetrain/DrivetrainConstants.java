@@ -28,6 +28,13 @@ public final class DrivetrainConstants {
   public static final ScreamPIDConstants HEADING_CORRECTION_CONSTANTS =
       new ScreamPIDConstants(8.0, 0.0, 0.0);
 
+  public static final ProfiledPIDController HEADING_CONTROLLER_PROFILED =
+      new ProfiledPIDController(7.0, 0, 0, new Constraints(7.0, Units.degreesToRadians(720.0 * 5)));
+
+  static {
+    HEADING_CONTROLLER_PROFILED.enableContinuousInput(-Math.PI, Math.PI);
+  }
+
   public static final ProfiledPIDController DRIVE_ALIGNMENT_CONTROLLER =
       new ProfiledPIDController(10.0, 0.0, 0.0, new Constraints(4.0, 5.0));
 

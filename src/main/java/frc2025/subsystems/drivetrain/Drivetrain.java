@@ -173,6 +173,10 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     super.resetRotation(rotation);
   }
 
+  public void resetHeadingController() {
+    DrivetrainConstants.HEADING_CONTROLLER_PROFILED.reset(getHeading().getRadians());
+  }
+
   @Override
   public void addVisionMeasurement(
       Pose2d visionRobotPoseMeters,
@@ -190,6 +194,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public void logTelemetry(SwerveDriveState state) {
     Logger.log("RobotState/EstimatedPose", state.Pose);
+    Logger.log(
+        "Subsystems/Drivetrain/ActiveRequest", getSwerveRequest().getClass().getSimpleName());
     Logger.log("Subsystems/Drivetrain/MeasuredStates", state.ModuleStates);
     Logger.log("Subsystems/Drivetrain/SetpointStates", state.ModuleTargets);
 

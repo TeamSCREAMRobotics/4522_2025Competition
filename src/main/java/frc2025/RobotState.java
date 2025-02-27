@@ -37,9 +37,7 @@ public class RobotState {
     this.wristRollers = subsystems.wristRollers();
   }
 
-  public static Supplier<GamePiece> activeGamePiece = () -> Dashboard.Sim.selectedGamePiece();
-
-  public enum GamePiece {
+  public enum Coral {
     NONE,
     CORAL,
     ALGAE;
@@ -73,7 +71,7 @@ public class RobotState {
   }
 
   public Pose2d getTargetBranchPose() {
-    return Controlboard.getScoringSide().get() == ScoringSide.LEFT
+    return Controlboard.getScoringSide().get() == ScoringSide.RIGHT
         ? AllianceFlipUtil.get(
                 FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
             .get(getReefZone().getAsInt())
@@ -148,11 +146,11 @@ public class RobotState {
               elevator.getMeasuredHeight().getMeters(), wrist.getAngle())
           /* ComponentVisualizer.getCoralPose(
               elevator.getMeasuredHeight().getMeters()
-                  - (activeGamePiece.get() == GamePiece.CORAL ? 0 : 4),
+                  - (activeCoral.get() == Coral.CORAL ? 0 : 4),
               wrist.getAngle()),
           ComponentVisualizer.getAlgaePose(
               elevator.getMeasuredHeight().getMeters()
-                  - (activeGamePiece.get() == GamePiece.ALGAE ? 0 : 4),
+                  - (activeCoral.get() == Coral.ALGAE ? 0 : 4),
               wrist.getAngle()) */
         });
     Logger.log(

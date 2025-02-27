@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc2025.RobotContainer.Subsystems;
@@ -32,13 +31,12 @@ public class DriveToPose extends Command {
   private final ProfiledPIDController driveController =
       DrivetrainConstants.DRIVE_ALIGNMENT_CONTROLLER;
   private final ProfiledPIDController headingController =
-      new ProfiledPIDController(5.0, 0, 0, new Constraints(4, Units.degreesToRadians(720)));
+      DrivetrainConstants.HEADING_CONTROLLER_PROFILED;
 
   public static double driveErrorAbs;
   private Translation2d lastSetpointTranslation;
 
   private Optional<DoubleSupplier> yOverride = Optional.empty();
-  private Optional<Supplier<Translation2d>> translationOverride = Optional.empty();
 
   private BooleanSupplier slowMode = () -> false;
 
@@ -60,13 +58,8 @@ public class DriveToPose extends Command {
     this.yOverride = Optional.of(yOverride);
   }
 
-  public DriveToPose(
-      Subsystems subsystems,
-      Supplier<Pose2d> targetPose,
-      Supplier<Translation2d> translationOverride,
-      BooleanSupplier slowMode) {
+  public DriveToPose(Subsystems subsystems, Supplier<Pose2d> targetPose, BooleanSupplier slowMode) {
     this(subsystems, targetPose);
-    this.translationOverride = Optional.of(translationOverride);
     this.slowMode = slowMode;
   }
 
@@ -131,9 +124,7 @@ public class DriveToPose extends Command {
 
     Translation2d velocity;
 
-    if (translationOverride.isPresent() && translationOverride.get().get().getNorm() > 0.5) {
-      velocity = translationOverride.get().get();
-    } else if (yOverride.isPresent()) {
+    if (yOverride.isPresent()) {
       velocity =
           new Pose2d(
                   new Translation2d(),
@@ -150,17 +141,14 @@ public class DriveToPose extends Command {
               .getTranslation();
     }
 
-    if (!(translationOverride.isPresent() && translationOverride.get().get().getNorm() > 0.5)) {
-      if (yOverride.isPresent()
-          && Math.abs(targetPose.minus(currentPose).getX()) < driveTolerance) {
-        velocity = new Translation2d(0.0, yOverride.get().getAsDouble());
-      } else if (Math.abs(targetPose.getTranslation().minus(currentPose.getTranslation()).getX())
-              < driveTolerance
-          && Math.abs(targetPose.getTranslation().minus(currentPose.getTranslation()).getY())
-              < driveTolerance) {
-        Controlboard.isSwitchingSide = false;
-        velocity = new Translation2d();
-      }
+    if (yOverride.isPresent() && Math.abs(targetPose.minus(currentPose).getX()) < driveTolerance) {
+      velocity = new Translation2d(0.0, yOverride.get().getAsDouble());
+    } else if (Math.abs(targetPose.getTranslation().minus(currentPose.getTranslation()).getX())
+            < driveTolerance
+        && Math.abs(targetPose.getTranslation().minus(currentPose.getTranslation()).getY())
+            < driveTolerance) {
+      Controlboard.isSwitchingSide = false;
+      velocity = new Translation2d();
     }
 
     velocity = velocity.times(elevHeightScalar);

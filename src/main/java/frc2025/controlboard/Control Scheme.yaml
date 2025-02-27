@@ -27,8 +27,8 @@
 - Paddles (as viewed from front of controller)
   - Top Left: Alternate controls (Left Stick)
   - Top Right: Auto-Align and move to Barge net setpoint (Right Stick)
-  - Bottom Left: Handoff from intake -> wrist (D-Pad up)
-  - Bottom Right: Outtake to processor (D-Pad Right)
+  - Bottom Left: Slow mode (Dpad up)
+  - Bottom Right: None
 
 - D-Pad
   - Left: Align to reef

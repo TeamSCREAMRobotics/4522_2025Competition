@@ -4,6 +4,7 @@
 
 package frc2025;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +19,7 @@ import frc2025.controlboard.Controlboard;
 import frc2025.subsystems.climber.Climber;
 import frc2025.subsystems.climber.ClimberConstants;
 import frc2025.subsystems.drivetrain.Drivetrain;
+import frc2025.subsystems.drivetrain.DrivetrainConstants;
 import frc2025.subsystems.drivetrain.generated.TunerConstants;
 import frc2025.subsystems.superstructure.Superstructure;
 import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureState;
@@ -63,35 +65,32 @@ public class RobotContainer {
               new DriveToPose(
                   subsystems,
                   () -> robotState.getTargetBranchPose(),
-                  Controlboard.getTranslation(),
                   () -> (Controlboard.isSwitchingSide && DriveToPose.driveErrorAbs < 0.5)),
           Set.of(drivetrain));
 
   private final Command troughAlign =
-      drivetrain.applyRequest(
-          () ->
-              drivetrain
-                  .getHelper()
-                  .getFacingAngle(
-                      Controlboard.getTranslation().get(),
-                      getRobotState().getTargetAlgaePose().getFirst().getRotation()));
-
-  private final Command stationAlign =
-      drivetrain.applyRequest(
-          () ->
-              drivetrain
-                  .getHelper()
-                  .getFacingAngle(
-                      Controlboard.getTranslation().get(), robotState.getStationAlignAngle()));
+      drivetrain
+          .applyRequest(
+              () ->
+                  drivetrain
+                      .getHelper()
+                      .getFacingAngleProfiled(
+                          Controlboard.getTranslation().get(),
+                          getRobotState().getTargetAlgaePose().getFirst().getRotation(),
+                          DrivetrainConstants.HEADING_CONTROLLER_PROFILED))
+          .beforeStarting(() -> drivetrain.resetHeadingController());
 
   private final Command troughFeedAlign =
-      drivetrain.applyRequest(
-          () ->
-              drivetrain
-                  .getHelper()
-                  .getFacingAngle(
-                      Controlboard.getTranslation().get(),
-                      robotState.getStationAlignAngle().plus(new Rotation2d(Math.PI))));
+      drivetrain
+          .applyRequest(
+              () ->
+                  drivetrain
+                      .getHelper()
+                      .getFacingAngleProfiled(
+                          Controlboard.getTranslation().get(),
+                          robotState.getStationAlignAngle().plus(new Rotation2d(Math.PI)),
+                          DrivetrainConstants.HEADING_CONTROLLER_PROFILED))
+          .beforeStarting(() -> drivetrain.resetHeadingController());
 
   private final Function<SuperstructureState, Supplier<Command>> applyTargetStateFactory =
       (state) -> () -> superstructure.applyTargetState(state);
@@ -101,10 +100,7 @@ public class RobotContainer {
           () ->
               Commands.parallel(
                   new DriveToPose(
-                      subsystems,
-                      () -> robotState.getTargetAlgaePose().getFirst(),
-                      Controlboard.getTranslation(),
-                      () -> false),
+                      subsystems, () -> robotState.getTargetAlgaePose().getFirst(), () -> false),
                   applyTargetStateFactory.apply(robotState.getTargetAlgaePose().getSecond()).get()),
           Set.of(drivetrain));
 
@@ -112,12 +108,63 @@ public class RobotContainer {
       Commands.defer(
           robotState.getScoreCommand(), robotState.getScoreCommand().get().getRequirements());
 
+  private final Command driveDefault =
+      drivetrain.run(
+          () -> {
+            if (Controlboard.getFieldCentric().getAsBoolean()) {
+              if (!Dashboard.disableAutoFeatures.get()
+                  && superstructure.getElevator().getMeasuredHeight().getInches() < 15.0
+                  && !(Math.abs(Controlboard.getRotation().getAsDouble()) > 0.5)
+                  && !Controlboard.groundIntake().getAsBoolean()) {
+                if (wristRollers.hasCoral().getAsBoolean()) {
+                  drivetrain.setControl(
+                      drivetrain
+                          .getHelper()
+                          .getPointingAtProfiled(
+                              Controlboard.getTranslation().get(),
+                              AllianceFlipUtil.get(
+                                  FieldConstants.BLUE_REEF_CENTER, FieldConstants.RED_REEF_CENTER),
+                              DrivetrainConstants.HEADING_CONTROLLER_PROFILED));
+                } else {
+                  drivetrain.setControl(
+                      drivetrain
+                          .getHelper()
+                          .getFacingAngleProfiled(
+                              Controlboard.getTranslation().get(),
+                              robotState.getStationAlignAngle(),
+                              DrivetrainConstants.HEADING_CONTROLLER_PROFILED));
+                }
+              } else {
+                drivetrain.setControl(
+                    drivetrain
+                        .getHelper()
+                        .getFieldCentric(
+                            Controlboard.getTranslation().get(),
+                            Controlboard.getRotation().getAsDouble()));
+                drivetrain.resetHeadingController();
+              }
+            } else {
+              drivetrain.setControl(
+                  drivetrain
+                      .getHelper()
+                      .getRobotCentric(
+                          Controlboard.getTranslation().get(),
+                          Controlboard.getRotation().getAsDouble()));
+              drivetrain.resetHeadingController();
+            }
+          });
+
   public RobotContainer() {
     configureBindings();
     configureManualOverrides();
     configureDefaultCommands();
 
-    Controlboard.elevHeightSup = () -> superstructure.getElevator().getMeasuredHeight().getInches();
+    Controlboard.elevHeightSup =
+        () ->
+            MathUtil.clamp(
+                superstructure.getElevator().getMeasuredHeight().getInches(),
+                0.0,
+                ElevatorConstants.MAX_HEIGHT.getInches());
 
     autoSelector = new AutoSelector(this);
   }
@@ -168,16 +215,19 @@ public class RobotContainer {
 
     // Reef scoring/clearing controls
     Controlboard.goToLevel4()
+        .and(() -> Controlboard.getTranslation().get().getNorm() < 0.5)
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L4).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
         .whileTrue(branchAlign);
 
     Controlboard.goToLevel3()
+        .and(() -> Controlboard.getTranslation().get().getNorm() < 0.5)
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L3).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
         .whileTrue(branchAlign);
 
     Controlboard.goToLevel2()
+        .and(() -> Controlboard.getTranslation().get().getNorm() < 0.5)
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L2).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
         .whileTrue(branchAlign);
@@ -188,6 +238,7 @@ public class RobotContainer {
         .whileTrue(troughAlign);
 
     Controlboard.goToAlgaeClear()
+        .and(() -> Controlboard.getTranslation().get().getNorm() < 0.5)
         .whileTrue(
             Commands.parallel(
                 applyTargetStateFactory.apply(SuperstructureState.REEF_ALGAE_L2).get(),
@@ -197,11 +248,9 @@ public class RobotContainer {
 
     // Intake controls
     Controlboard.feed()
-        .and(new Trigger(wristRollers.hasGamePiece()).negate())
         .whileTrue(
             Commands.parallel(
                 new Feed(wristRollers),
-                stationAlign,
                 applyTargetStateFactory.apply(SuperstructureState.FEEDING).get()));
 
     Controlboard.troughFeed()
@@ -221,13 +270,17 @@ public class RobotContainer {
     Controlboard.processor()
         .whileTrue(
             Commands.parallel(
-                drivetrain.applyRequest(
-                    () ->
-                        drivetrain
-                            .getHelper()
-                            .getFacingAngle(
-                                Controlboard.getTranslation().get(),
-                                AllianceFlipUtil.get(Rotation2d.kCW_90deg, Rotation2d.kCCW_90deg))),
+                drivetrain
+                    .applyRequest(
+                        () ->
+                            drivetrain
+                                .getHelper()
+                                .getFacingAngleProfiled(
+                                    Controlboard.getTranslation().get(),
+                                    AllianceFlipUtil.get(
+                                        Rotation2d.kCW_90deg, Rotation2d.kCCW_90deg),
+                                    DrivetrainConstants.HEADING_CONTROLLER_PROFILED))
+                    .beforeStarting(() -> drivetrain.resetHeadingController()),
                 applyTargetStateFactory.apply(SuperstructureState.PROCESSOR).get()));
 
     Controlboard.score().whileTrue(scoreFactory);
@@ -237,23 +290,11 @@ public class RobotContainer {
 
   private void configureDefaultCommands() {
     drivetrain.setDefaultCommand(
-        drivetrain
-            .applyRequest(
-                () ->
-                    Dashboard.fieldCentric.get()
-                        ? drivetrain
-                            .getHelper()
-                            .getFieldCentric(
-                                Controlboard.getTranslation().get(),
-                                Controlboard.getRotation().getAsDouble())
-                        : drivetrain
-                            .getHelper()
-                            .getRobotCentric(
-                                Controlboard.getTranslation()
-                                    .get()
-                                    .times(AllianceFlipUtil.getDirectionCoefficient()),
-                                Controlboard.getRotation().getAsDouble()))
-            .beforeStarting(() -> drivetrain.getHelper().setLastAngle(drivetrain.getHeading())));
+        driveDefault.beforeStarting(
+            () -> {
+              // drivetrain.resetHeadingController();
+              drivetrain.getHelper().setLastAngle(drivetrain.getHeading());
+            }));
 
     superstructure.setDefaultCommand(
         applyTargetStateFactory.apply(SuperstructureState.FEEDING).get());

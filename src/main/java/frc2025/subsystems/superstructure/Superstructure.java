@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc2025.logging.Logger;
 import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureState;
 import frc2025.subsystems.superstructure.elevator.Elevator;
-import frc2025.subsystems.superstructure.elevator.Elevator.ElevatorGoal;
 import frc2025.subsystems.superstructure.wrist.Wrist;
 import frc2025.subsystems.superstructure.wrist.Wrist.WristGoal;
 import java.util.function.Supplier;
@@ -46,7 +45,7 @@ public class Superstructure extends SubsystemBase {
                       wrist.applyGoalCommand(WristGoal.STOW),
                       new SequentialCommandGroup(
                           new WaitUntilCommand(() -> wrist.atGoal()),
-                          elevator.applyGoalCommand(ElevatorGoal.HOME)));
+                          elevator.applyGoalCommand(state.elevatorGoal)));
               break;
             default:
               transition =

@@ -22,7 +22,6 @@
             "/Robot/RobotState/Subsystems/Wrist/Velocity",
             "/Robot/RobotState/Subsystems/Wrist/Rotor Velocity",
             "/Robot/RobotState/Subsystems/Elevator/Velocity",
-            "/SmartDashboard/Active Game Piece",
             "/Robot/RobotState/Subsystems/Wrist/SetpointDegrees",
             "/Robot/RobotState/Subsystems/IntakeRollers",
             "/Robot/RobotState/RobotPose",

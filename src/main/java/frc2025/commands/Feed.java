@@ -22,17 +22,17 @@ public class Feed extends Command {
   @Override
   public void end(boolean interrupted) {
     rollers.applyGoal(WristRollersGoal.HOLD);
-    WristRollers.hasGamePiece = true;
+    WristRollers.hasCoral = true;
   }
 
   @Override
   public boolean isFinished() {
-    return rollers.hasGamePiece().getAsBoolean();
+    return rollers.hasCoral().getAsBoolean();
   }
 
   @Override
   public InterruptionBehavior getInterruptionBehavior() {
-    return rollers.acquiredGamePiece()
+    return rollers.acquiredCoral()
         ? InterruptionBehavior.kCancelIncoming
         : InterruptionBehavior.kCancelSelf;
   }

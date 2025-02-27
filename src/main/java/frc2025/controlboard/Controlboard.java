@@ -9,9 +9,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc2025.subsystems.drivetrain.DrivetrainConstants;
+import frc2025.subsystems.superstructure.elevator.ElevatorConstants;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import math.ScreamMath;
 import util.AllianceFlipUtil;
 import util.ScreamUtil;
 
@@ -32,19 +34,17 @@ public class Controlboard {
   public static DoubleSupplier elevHeightSup;
 
   public static boolean fieldCentric = true;
-  public static boolean leftSide = true;
+  public static boolean leftSide = false;
 
   public static boolean isSwitchingSide = false;
 
   static {
     driveController
         .leftBumper()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  leftSide = !leftSide;
-                  isSwitchingSide = true;
-                }));
+        .whileTrue(
+            Commands.run(() -> leftSide = true)
+                .beforeStarting(Commands.runOnce(() -> isSwitchingSide = true)))
+        .whileFalse(Commands.run(() -> leftSide = false));
   }
 
   public static Command driverRumbleCommand(Supplier<RumbleType> type, double value, double time) {
@@ -72,7 +72,15 @@ public class Controlboard {
                             -MathUtil.applyDeadband(driveController.getLeftX(), STICK_DEADBAND), 2))
                     .times(DrivetrainConstants.MAX_SPEED))
             .times(AllianceFlipUtil.getDirectionCoefficient())
-            .times(MathUtil.clamp((1.0 / elevHeightSup.getAsDouble()) * 20.0, 0, 1));
+            .times(
+                driveController.getHID().getPOV() == 0
+                    ? 0.5
+                    : ScreamMath.mapRange(
+                        elevHeightSup.getAsDouble(),
+                        0.0,
+                        ElevatorConstants.MAX_HEIGHT.getInches(),
+                        1.0,
+                        0.4));
   }
 
   public static Translation2d snapTranslationToPole(Translation2d translation) {

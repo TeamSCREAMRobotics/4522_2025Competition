@@ -4,6 +4,7 @@ import com.ctre.phoenix6.hardware.CANrange;
 import drivers.TalonFXSubsystem;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.util.Units;
+import frc2025.Dashboard;
 import frc2025.Robot;
 import frc2025.logging.Logger;
 import frc2025.subsystems.superstructure.wrist.WristRollers.WristRollersGoal;
@@ -14,7 +15,7 @@ import lombok.Setter;
 public class WristRollers extends TalonFXSubsystem {
 
   private final CANrange beam = new CANrange(0);
-  public static boolean hasGamePiece = false;
+  public static boolean hasCoral = false;
 
   @Setter private static double idleVoltage = 1.0;
 
@@ -27,7 +28,7 @@ public class WristRollers extends TalonFXSubsystem {
   }
 
   public enum WristRollersGoal implements TalonFXSubsystemGoal {
-    IDLE(() -> hasGamePiece ? 0.0 : -1.0, ControlType.VOLTAGE),
+    IDLE(() -> hasCoral ? 0.0 : -1.0, ControlType.VOLTAGE),
     HOLD(() -> 0.0, ControlType.VOLTAGE),
     INTAKE(() -> 9.0, ControlType.VOLTAGE),
     INTAKE_ALGAE(() -> -9.0, ControlType.VOLTAGE),
@@ -63,28 +64,29 @@ public class WristRollers extends TalonFXSubsystem {
     return Units.metersToInches(beam.getDistance().getValueAsDouble());
   }
 
-  public boolean acquiredGamePiece() {
+  public boolean acquiredCoral() {
     return getBeamDistanceInches() < 2.0;
   }
 
-  public BooleanSupplier hasGamePiece() {
+  public BooleanSupplier hasCoral() {
     if (Robot.isSimulation()) {
-      return () -> false;
+      return () -> Dashboard.Sim.hasCoral.get();
     } else {
-      return () -> beamDebouncer.calculate(acquiredGamePiece());
+      return () -> beamDebouncer.calculate(acquiredCoral());
     }
   }
 
   public static void resetBeam() {
-    hasGamePiece = false;
+    Dashboard.Sim.hasCoral.set(false);
+    hasCoral = false;
     idleVoltage = 1.0;
   }
 
   @Override
   public void periodic() {
     super.periodic();
-    Logger.log(logPrefix + "HasGamePiece", hasGamePiece);
-    Logger.log(logPrefix + "AcquiredGamePiece", acquiredGamePiece());
+    Logger.log(logPrefix + "HasCoral", hasCoral);
+    Logger.log(logPrefix + "AcquiredCoral", acquiredCoral());
     Logger.log(logPrefix + "BeamDistance", getBeamDistanceInches());
   }
 }

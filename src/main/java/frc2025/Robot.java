@@ -4,11 +4,7 @@
 
 package frc2025;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathCommand;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
-
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -65,16 +61,17 @@ public class Robot extends TimedRobot {
         allCommands.stream().map((command) -> command.getName()).toArray(String[]::new));
 
     /* autoCommandReloader.runOnceWhenChanged(
-        () -> {
-          autonomousCommand = robotContainer.getAutonomousCommand();
-        },
-        robotContainer.getAutoSelector().getSelected()); */
+    () -> {
+      autonomousCommand = robotContainer.getAutonomousCommand();
+    },
+    robotContainer.getAutoSelector().getSelected()); */
   }
 
   @Override
   public void disabledInit() {
-    if(!hasScheduledAutoInit){
-      Command initAutoCommand = AutoMode.DO_NOTHING.getCommand(robotContainer).ignoringDisable(true);
+    if (!hasScheduledAutoInit) {
+      Command initAutoCommand =
+          AutoMode.DO_NOTHING.getCommand(robotContainer).ignoringDisable(true);
       initAutoCommand.schedule();
       hasScheduledAutoInit = true;
     }
@@ -89,7 +86,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     VisionManager.hasEnabled = true;
-    autonomousCommand = robotContainer.getAutonomousCommand().beforeStarting(Commands.waitSeconds(0.01));
+    autonomousCommand =
+        robotContainer.getAutonomousCommand().beforeStarting(Commands.waitSeconds(0.01));
 
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
