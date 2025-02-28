@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc2025.autonomous.AutoSelector;
 import frc2025.commands.DriveToPose;
@@ -18,6 +19,7 @@ import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard;
 import frc2025.subsystems.climber.Climber;
 import frc2025.subsystems.climber.ClimberConstants;
+import frc2025.subsystems.climber.Climber.ClimberGoal;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.drivetrain.DrivetrainConstants;
 import frc2025.subsystems.drivetrain.generated.TunerConstants;
@@ -28,6 +30,8 @@ import frc2025.subsystems.superstructure.wrist.WristConstants;
 import frc2025.subsystems.superstructure.wrist.WristRollers;
 import frc2025.subsystems.superstructure.wrist.WristRollers.WristRollersGoal;
 import frc2025.subsystems.vision.VisionManager;
+
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -65,7 +69,7 @@ public class RobotContainer {
               new DriveToPose(
                   subsystems,
                   () -> robotState.getTargetBranchPose(),
-                  () -> (Controlboard.isSwitchingSide && DriveToPose.driveErrorAbs < 0.5)),
+                  () -> (Controlboard.isSwitchingSide && DriveToPose.driveErrorAbs < 1.0)),
           Set.of(drivetrain));
 
   private final Command troughAlign =
@@ -92,6 +96,18 @@ public class RobotContainer {
                           DrivetrainConstants.HEADING_CONTROLLER_PROFILED))
           .beforeStarting(() -> drivetrain.resetHeadingController());
 
+          private final Command feedAlign =
+          drivetrain
+              .applyRequest(
+                  () ->
+                      drivetrain
+                          .getHelper()
+                          .getFacingAngleProfiled(
+                              Controlboard.getTranslation().get(),
+                              robotState.getStationAlignAngle(),
+                              DrivetrainConstants.HEADING_CONTROLLER_PROFILED))
+              .beforeStarting(() -> drivetrain.resetHeadingController());
+
   private final Function<SuperstructureState, Supplier<Command>> applyTargetStateFactory =
       (state) -> () -> superstructure.applyTargetState(state);
 
@@ -113,10 +129,8 @@ public class RobotContainer {
           () -> {
             if (Controlboard.getFieldCentric().getAsBoolean()) {
               if (!Dashboard.disableAutoFeatures.get()
-                  && superstructure.getElevator().getMeasuredHeight().getInches() < 15.0
-                  && !(Math.abs(Controlboard.getRotation().getAsDouble()) > 0.5)
+                  && superstructure.getElevator().getMeasuredHeight().getInches() < 15.0 && wristRollers.hasCoral().getAsBoolean() && !(Math.abs(Controlboard.getRotation().getAsDouble()) > 0.5)
                   && !Controlboard.groundIntake().getAsBoolean()) {
-                if (wristRollers.hasCoral().getAsBoolean()) {
                   drivetrain.setControl(
                       drivetrain
                           .getHelper()
@@ -125,15 +139,7 @@ public class RobotContainer {
                               AllianceFlipUtil.get(
                                   FieldConstants.BLUE_REEF_CENTER, FieldConstants.RED_REEF_CENTER),
                               DrivetrainConstants.HEADING_CONTROLLER_PROFILED));
-                } else {
-                  drivetrain.setControl(
-                      drivetrain
-                          .getHelper()
-                          .getFacingAngleProfiled(
-                              Controlboard.getTranslation().get(),
-                              robotState.getStationAlignAngle(),
-                              DrivetrainConstants.HEADING_CONTROLLER_PROFILED));
-                }
+                
               } else {
                 drivetrain.setControl(
                     drivetrain
@@ -251,14 +257,15 @@ public class RobotContainer {
         .whileTrue(
             Commands.parallel(
                 new Feed(wristRollers),
-                applyTargetStateFactory.apply(SuperstructureState.FEEDING).get()));
+                applyTargetStateFactory.apply(SuperstructureState.FEEDING).get()))
+                .and(() -> !Dashboard.disableAutoFeatures.get()).whileTrue(feedAlign);
 
     Controlboard.troughFeed()
         .whileTrue(
             Commands.parallel(
                 applyTargetStateFactory.apply(SuperstructureState.TROUGH_FEED).get(),
                 wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_TROUGH)))
-        .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
+        .and(() -> !Dashboard.disableAutoFeatures.get())
         .whileTrue(troughFeedAlign);
 
     Controlboard.groundIntake()
@@ -285,7 +292,14 @@ public class RobotContainer {
 
     Controlboard.score().whileTrue(scoreFactory);
 
-    Controlboard.climb().onTrue(climber.retractServo());
+    Controlboard.climb().onTrue(Commands.runOnce(() -> {
+        climber.setDefaultCommand(climber.applyGoalCommand(ClimberGoal.CLIMB));
+    }));
+
+    // Controlboard.climb().toggleOnTrue(climber.outClimbSequence());
+    Controlboard.climb().toggleOnTrue(climber.retractServo());
+
+    Controlboard.testButton().whileTrue(climber.applyGoalCommand(ClimberGoal.OUT));
   }
 
   private void configureDefaultCommands() {

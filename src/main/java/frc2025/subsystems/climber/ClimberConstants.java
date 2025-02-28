@@ -19,21 +19,10 @@ import util.SimUtil;
 
 public class ClimberConstants {
 
-  public static final double REDUCTION = 1.0;
+  public static final double REDUCTION = 198.0;
 
   public static final TalonFXSubsystemConfiguration CONFIGURATION =
       new TalonFXSubsystemConfiguration();
-
-  public static final DCMotorSim SIM =
-      SimUtil.createDCMotorSim(
-          DCMotor.getFalcon500(2),
-          REDUCTION,
-          ScreamMath.parallelAxisTheorem(
-                  Units.KilogramSquareMeters.of(0.0534783828),
-                  Units.Pounds.of(5.5251888),
-                  Length.fromInches(9.401318))
-              .in(Units.KilogramSquareMeters));
-  public static final ScreamPIDConstants SIM_GAINS = new ScreamPIDConstants(REDUCTION, 0.0, 0.0);
 
   static {
     CONFIGURATION.name = "Climber";
@@ -42,29 +31,22 @@ public class ClimberConstants {
     CONFIGURATION.logTelemetry = false;
     CONFIGURATION.debugMode = false;
 
-    CONFIGURATION.simConstants =
-        new TalonFXSubsystemSimConstants(
-            new SimWrapper(SIM),
-            REDUCTION,
-            SIM_GAINS.getProfiledPIDController(new Constraints(0.5, 0.1)),
-            false,
-            true);
-
     CONFIGURATION.masterConstants =
-        new TalonFXConstants(new CANDevice(12), InvertedValue.Clockwise_Positive);
+        new TalonFXConstants(new CANDevice(12), InvertedValue.CounterClockwise_Positive);
 
     CONFIGURATION.slaveConstants =
         new TalonFXConstants[] {
-          new TalonFXConstants(new CANDevice(13), InvertedValue.Clockwise_Positive)
+          new TalonFXConstants(new CANDevice(13), InvertedValue.CounterClockwise_Positive)
         };
 
     CONFIGURATION.neutralMode = NeutralModeValue.Coast;
     CONFIGURATION.sensorToMechRatio = REDUCTION;
     CONFIGURATION.enableSupplyCurrentLimit = true;
     CONFIGURATION.supplyCurrentLimit = 40;
-    CONFIGURATION.cruiseVelocity = 1.0;
-    CONFIGURATION.acceleration = 1.0;
+    CONFIGURATION.cruiseVelocity = 20.0;
+    CONFIGURATION.acceleration = 10.0;
     CONFIGURATION.slot0 =
-        new ScreamPIDConstants(1.0, 0, 0).getSlot0Configs(new FeedforwardConstants());
+        new ScreamPIDConstants(25.0, 0, 0).getSlot0Configs(new FeedforwardConstants());
+    CONFIGURATION.positionThreshold = edu.wpi.first.math.util.Units.degreesToRotations(2.0);
   }
 }

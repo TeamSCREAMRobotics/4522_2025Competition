@@ -34,7 +34,7 @@ public final class ElevatorConstants {
       MAX_HEIGHT.getInches() / PULLEY_CIRCUMFERENCE.getInches();
   public static final double ENCODER_MIN = 0.0;
 
-  public static final double REDUCTION = (50.0 / 20.0) * (38.0 / 12.0);
+  public static final double REDUCTION = (50.0 / 20.0) * (36.0 / 14.0);
 
   public static final ElevatorSim SIM =
       new ElevatorSim(
@@ -84,11 +84,11 @@ public final class ElevatorConstants {
     CONFIGURATION.minUnitsLimit = ENCODER_MIN;
     CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
     CONFIGURATION.cruiseVelocity = 60.0; // 30.0
-    CONFIGURATION.acceleration = 45.0;
+    CONFIGURATION.acceleration = 90.0;
     CONFIGURATION.slot0 =
         new ScreamPIDConstants(60.0, 0, 0) // 60.0
             .getSlot0Configs(
-                new FeedforwardConstants(0, 0.65, 0.0, 0, GravityTypeValue.Elevator_Static));
+                new FeedforwardConstants(0, 0.0, 0.65, 0, GravityTypeValue.Elevator_Static));
     CONFIGURATION.positionThreshold = Elevator.heightToRotations(Length.fromInches(4.0));
   }
 }

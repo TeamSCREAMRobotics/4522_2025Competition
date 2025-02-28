@@ -45,7 +45,7 @@ public class VisionManager {
                 0.209727,
                 0.270552,
                 0.202070,
-                new Rotation3d(0, -Units.degreesToRadians(20), -Units.degreesToRadians(30))));
+                new Rotation3d(0, -Units.degreesToRadians(20.0), -Units.degreesToRadians(30))));
     public static final Limelight REEF_RIGHT =
         new Limelight(
             "limelight-reefa",
@@ -62,14 +62,14 @@ public class VisionManager {
                 Units.inchesToMeters(11.834409),
                 Units.inchesToMeters(9.971965),
                 new Rotation3d(Units.degreesToRadians(90.0), -Units.degreesToRadians(30), 0.0)));
-    public static final Limelight STATION_ELEVATOR =
+    public static final Limelight CLIMBER =
         new Limelight(
-            "limelight-station",
+            "limelight-climber",
             new Pose3d(
-                -Units.inchesToMeters(1.492570),
-                -Units.inchesToMeters(5.0),
-                Units.inchesToMeters(40.156036),
-                new Rotation3d(0, -Units.degreesToRadians(30.0), Math.PI)));
+                -0.32076,
+                -0.012695,
+                0.168759,
+                new Rotation3d(0, -Units.degreesToRadians(25.0), Math.PI)));
   }
 
   private PhotonCamera reefRight;
@@ -90,7 +90,7 @@ public class VisionManager {
         Limelights.REEF_RIGHT,
         Limelights.REEF_LEFT,
         Limelights.FRONT_ELEVATOR,
-        Limelights.STATION_ELEVATOR
+        Limelights.CLIMBER
       };
 
   private final Notifier visionThread;
@@ -158,7 +158,7 @@ public class VisionManager {
           GeomUtil.pose3dToTransform3d(Limelights.FRONT_ELEVATOR.relativePosition()));
       visionSim.addCamera(
           stationElevatorSim,
-          GeomUtil.pose3dToTransform3d(Limelights.STATION_ELEVATOR.relativePosition()));
+          GeomUtil.pose3dToTransform3d(Limelights.CLIMBER.relativePosition()));
 
       for (PhotonCameraSim camera : simCameras) {
         camera.enableRawStream(true);

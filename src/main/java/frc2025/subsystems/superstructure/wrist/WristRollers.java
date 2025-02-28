@@ -17,9 +17,7 @@ public class WristRollers extends TalonFXSubsystem {
   private final CANrange beam = new CANrange(0);
   public static boolean hasCoral = false;
 
-  @Setter private static double idleVoltage = 1.0;
-
-  private final Debouncer beamDebouncer = new Debouncer(0.025);
+  private final Debouncer beamDebouncer = new Debouncer(0.07);
 
   public WristRollers(TalonFXSubsystemConfiguration config) {
     super(config, WristRollersGoal.IDLE);
@@ -77,9 +75,10 @@ public class WristRollers extends TalonFXSubsystem {
   }
 
   public static void resetBeam() {
-    Dashboard.Sim.hasCoral.set(false);
+    if(Robot.isSimulation()) {
+      Dashboard.Sim.hasCoral.set(false);
+    }
     hasCoral = false;
-    idleVoltage = 1.0;
   }
 
   @Override

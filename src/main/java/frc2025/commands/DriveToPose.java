@@ -40,7 +40,7 @@ public class DriveToPose extends Command {
 
   private BooleanSupplier slowMode = () -> false;
 
-  private final double driveTolerance = 0.01;
+  private final double driveTolerance = 0.03;
 
   public DriveToPose(Subsystems subsystems, Supplier<Pose2d> targetPose) {
     this.drivetrain = subsystems.drivetrain();
@@ -100,7 +100,7 @@ public class DriveToPose extends Command {
         MathUtil.clamp(elevHeightScalar, 0.0, ElevatorConstants.MAX_HEIGHT.getInches());
     elevHeightScalar =
         ScreamMath.mapRange(
-            elevHeightScalar, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 1.0, 0.75);
+            elevHeightScalar, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 1.0, 0.5);
 
     driveErrorAbs = currentDistance;
 
@@ -154,7 +154,7 @@ public class DriveToPose extends Command {
     velocity = velocity.times(elevHeightScalar);
 
     if (slowMode.getAsBoolean()) {
-      GeomUtil.normalize(velocity);
+      velocity = GeomUtil.normalize(velocity);
     }
 
     drivetrain.setControl(

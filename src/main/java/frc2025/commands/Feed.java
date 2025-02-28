@@ -21,8 +21,10 @@ public class Feed extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    rollers.applyGoal(WristRollersGoal.HOLD);
-    WristRollers.hasCoral = true;
+    rollers.stop();
+    if(!interrupted){
+      WristRollers.hasCoral = true;
+    }
   }
 
   @Override

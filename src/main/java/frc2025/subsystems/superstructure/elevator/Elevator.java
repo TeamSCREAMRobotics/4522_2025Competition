@@ -24,11 +24,11 @@ public class Elevator extends TalonFXSubsystem {
   public enum ElevatorGoal implements TalonFXSubsystemGoal {
     HOME(Length.kZero),
     FEED(Length.fromInches(2.3)),
-    TROUGH_FEED(Length.fromInches(14.5)),
+    TROUGH_FEED(Length.fromInches(13.0)),
     TROUGH(Length.fromInches(2.0)),
     L2(Length.fromInches(23.0)),
     L3(Length.fromInches(39.0)),
-    L4(Length.fromInches(63.25)),
+    L4(Length.fromInches(63.75)),
     CLEAR_ALGAE_L1(Length.fromInches(14.1)),
     CLEAR_ALGAE_L2(Length.fromInches(29.611)),
     BARGE(Length.fromInches(69.203)),
@@ -94,7 +94,7 @@ public class Elevator extends TalonFXSubsystem {
         new ParallelDeadlineGroup(
             new WaitUntilCommand(
                 () ->
-                    ((Timer.getFPGATimestamp() - startTime) > 2.0)
+                    ((Timer.getFPGATimestamp() - startTime) > 1.0)
                         && master.getSupplyCurrent().getValueAsDouble() > 15.0),
             new RunCommand(() -> setVoltage(-2.0))),
         new InstantCommand(() -> resetPosition(0.0)));
