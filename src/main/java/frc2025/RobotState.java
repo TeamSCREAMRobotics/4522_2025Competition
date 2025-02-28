@@ -55,7 +55,7 @@ public class RobotState {
         case REEF_L4:
           return wristRollers
               .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
-              .finallyDo(() -> WristRollers.resetBeam());
+              .alongWith(Commands.waitSeconds(0.1).andThen(() -> WristRollers.resetBeam()));
         case TROUGH:
           return wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL);
         case PROCESSOR:
@@ -71,7 +71,15 @@ public class RobotState {
   }
 
   public Pose2d getTargetBranchPose() {
-    return Controlboard.getScoringSide().get() == ScoringSide.RIGHT
+    ScoringSide side;
+
+    if (Controlboard.lastSide != Controlboard.getScoringSide() && !wristRollers.acquiredCoral()) {
+      side = Controlboard.lastSide;
+    } else {
+      side = Controlboard.getScoringSide();
+    }
+
+    return side == ScoringSide.RIGHT
         ? AllianceFlipUtil.get(
                 FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
             .get(getReefZone().getAsInt())
@@ -125,10 +133,11 @@ public class RobotState {
                             FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
                         .get(reefZone)
                         .getSecond()
-                  });
-              Logger.log("Field/ReefZone", reefZone);
+                  },
+                  1.0);
+              Logger.log("Field/ReefZone", reefZone, 1.0);
             });
-    Logger.log("Controls/ScoringSide", Controlboard.getScoringSide().get());
+    Logger.log("Controls/ScoringSide", Controlboard.getScoringSide());
     Logger.log("Controls/IsSwitchingSide", Controlboard.isSwitchingSide);
     if (Robot.isSimulation()) {
       visualizeComponents();

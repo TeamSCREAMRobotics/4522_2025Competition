@@ -30,7 +30,8 @@ public class FieldConstants {
   public static final Pose2d BLUE_BARGE_ALIGN =
       new Pose2d(7.65, FIELD_DIMENSIONS.getY() * 0.75, Rotation2d.kZero);
   public static final Pose2d RED_BARGE_ALIGN =
-      new Pose2d(FIELD_DIMENSIONS.getX() - 7.65, FIELD_DIMENSIONS.getY() * 0.25, Rotation2d.k180deg);
+      new Pose2d(
+          FIELD_DIMENSIONS.getX() - 7.65, FIELD_DIMENSIONS.getY() * 0.25, Rotation2d.k180deg);
 
   public static final Translation2d BLUE_REEF_CENTER =
       new Translation2d(Units.inchesToMeters(176.746), FIELD_DIMENSIONS.getY() / 2.0);

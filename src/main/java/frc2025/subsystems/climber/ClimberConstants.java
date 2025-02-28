@@ -2,20 +2,11 @@ package frc2025.subsystems.climber;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import data.Length;
 import drivers.TalonFXSubsystem.CANDevice;
 import drivers.TalonFXSubsystem.TalonFXConstants;
 import drivers.TalonFXSubsystem.TalonFXSubsystemConfiguration;
-import drivers.TalonFXSubsystem.TalonFXSubsystemSimConstants;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import math.ScreamMath;
 import pid.ScreamPIDConstants;
 import pid.ScreamPIDConstants.FeedforwardConstants;
-import sim.SimWrapper;
-import util.SimUtil;
 
 public class ClimberConstants {
 

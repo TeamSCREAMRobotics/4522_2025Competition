@@ -73,7 +73,7 @@ public class SwerveDrivetrain<
    */
   public static class SwerveDriveState implements Cloneable {
     /** The current pose of the robot */
-    public Pose2d Pose = new Pose2d();
+    public Pose2d Pose = Pose2d.kZero;
 
     /** The current velocity of the robot */
     public ChassisSpeeds Speeds = new ChassisSpeeds();
@@ -197,7 +197,7 @@ public class SwerveDrivetrain<
     public ChassisSpeeds currentChassisSpeed = new ChassisSpeeds();
 
     /** The current pose of the robot */
-    public Pose2d currentPose = new Pose2d();
+    public Pose2d currentPose = Pose2d.kZero;
 
     /**
      * The timestamp of the current control apply, in the timebase of {@link

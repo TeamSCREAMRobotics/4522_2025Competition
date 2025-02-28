@@ -15,8 +15,8 @@
 - Face Buttons
   - A: Trough / Lock to processor (alternate controls)
   - B: Move to L2 setpoint
-  - X: Move to L3 setpoint / Move to Algae clear L1 (alternate controls)
-  - Y: Move to L4 setpoint / Move to Algae clear L2 (alternate controls)
+  - X: Move to L3 setpoint
+  - Y: Move to L4 setpoint / Move to Algae clear (alternate controls)
   - Start: Climb sequence
   - Back: Reset gyro
 
@@ -32,4 +32,7 @@
 
 - D-Pad
   - Left: Align to reef
+  - Up: Slow mode
+  - Down: Test button
+  - Right: Toggle field centric
 

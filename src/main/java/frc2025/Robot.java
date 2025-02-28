@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.autonomous.AutoSelector.AutoMode;
+import frc2025.commands.DriveToPose;
+import frc2025.controlboard.Controlboard;
 import frc2025.logging.Logger;
 import frc2025.subsystems.vision.VisionManager;
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ public class Robot extends TimedRobot {
   private final RobotContainer robotContainer;
 
   public Robot() {
-    // super(0.03);
+    super(0.025);
     robotContainer = new RobotContainer();
 
     Logger.setOptions(
@@ -48,6 +50,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().onCommandInterrupt((command) -> allCommands.remove(command));
 
     FollowPathCommand.warmupCommand().schedule();
+    DriveToPose.warmup(robotContainer.getSubsystems());
   }
 
   @Override
@@ -109,7 +112,9 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    Controlboard.periodic();
+  }
 
   @Override
   public void teleopExit() {}

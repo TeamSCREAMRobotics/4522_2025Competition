@@ -22,7 +22,7 @@ public class Feed extends Command {
   @Override
   public void end(boolean interrupted) {
     rollers.stop();
-    if(!interrupted){
+    if (!interrupted) {
       WristRollers.hasCoral = true;
     }
   }

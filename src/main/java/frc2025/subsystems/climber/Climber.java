@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
 import java.util.function.DoubleSupplier;
 
 public class Climber extends TalonFXSubsystem {
@@ -54,12 +53,16 @@ public class Climber extends TalonFXSubsystem {
     }
   }
 
-  public Command outClimbSequence(){
-    return new SequentialCommandGroup(applyGoalCommand(ClimberGoal.STOW_UNDER_FUNNEL).until(() -> atGoal()), retractServo(), applyGoalCommand(ClimberGoal.OUT).until(() -> atGoal()));
+  public Command outClimbSequence() {
+    return new SequentialCommandGroup(
+        applyGoalCommand(ClimberGoal.STOW_UNDER_FUNNEL).until(() -> atGoal()),
+        retractServo(),
+        applyGoalCommand(ClimberGoal.OUT).until(() -> atGoal()));
   }
 
   public Command retractServo() {
-    return Commands.run(() -> servo_Funnel.setSpeed(-1.0)).until(() -> MathUtil.isNear(0.0, servo_Funnel.getPosition(), 0.05));
+    return Commands.run(() -> servo_Funnel.setSpeed(-1.0))
+        .until(() -> MathUtil.isNear(0.0, servo_Funnel.getPosition(), 0.05));
   }
 
   public Command extendServo() {

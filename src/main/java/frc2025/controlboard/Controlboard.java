@@ -41,10 +41,18 @@ public class Controlboard {
   static {
     driveController
         .leftBumper()
-        .whileTrue(
-            Commands.run(() -> leftSide = true)
-                .beforeStarting(Commands.runOnce(() -> isSwitchingSide = true)))
+        .whileTrue(Commands.run(() -> leftSide = true))
         .whileFalse(Commands.run(() -> leftSide = false));
+    driveController.povRight().onTrue(Commands.runOnce(() -> fieldCentric = !fieldCentric));
+  }
+
+  public static ScoringSide lastSide = ScoringSide.RIGHT;
+
+  public static void periodic() {
+    if (lastSide != (leftSide ? ScoringSide.LEFT : ScoringSide.RIGHT)) {
+      isSwitchingSide = true;
+    }
+    lastSide = (leftSide ? ScoringSide.LEFT : ScoringSide.RIGHT);
   }
 
   public static Command driverRumbleCommand(Supplier<RumbleType> type, double value, double time) {
@@ -107,8 +115,8 @@ public class Controlboard {
     return () -> fieldCentric;
   }
 
-  public static Supplier<ScoringSide> getScoringSide() {
-    return () -> leftSide ? ScoringSide.LEFT : ScoringSide.RIGHT;
+  public static ScoringSide getScoringSide() {
+    return leftSide ? ScoringSide.LEFT : ScoringSide.RIGHT;
   }
 
   public static BooleanSupplier getSlowMode() {

@@ -31,7 +31,7 @@ public class Elevator extends TalonFXSubsystem {
     L4(Length.fromInches(63.75)),
     CLEAR_ALGAE_L1(Length.fromInches(14.1)),
     CLEAR_ALGAE_L2(Length.fromInches(29.611)),
-    BARGE(Length.fromInches(69.203)),
+    BARGE(Length.fromInches(70.203)),
     MAX(ElevatorConstants.MAX_HEIGHT);
 
     public DoubleSupplier targetRotations;

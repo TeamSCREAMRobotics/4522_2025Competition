@@ -75,22 +75,19 @@ public class VisionManager {
   private PhotonCamera reefRight;
   private PhotonCamera reefLeft;
   private PhotonCamera frontElevator;
-  private PhotonCamera stationElevator;
+  private PhotonCamera climber;
   private PhotonCamera[] cameras;
   private PhotonCameraSim reefRightSim;
   private PhotonCameraSim reefLeftSim;
   private PhotonCameraSim frontElevatorSim;
-  private PhotonCameraSim stationElevatorSim;
+  private PhotonCameraSim climberSim;
   private PhotonCameraSim[] simCameras;
   private VisionSystemSim visionSim;
 
   private final Drivetrain drivetrain;
   private final Limelight[] limelights =
       new Limelight[] {
-        Limelights.REEF_RIGHT,
-        Limelights.REEF_LEFT,
-        Limelights.FRONT_ELEVATOR,
-        Limelights.CLIMBER
+        Limelights.REEF_RIGHT, Limelights.REEF_LEFT, Limelights.FRONT_ELEVATOR, Limelights.CLIMBER
       };
 
   private final Notifier visionThread;
@@ -106,7 +103,7 @@ public class VisionManager {
               for (Limelight ll : limelights) {
                 addGlobalPoseEstimate(ll);
               }
-              if (Robot.isSimulation()) {
+              if (Robot.isSimulation() && visionSim != null) {
                 visionSim.update(drivetrain.getEstimatedPose());
                 for (int i = 0; i < 4; i++) {
                   for (PhotonPipelineResult result : cameras[i].getAllUnreadResults()) {
@@ -124,8 +121,8 @@ public class VisionManager {
       reefRight = new PhotonCamera("reefA");
       reefLeft = new PhotonCamera("reefB");
       frontElevator = new PhotonCamera("elevator");
-      stationElevator = new PhotonCamera("station");
-      cameras = new PhotonCamera[] {reefRight, reefLeft, frontElevator, stationElevator};
+      climber = new PhotonCamera("station");
+      cameras = new PhotonCamera[] {reefRight, reefLeft, frontElevator, climber};
 
       visionSim = new VisionSystemSim("main");
 
@@ -144,10 +141,9 @@ public class VisionManager {
       reefRightSim = new PhotonCameraSim(reefRight, cameraProps);
       reefLeftSim = new PhotonCameraSim(reefLeft, cameraProps);
       frontElevatorSim = new PhotonCameraSim(frontElevator, cameraProps);
-      stationElevatorSim = new PhotonCameraSim(stationElevator, cameraProps);
+      climberSim = new PhotonCameraSim(climber, cameraProps);
 
-      simCameras =
-          new PhotonCameraSim[] {reefRightSim, reefLeftSim, frontElevatorSim, stationElevatorSim};
+      simCameras = new PhotonCameraSim[] {reefRightSim, reefLeftSim, frontElevatorSim, climberSim};
 
       visionSim.addCamera(
           reefRightSim, GeomUtil.pose3dToTransform3d(Limelights.REEF_RIGHT.relativePosition()));
@@ -157,8 +153,7 @@ public class VisionManager {
           frontElevatorSim,
           GeomUtil.pose3dToTransform3d(Limelights.FRONT_ELEVATOR.relativePosition()));
       visionSim.addCamera(
-          stationElevatorSim,
-          GeomUtil.pose3dToTransform3d(Limelights.CLIMBER.relativePosition()));
+          climberSim, GeomUtil.pose3dToTransform3d(Limelights.CLIMBER.relativePosition()));
 
       for (PhotonCameraSim camera : simCameras) {
         camera.enableRawStream(true);

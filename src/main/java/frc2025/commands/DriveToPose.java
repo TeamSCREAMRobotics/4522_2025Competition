@@ -28,9 +28,9 @@ public class DriveToPose extends Command {
   private final Elevator elevator;
   private final Supplier<Pose2d> targetPose;
 
-  private final ProfiledPIDController driveController =
+  private static final ProfiledPIDController driveController =
       DrivetrainConstants.DRIVE_ALIGNMENT_CONTROLLER;
-  private final ProfiledPIDController headingController =
+  private static final ProfiledPIDController headingController =
       DrivetrainConstants.HEADING_CONTROLLER_PROFILED;
 
   public static double driveErrorAbs;
@@ -40,7 +40,9 @@ public class DriveToPose extends Command {
 
   private BooleanSupplier slowMode = () -> false;
 
-  private final double driveTolerance = 0.03;
+  private final double driveTolerance = 0.01;
+
+  private final double logFrequency = 0.5;
 
   public DriveToPose(Subsystems subsystems, Supplier<Pose2d> targetPose) {
     this.drivetrain = subsystems.drivetrain();
@@ -86,6 +88,7 @@ public class DriveToPose extends Command {
     headingController.reset(
         currentPose.getRotation().getRadians(), drivetrain.getYawRate().getRadians());
     lastSetpointTranslation = currentPose.getTranslation();
+    Controlboard.isSwitchingSide = false;
   }
 
   @Override
@@ -127,7 +130,7 @@ public class DriveToPose extends Command {
     if (yOverride.isPresent()) {
       velocity =
           new Pose2d(
-                  new Translation2d(),
+                  Translation2d.kZero,
                   currentPose.getTranslation().minus(targetPose.getTranslation()).getAngle())
               .transformBy(GeomUtil.translationToTransform(driveVelocity, 0.0))
               .getTranslation();
@@ -135,7 +138,7 @@ public class DriveToPose extends Command {
     } else {
       velocity =
           new Pose2d(
-                  new Translation2d(),
+                  Translation2d.kZero,
                   currentPose.getTranslation().minus(targetPose.getTranslation()).getAngle())
               .transformBy(GeomUtil.translationToTransform(driveVelocity, 0.0))
               .getTranslation();
@@ -148,13 +151,16 @@ public class DriveToPose extends Command {
         && Math.abs(targetPose.getTranslation().minus(currentPose.getTranslation()).getY())
             < driveTolerance) {
       Controlboard.isSwitchingSide = false;
-      velocity = new Translation2d();
+      velocity = Translation2d.kZero;
     }
 
     velocity = velocity.times(elevHeightScalar);
 
     if (slowMode.getAsBoolean()) {
-      velocity = GeomUtil.normalize(velocity);
+      velocity =
+          new Translation2d(
+              MathUtil.clamp(velocity.getNorm(), 0.0, elevHeightScalar * 1.75),
+              velocity.getAngle());
     }
 
     drivetrain.setControl(
@@ -163,17 +169,46 @@ public class DriveToPose extends Command {
             .getApplyFieldSpeeds(
                 new ChassisSpeeds(velocity.getX(), velocity.getY(), headingVelocity)));
 
-    Logger.log("DriveToPose/FFScalar", ffScalar);
-    Logger.log("DriveToPose/HeightScalar", elevHeightScalar);
-    Logger.log("DriveToPose/MeasuredDistance", currentDistance);
-    Logger.log("DriveToPose/DistanceSetpoint", driveController.getSetpoint().position);
-    Logger.log("DriveToPose/MeasuredHeading", currentPose.getRotation().getDegrees());
-    Logger.log("DriveToPose/SetpointHeading", targetPose.getRotation().getDegrees());
+    Logger.log("DriveToPose/FFScalar", ffScalar, logFrequency);
+    Logger.log("DriveToPose/HeightScalar", elevHeightScalar, logFrequency);
+    Logger.log("DriveToPose/MeasuredDistance", currentDistance, logFrequency);
+    Logger.log(
+        "DriveToPose/DistanceSetpoint", driveController.getSetpoint().position, logFrequency);
+    Logger.log("DriveToPose/MeasuredHeading", currentPose.getRotation().getDegrees(), logFrequency);
+    Logger.log("DriveToPose/SetpointHeading", targetPose.getRotation().getDegrees(), logFrequency);
     Logger.log(
         "DriveToPose/Setpoint",
         new Pose2d(
-            lastSetpointTranslation, new Rotation2d(headingController.getSetpoint().position)));
-    Logger.log("DriveToPose/TargetPose", targetPose);
+            lastSetpointTranslation, new Rotation2d(headingController.getSetpoint().position)),
+        logFrequency);
+    Logger.log("DriveToPose/TargetPose", targetPose, logFrequency);
+  }
+
+  public static void warmup(Subsystems subsystems) {
+    ProfiledPIDController tempDriveController = DrivetrainConstants.DRIVE_ALIGNMENT_CONTROLLER;
+    ProfiledPIDController tempHeadingController = DrivetrainConstants.HEADING_CONTROLLER_PROFILED;
+
+    tempDriveController.setTolerance(0.01);
+    tempHeadingController.setTolerance(Units.degreesToRadians(1));
+    tempHeadingController.enableContinuousInput(-Math.PI, Math.PI);
+
+    tempDriveController.calculate(0.1, 0.0);
+    tempHeadingController.calculate(0.0, 0.1);
+
+    Pose2d dummyPose = Pose2d.kZero;
+    DriveToPose dummyCommand = new DriveToPose(subsystems, dummyPose);
+    dummyCommand.initialize();
+    dummyCommand.execute();
+    dummyCommand.end(false);
+
+    Logger.log("DriveToPose/FFScalar", 0.0);
+    Logger.log("DriveToPose/HeightScalar", 0.0);
+    Logger.log("DriveToPose/MeasuredDistance", 0.0);
+    Logger.log("DriveToPose/DistanceSetpoint", 0.0);
+    Logger.log("DriveToPose/MeasuredHeading", Rotation2d.kZero);
+    Logger.log("DriveToPose/SetpointHeading", Rotation2d.kZero);
+    Logger.log("DriveToPose/Setpoint", Pose2d.kZero);
+    Logger.log("DriveToPose/TargetPose", Pose2d.kZero);
   }
 
   @Override

@@ -19,6 +19,7 @@ public class Dashboard {
   public static DashboardBoolean disableAutoFeatures;
   public static DashboardBoolean zeroElevator;
   public static DashboardBoolean fieldCentric;
+  public static DashboardBoolean disableCoralRequirement;
 
   private static Field2d field = new Field2d();
 
@@ -38,6 +39,7 @@ public class Dashboard {
     wristRollersVoltage = new DashboardNumber(overrides, "Rollers Voltage", 0);
     disableVisionUpdates = new DashboardBoolean(overrides, "Disable Vision Updates", false);
     disableAutoFeatures = new DashboardBoolean(overrides, "Disable Auto Features", false);
+    disableCoralRequirement = new DashboardBoolean(overrides, "Disable Coral Requirement", false);
     zeroElevator = new DashboardBoolean(overrides, "Zero Elevator", false);
     fieldCentric = new DashboardBoolean(overrides, "Field Centric", true);
   }

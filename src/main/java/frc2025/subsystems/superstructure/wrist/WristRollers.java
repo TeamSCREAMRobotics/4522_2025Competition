@@ -10,7 +10,6 @@ import frc2025.logging.Logger;
 import frc2025.subsystems.superstructure.wrist.WristRollers.WristRollersGoal;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import lombok.Setter;
 
 public class WristRollers extends TalonFXSubsystem {
 
@@ -75,7 +74,7 @@ public class WristRollers extends TalonFXSubsystem {
   }
 
   public static void resetBeam() {
-    if(Robot.isSimulation()) {
+    if (Robot.isSimulation()) {
       Dashboard.Sim.hasCoral.set(false);
     }
     hasCoral = false;
