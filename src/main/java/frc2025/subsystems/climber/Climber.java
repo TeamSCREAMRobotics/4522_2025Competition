@@ -11,7 +11,7 @@ import java.util.function.DoubleSupplier;
 public class Climber extends TalonFXSubsystem {
 
   private final Servo servo_Funnel = new Servo(9);
-  private final Servo servo_Latch = new Servo(0);
+  private final Servo servo_Latch = new Servo(8);
 
   public static boolean hasClimbed = false;
 
@@ -21,7 +21,7 @@ public class Climber extends TalonFXSubsystem {
     servo_Funnel.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
     servo_Latch.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
 
-    resetPosition(0.0);
+    //resetPosition(0.0);
   }
 
   public enum ClimberGoal implements TalonFXSubsystemGoal {
@@ -57,15 +57,14 @@ public class Climber extends TalonFXSubsystem {
     return new SequentialCommandGroup(
         applyGoalCommand(ClimberGoal.STOW_UNDER_FUNNEL).until(() -> atGoal()),
         retractServo(),
-        applyGoalCommand(ClimberGoal.OUT).until(() -> atGoal()));
+        applyGoalCommand(ClimberGoal.OUT));
   }
 
   public Command retractServo() {
-    return Commands.run(() -> servo_Funnel.setSpeed(-1.0))
-        .until(() -> MathUtil.isNear(0.0, servo_Funnel.getPosition(), 0.05));
+    return Commands.runOnce(() -> servo_Funnel.setSpeed(-1.0)).withTimeout(3.0);
   }
 
   public Command extendServo() {
-    return Commands.run(() -> servo_Funnel.setSpeed(1.0));
+    return Commands.runOnce(() -> servo_Funnel.setSpeed(1.0));
   }
 }

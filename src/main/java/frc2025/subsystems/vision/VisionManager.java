@@ -176,10 +176,10 @@ public class VisionManager {
     PoseEstimate mt2Estimate =
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight.name());
 
-    if (isValidEstimate(mtEstimate)) {
+    if (isValidEstimate(mtEstimate) && mtEstimate.tagCount > 1) {
       Logger.log("Vision/" + limelight.name() + "/MegaTagEstimate", mtEstimate.pose);
       if (!hasEnabled) {
-        double stds = 1.0;
+        double stds = 7.5;
         drivetrain.addVisionMeasurement(
             mtEstimate.pose, mtEstimate.timestampSeconds, VecBuilder.fill(stds, stds, stds));
         Logger.log("Vision/" + limelight.name() + "/XyStds", stds);
