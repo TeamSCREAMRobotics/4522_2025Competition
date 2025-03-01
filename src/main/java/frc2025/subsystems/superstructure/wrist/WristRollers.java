@@ -16,7 +16,7 @@ public class WristRollers extends TalonFXSubsystem {
   private final CANrange beam = new CANrange(0);
   public static boolean hasCoral = false;
 
-  private final Debouncer beamDebouncer = new Debouncer(0.07);
+  private final Debouncer beamDebouncer = new Debouncer(0.08);
 
   public WristRollers(TalonFXSubsystemConfiguration config) {
     super(config, WristRollersGoal.IDLE);

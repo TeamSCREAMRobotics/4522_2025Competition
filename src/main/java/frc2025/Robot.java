@@ -63,11 +63,11 @@ public class Robot extends TimedRobot {
         "AllCommands",
         allCommands.stream().map((command) -> command.getName()).toArray(String[]::new));
 
-    /* autoCommandReloader.runOnceWhenChanged(
+    autoCommandReloader.runOnceWhenChanged(
     () -> {
       autonomousCommand = robotContainer.getAutonomousCommand();
     },
-    robotContainer.getAutoSelector().getSelected()); */
+    robotContainer.getAutoSelector().getSelected());
   }
 
   @Override
@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     VisionManager.hasEnabled = true;
     autonomousCommand =
-        robotContainer.getAutonomousCommand().beforeStarting(Commands.waitSeconds(0.01));
+        autonomousCommand.beforeStarting(Commands.waitSeconds(0.01));
 
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
