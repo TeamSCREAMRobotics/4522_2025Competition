@@ -297,12 +297,12 @@ public class RobotContainer {
     Controlboard.climb()
         .onTrue(
             Commands.runOnce(
-                () -> {
-                  climber.setDefaultCommand(climber.applyGoalCommand(ClimberGoal.CLIMB));
-                }));
+                () -> 
+                  climber.setDefaultCommand(climber.applyGoalCommand(ClimberGoal.CLIMB))
+                ));
 
     Controlboard.climb().toggleOnTrue(climber.outClimbSequence());
-    // Controlboard.climb().toggleOnTrue(climber.retractServo());
+    //Controlboard.climb().toggleOnTrue(climber.retractServo());
 
     Controlboard.testButton().whileTrue(climber.applyGoalCommand(ClimberGoal.OUT));
   }

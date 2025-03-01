@@ -19,7 +19,7 @@ public class ClimberConstants {
     CONFIGURATION.name = "Climber";
 
     CONFIGURATION.codeEnabled = true;
-    CONFIGURATION.logTelemetry = false;
+    CONFIGURATION.logTelemetry = true;
     CONFIGURATION.debugMode = false;
 
     CONFIGURATION.masterConstants =
@@ -34,10 +34,10 @@ public class ClimberConstants {
     CONFIGURATION.sensorToMechRatio = REDUCTION;
     CONFIGURATION.enableSupplyCurrentLimit = true;
     CONFIGURATION.supplyCurrentLimit = 40;
-    CONFIGURATION.cruiseVelocity = 20.0;
-    CONFIGURATION.acceleration = 10.0;
+    CONFIGURATION.cruiseVelocity = 60.0;
+    CONFIGURATION.acceleration = 80.0;
     CONFIGURATION.slot0 =
-        new ScreamPIDConstants(25.0, 0, 0).getSlot0Configs(new FeedforwardConstants());
-    CONFIGURATION.positionThreshold = edu.wpi.first.math.util.Units.degreesToRotations(2.0);
+        new ScreamPIDConstants(75.0, 0, 0).getSlot0Configs(new FeedforwardConstants());
+    CONFIGURATION.positionThreshold = 0.005;
   }
 }
