@@ -14,7 +14,7 @@ import java.util.function.DoubleSupplier;
 public class WristRollers extends TalonFXSubsystem {
 
   private final CANrange beam = new CANrange(0);
-  public static boolean hasCoral = false;
+  public static boolean hasCoral = true;
 
   private final Debouncer beamDebouncer = new Debouncer(0.08);
 
@@ -28,7 +28,7 @@ public class WristRollers extends TalonFXSubsystem {
     IDLE(() -> hasCoral ? 0.0 : -1.0, ControlType.VOLTAGE),
     HOLD(() -> 0.0, ControlType.VOLTAGE),
     INTAKE(() -> 9.0, ControlType.VOLTAGE),
-    INTAKE_ALGAE(() -> -9.0, ControlType.VOLTAGE),
+    INTAKE_ALGAE(() -> -12.0, ControlType.VOLTAGE),
     INTAKE_TROUGH(() -> -9.0, ControlType.VOLTAGE),
     EJECT_CORAL(() -> 12.0, ControlType.VOLTAGE),
     EJECT_ALGAE(() -> 12.0, ControlType.VOLTAGE);

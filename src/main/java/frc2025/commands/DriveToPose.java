@@ -2,6 +2,7 @@ package frc2025.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -40,7 +41,9 @@ public class DriveToPose extends Command {
 
   private BooleanSupplier slowMode = () -> false;
 
-  private final double driveTolerance = 0.01;
+  private LinearFilter distanceFilter;
+
+  private final double driveTolerance = 0.02;
 
   private final double logFrequency = 0.5;
 
@@ -53,6 +56,7 @@ public class DriveToPose extends Command {
     driveController.setTolerance(driveTolerance);
     headingController.setTolerance(Units.degreesToRadians(1));
     headingController.enableContinuousInput(-Math.PI, Math.PI);
+    distanceFilter = LinearFilter.movingAverage(17);
   }
 
   public DriveToPose(Subsystems subsystems, Supplier<Pose2d> targetPose, DoubleSupplier yOverride) {
@@ -146,10 +150,7 @@ public class DriveToPose extends Command {
 
     if (yOverride.isPresent() && Math.abs(targetPose.minus(currentPose).getX()) < driveTolerance) {
       velocity = new Translation2d(0.0, yOverride.get().getAsDouble());
-    } else if (Math.abs(targetPose.getTranslation().minus(currentPose.getTranslation()).getX())
-            < driveTolerance
-        && Math.abs(targetPose.getTranslation().minus(currentPose.getTranslation()).getY())
-            < driveTolerance) {
+    } else if (distanceFilter.calculate(currentDistance) < driveTolerance) {
       Controlboard.isSwitchingSide = false;
       velocity = Translation2d.kZero;
     }
@@ -159,7 +160,7 @@ public class DriveToPose extends Command {
     if (slowMode.getAsBoolean()) {
       velocity =
           new Translation2d(
-              MathUtil.clamp(velocity.getNorm(), 0.0, elevHeightScalar * 1.75),
+              MathUtil.clamp(velocity.getNorm(), 0.0, elevHeightScalar),
               velocity.getAngle());
     }
 

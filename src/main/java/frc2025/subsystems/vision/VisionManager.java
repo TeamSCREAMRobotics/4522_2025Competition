@@ -177,7 +177,7 @@ public class VisionManager {
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight.name());
 
     if (isValidEstimate(mtEstimate) && mtEstimate.tagCount > 1) {
-      Logger.log("Vision/" + limelight.name() + "/MegaTagEstimate", mtEstimate.pose);
+      //Logger.log("Vision/" + limelight.name() + "/MegaTagEstimate", mtEstimate.pose);
       if (!hasEnabled) {
         double stds = 7.5;
         drivetrain.addVisionMeasurement(
@@ -187,8 +187,8 @@ public class VisionManager {
     }
 
     if (isValidEstimate(mt2Estimate) && hasEnabled) {
-      Logger.log("Vision/" + limelight.name() + "/MegaTag2Estimate", mt2Estimate.pose);
-      double xyStds = Math.pow(0.8, mt2Estimate.tagCount) * (mt2Estimate.avgTagDist * 3);
+      //Logger.log("Vision/" + limelight.name() + "/MegaTag2Estimate", mt2Estimate.pose);
+      double xyStds = Math.pow(0.8, mt2Estimate.tagCount) * (mt2Estimate.avgTagDist * 3.5);
       drivetrain.addVisionMeasurement(
           mt2Estimate.pose, mt2Estimate.timestampSeconds, VecBuilder.fill(xyStds, xyStds, 9999999));
       Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);

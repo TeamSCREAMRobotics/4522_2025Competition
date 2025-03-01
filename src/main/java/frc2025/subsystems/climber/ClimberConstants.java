@@ -18,8 +18,8 @@ public class ClimberConstants {
   static {
     CONFIGURATION.name = "Climber";
 
-    CONFIGURATION.codeEnabled = true;
-    CONFIGURATION.logTelemetry = true;
+    CONFIGURATION.codeEnabled = false;
+    CONFIGURATION.logTelemetry = false;
     CONFIGURATION.debugMode = false;
 
     CONFIGURATION.masterConstants =

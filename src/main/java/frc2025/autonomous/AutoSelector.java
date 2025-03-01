@@ -11,7 +11,7 @@ public class AutoSelector {
 
   public enum AutoMode {
     DO_NOTHING(container -> Commands.none()),
-    MAXSPEED_TEST(container -> Routines.maxSpeedTest(container)),
+    TEST(container -> Routines.test(container)),
     PROCESSOR_MORE(container -> Routines.processor_Side_E_C_D_2(container));
 
     private final Function<RobotContainer, Command> factory;

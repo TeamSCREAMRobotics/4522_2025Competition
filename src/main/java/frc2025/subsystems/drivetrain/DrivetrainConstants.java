@@ -36,7 +36,7 @@ public final class DrivetrainConstants {
   }
 
   public static final ProfiledPIDController DRIVE_ALIGNMENT_CONTROLLER =
-      new ProfiledPIDController(20.0, 0.0, 0.0, new Constraints(3.5, 4.0));
+      new ProfiledPIDController(13.0, 0.0, 0.0, new Constraints(3.5, 4.0));
 
   public static final PIDController HEADING_CONTROLLER =
       HEADING_CORRECTION_CONSTANTS.getPIDController(-Math.PI, Math.PI);
