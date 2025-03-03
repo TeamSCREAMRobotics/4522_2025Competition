@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc2025.autonomous.AutoSelector;
+import frc2025.commands.ClimbSequence;
 import frc2025.commands.DriveToPose;
 import frc2025.commands.Feed;
 import frc2025.constants.FieldConstants;
@@ -49,6 +50,7 @@ public class RobotContainer {
   private static final WristRollers wristRollers = new WristRollers(WristConstants.ROLLERS_CONFIG);
   private static final Climber climber = new Climber(ClimberConstants.CONFIGURATION);
 
+  @Getter
   private static final VisionManager visionManager = new VisionManager(drivetrain);
 
   @Getter
@@ -63,9 +65,10 @@ public class RobotContainer {
       Commands.defer(
           () ->
               new DriveToPose(
-                  subsystems,
-                  () -> robotState.getTargetBranchPose(),
-                  () -> (Controlboard.isSwitchingSide && DriveToPose.driveErrorAbs < 1.0)),
+                      subsystems,
+                      () -> robotState.getTargetBranchPose(),
+                      () -> (Controlboard.isSwitchingSide && DriveToPose.driveErrorAbs < 1.0))
+                  .repeatedly(),
           Set.of(drivetrain));
 
   private final Command troughAlign =
@@ -157,6 +160,8 @@ public class RobotContainer {
             }
           });
 
+  private ClimbSequence climbSequence = new ClimbSequence(subsystems);
+
   public RobotContainer() {
     configureBindings();
     configureManualOverrides();
@@ -185,6 +190,9 @@ public class RobotContainer {
 
     Controlboard.driveController
         .rightStick()
+        .and(
+            () ->
+                Controlboard.getTranslation().get().getNorm() < 0.25)
         .whileTrue(
             Commands.parallel(
                 new DriveToPose(
@@ -196,23 +204,23 @@ public class RobotContainer {
                     .onlyIf(() -> !Dashboard.disableAutoFeatures.get()),
                 Commands.sequence(
                     Commands.waitUntil(
-                        () ->
-                            drivetrain.getEstimatedPose().getX()
-                                > AllianceFlipUtil.get(
-                                        FieldConstants.BLUE_BARGE_ALIGN
-                                            .getTranslation()
-                                            .minus(new Translation2d(2.0, 0)),
+                        () -> AllianceFlipUtil.get(drivetrain.getEstimatedPose().getX()
+                        > 
+                                FieldConstants.BLUE_BARGE_ALIGN
+                                    .getTranslation()
+                                    .minus(new Translation2d(3.0, 0)).getX(), 
+                            drivetrain.getEstimatedPose().getX() < 
                                         FieldConstants.RED_BARGE_ALIGN
                                             .getTranslation()
-                                            .plus(new Translation2d(2.0, 0)))
-                                    .getX()),
+                                            .plus(new Translation2d(3.0, 0))
+                                    .getX()) || Dashboard.disableAutoFeatures.get()),
                     applyTargetStateFactory.apply(SuperstructureState.BARGE_NET).get())));
 
     // Reef scoring/clearing controls
     Controlboard.goToLevel4()
         .and(
             () ->
-                Controlboard.getTranslation().get().getNorm() < 0.5
+                Controlboard.getTranslation().get().getNorm() < 0.25
                     && (wristRollers.hasCoral().getAsBoolean()
                         || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L4).get())
@@ -222,7 +230,7 @@ public class RobotContainer {
     Controlboard.goToLevel3()
         .and(
             () ->
-                Controlboard.getTranslation().get().getNorm() < 0.5
+                Controlboard.getTranslation().get().getNorm() < 0.25
                     && (wristRollers.hasCoral().getAsBoolean()
                         || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L3).get())
@@ -232,7 +240,7 @@ public class RobotContainer {
     Controlboard.goToLevel2()
         .and(
             () ->
-                Controlboard.getTranslation().get().getNorm() < 0.5
+                Controlboard.getTranslation().get().getNorm() < 0.25
                     && (wristRollers.hasCoral().getAsBoolean()
                         || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L2).get())
@@ -298,11 +306,10 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  climber.setDefaultCommand(climber.applyGoalCommand(ClimberGoal.CLIMB));
+                  climbSequence.schedule();
+                  climbSequence.advance();
                 }));
-
-    Controlboard.climb().toggleOnTrue(climber.outClimbSequence());
-    // Controlboard.climb().toggleOnTrue(climber.retractServo());
+    // Controlboard.climb().whileTrue(climber.setFunnelServoCommand(ServoGoal.RETRACT)).whileFalse(climber.setFunnelServoCommand(ServoGoal.EXTEND));
 
     Controlboard.testButton().whileTrue(climber.applyGoalCommand(ClimberGoal.OUT));
   }
@@ -333,22 +340,32 @@ public class RobotContainer {
                                 (Dashboard.wristVoltage.get()
                                     + superstructure.getWrist().getAngle().getCos())),
                     climber.applyVoltageCommand(() -> Dashboard.climberVoltage.get()),
-                    wristRollers.applyVoltageCommand(() -> Dashboard.wristRollersVoltage.get()))
+                    wristRollers.applyVoltageCommand(() -> Dashboard.wristRollersVoltage.get()),
+                    climber.setManualFunnelServo(() -> Dashboard.funnelServoPosition.get()),
+                    climber.setManualLatchServo(() -> Dashboard.latchServoPosition.get()))
                 .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
                 .ignoringDisable(true))
-        .onFalse(Commands.runOnce(() -> Dashboard.resetVoltageOverrides()).ignoringDisable(true));
+        .onFalse(Commands.runOnce(() -> Dashboard.resetManualOverrides()).ignoringDisable(true));
 
     new Trigger(() -> Dashboard.resetVoltage.get())
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  Dashboard.resetVoltageOverrides();
+                  Dashboard.resetManualOverrides();
                   Dashboard.resetVoltage.set(false);
                 }));
 
     new Trigger(() -> Dashboard.zeroElevator.get())
-        .whileTrue(
-            superstructure.rezero().andThen(() -> Dashboard.zeroElevator.set(false)));
+        .whileTrue(superstructure.rezero().andThen(() -> Dashboard.zeroElevator.set(false)));
+
+    new Trigger(() -> Dashboard.zeroClimber.get())
+        .onTrue(
+            Commands.runOnce(
+                    () -> {
+                      climber.resetPosition(0.0);
+                      Dashboard.zeroClimber.set(false);
+                    })
+                .ignoringDisable(true));
   }
 
   public Command getAutonomousCommand() {

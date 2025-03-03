@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import frc2025.RobotContainer;
 import frc2025.commands.DriveToPose;
 import frc2025.subsystems.drivetrain.Drivetrain;
-import frc2025.subsystems.drivetrain.DrivetrainConstants;
 
 public class DriveUntilAtPose extends DriveToPose {
 

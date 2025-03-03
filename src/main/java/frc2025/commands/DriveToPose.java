@@ -2,7 +2,6 @@ package frc2025.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -27,6 +26,7 @@ public class DriveToPose extends Command {
 
   private final Drivetrain drivetrain;
   private final Elevator elevator;
+  private final Supplier<Pose2d> currentPose;
   private final Supplier<Pose2d> targetPose;
 
   private static final ProfiledPIDController driveController =
@@ -41,8 +41,6 @@ public class DriveToPose extends Command {
 
   private BooleanSupplier slowMode = () -> false;
 
-  private LinearFilter distanceFilter;
-
   private final double driveTolerance = 0.02;
 
   private final double logFrequency = 0.5;
@@ -50,13 +48,13 @@ public class DriveToPose extends Command {
   public DriveToPose(Subsystems subsystems, Supplier<Pose2d> targetPose) {
     this.drivetrain = subsystems.drivetrain();
     this.elevator = subsystems.superstructure().getElevator();
+    this.currentPose = () -> drivetrain.getEstimatedPose();
     this.targetPose = targetPose;
     addRequirements(drivetrain);
     setName("DriveToPose");
     driveController.setTolerance(driveTolerance);
     headingController.setTolerance(Units.degreesToRadians(1));
     headingController.enableContinuousInput(-Math.PI, Math.PI);
-    distanceFilter = LinearFilter.movingAverage(17);
   }
 
   public DriveToPose(Subsystems subsystems, Supplier<Pose2d> targetPose, DoubleSupplier yOverride) {
@@ -150,9 +148,6 @@ public class DriveToPose extends Command {
 
     if (yOverride.isPresent() && Math.abs(targetPose.minus(currentPose).getX()) < driveTolerance) {
       velocity = new Translation2d(0.0, yOverride.get().getAsDouble());
-    } else if (distanceFilter.calculate(currentDistance) < driveTolerance) {
-      Controlboard.isSwitchingSide = false;
-      velocity = Translation2d.kZero;
     }
 
     velocity = velocity.times(elevHeightScalar);
@@ -160,8 +155,7 @@ public class DriveToPose extends Command {
     if (slowMode.getAsBoolean()) {
       velocity =
           new Translation2d(
-              MathUtil.clamp(velocity.getNorm(), 0.0, elevHeightScalar),
-              velocity.getAngle());
+              MathUtil.clamp(velocity.getNorm(), 0.0, elevHeightScalar), velocity.getAngle());
     }
 
     drivetrain.setControl(
@@ -217,8 +211,13 @@ public class DriveToPose extends Command {
     drivetrain.stop();
   }
 
-  /* @Override
+  @Override
   public boolean isFinished() {
-    return driveController.atGoal() && headingController.atGoal();
-  } */
+    return Math.abs(
+                targetPose.get().getTranslation().minus(currentPose.get().getTranslation()).getX())
+            < driveTolerance
+        && Math.abs(
+                targetPose.get().getTranslation().minus(currentPose.get().getTranslation()).getY())
+            < driveTolerance;
+  }
 }

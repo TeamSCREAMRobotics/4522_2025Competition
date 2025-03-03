@@ -4,15 +4,10 @@ import data.Length;
 import drivers.TalonFXSubsystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc2025.logging.Logger;
-
-import java.util.Set;
 import java.util.function.DoubleSupplier;
 import math.Conversions;
 
@@ -31,7 +26,7 @@ public class Elevator extends TalonFXSubsystem {
     TROUGH(Length.fromInches(2.0)),
     L2(Length.fromInches(23.0)),
     L3(Length.fromInches(39.0)),
-    L4(Length.fromInches(64.75)),
+    L4(Length.fromInches(64.1)),
     CLEAR_ALGAE_L1(Length.fromInches(14.1)),
     CLEAR_ALGAE_L2(Length.fromInches(29.611)),
     BARGE(Length.fromInches(70.203)),
@@ -94,10 +89,12 @@ public class Elevator extends TalonFXSubsystem {
   public Command rezero() {
     return new SequentialCommandGroup(
         new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
-            applyVoltageCommand(() -> -2.0).withDeadline(new WaitUntilCommand(
-              () ->
-                  ((Timer.getFPGATimestamp() - startTime) > 1.0)
-                      && master.getSupplyCurrent().getValueAsDouble() > 15.0)),
+        applyVoltageCommand(() -> -2.0)
+            .withDeadline(
+                new WaitUntilCommand(
+                    () ->
+                        ((Timer.getFPGATimestamp() - startTime) > 1.0)
+                            && master.getSupplyCurrent().getValueAsDouble() > 15.0)),
         new InstantCommand(() -> resetPosition(0.0)));
   }
 

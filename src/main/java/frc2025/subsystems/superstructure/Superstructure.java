@@ -12,7 +12,6 @@ import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureS
 import frc2025.subsystems.superstructure.elevator.Elevator;
 import frc2025.subsystems.superstructure.wrist.Wrist;
 import frc2025.subsystems.superstructure.wrist.Wrist.WristGoal;
-
 import java.util.Set;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -36,7 +35,7 @@ public class Superstructure extends SubsystemBase {
     Logger.log(logPrefix + "CurrentState", getCurrentState());
   }
 
-  public Command rezero(){
+  public Command rezero() {
     return Commands.defer(() -> elevator.rezero(), Set.of(this, elevator, wrist));
   }
 

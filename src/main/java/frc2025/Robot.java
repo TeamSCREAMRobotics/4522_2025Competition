@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
   private final RobotContainer robotContainer;
 
   public Robot() {
-    super(0.025);
+    super(0.03);
     robotContainer = new RobotContainer();
 
     Logger.setOptions(
@@ -58,16 +58,17 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     robotContainer.logTelemetry();
     Dashboard.periodic();
+    RobotContainer.getVisionManager().periodic();
 
     Logger.log(
         "AllCommands",
         allCommands.stream().map((command) -> command.getName()).toArray(String[]::new));
 
     autoCommandReloader.runOnceWhenChanged(
-    () -> {
-      autonomousCommand = robotContainer.getAutonomousCommand();
-    },
-    robotContainer.getAutoSelector().getSelected());
+        () -> {
+          autonomousCommand = robotContainer.getAutonomousCommand();
+        },
+        robotContainer.getAutoSelector().getSelected());
   }
 
   @Override
@@ -84,13 +85,13 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {}
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+    VisionManager.hasEnabled = true;
+  }
 
   @Override
   public void autonomousInit() {
-    VisionManager.hasEnabled = true;
-    autonomousCommand =
-        autonomousCommand.beforeStarting(Commands.waitSeconds(0.01));
+    autonomousCommand = autonomousCommand.beforeStarting(Commands.waitSeconds(0.01));
 
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
@@ -105,7 +106,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    VisionManager.hasEnabled = true;
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }

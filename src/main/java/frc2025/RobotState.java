@@ -122,7 +122,8 @@ public class RobotState {
     getReefZone()
         .ifPresent(
             reefZone -> {
-              Logger.log(
+              Logger.log("Field/ScoringLocations", AllianceFlipUtil.get(FieldConstants.BLUE_ALGAE_LOCATIONS, FieldConstants.RED_ALGAE_LOCATIONS).get(reefZone).getFirst());
+              /* Logger.log(
                   "Field/ScoringLocations",
                   new Pose2d[] {
                     AllianceFlipUtil.get(
@@ -134,7 +135,7 @@ public class RobotState {
                         .get(reefZone)
                         .getSecond()
                   },
-                  1.0);
+                  1.0); */
               Logger.log("Field/ReefZone", reefZone, 1.0);
             });
     Logger.log("Controls/ScoringSide", Controlboard.getScoringSide());
