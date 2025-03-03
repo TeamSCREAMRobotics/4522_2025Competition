@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc2025.autonomous.AutoSelector;
+import frc2025.commands.AutoAlign;
 import frc2025.commands.ClimbSequence;
 import frc2025.commands.DriveToPose;
 import frc2025.commands.Feed;
@@ -50,8 +51,7 @@ public class RobotContainer {
   private static final WristRollers wristRollers = new WristRollers(WristConstants.ROLLERS_CONFIG);
   private static final Climber climber = new Climber(ClimberConstants.CONFIGURATION);
 
-  @Getter
-  private static final VisionManager visionManager = new VisionManager(drivetrain);
+  @Getter private static final VisionManager visionManager = new VisionManager(drivetrain);
 
   @Getter
   private final Subsystems subsystems =
@@ -61,15 +61,11 @@ public class RobotContainer {
 
   @Getter private final AutoSelector autoSelector;
 
-  private final Command branchAlign =
-      Commands.defer(
-          () ->
-              new DriveToPose(
-                      subsystems,
-                      () -> robotState.getTargetBranchPose(),
-                      () -> (Controlboard.isSwitchingSide && DriveToPose.driveErrorAbs < 1.0))
-                  .repeatedly(),
-          Set.of(drivetrain));
+  private final Function<SuperstructureState, Supplier<Command>> applyTargetStateFactory =
+      (state) -> () -> superstructure.applyTargetState(state);
+
+  private final Command autoAlign =
+      new AutoAlign(this, () -> robotState.getTargetScoringLocation());
 
   private final Command troughAlign =
       drivetrain
@@ -79,7 +75,7 @@ public class RobotContainer {
                       .getHelper()
                       .getFacingAngleProfiled(
                           Controlboard.getTranslation().get(),
-                          getRobotState().getTargetAlgaePose().getFirst().getRotation(),
+                          getRobotState().getTargetAlgaeState().getFirst().getRotation(),
                           DrivetrainConstants.HEADING_CONTROLLER_PROFILED))
           .beforeStarting(() -> drivetrain.resetHeadingController());
 
@@ -107,16 +103,21 @@ public class RobotContainer {
                           DrivetrainConstants.HEADING_CONTROLLER_PROFILED))
           .beforeStarting(() -> drivetrain.resetHeadingController());
 
-  private final Function<SuperstructureState, Supplier<Command>> applyTargetStateFactory =
-      (state) -> () -> superstructure.applyTargetState(state);
-
   private final Command algaeClearFactory =
       Commands.defer(
-          () ->
-              Commands.parallel(
-                  new DriveToPose(
-                      subsystems, () -> robotState.getTargetAlgaePose().getFirst(), () -> false),
-                  applyTargetStateFactory.apply(robotState.getTargetAlgaePose().getSecond()).get()),
+          () -> {
+            if (Dashboard.disableAutoFeatures.get() || robotState.getReefZone().isEmpty()) {
+              return applyTargetStateFactory
+                  .apply(robotState.mapAlgaeLevelToState(Dashboard.wantedAlgaeLevel.getSelected()))
+                  .get();
+            } else {
+              return Commands.parallel(
+                  new AutoAlign(this, () -> robotState.getTargetScoringLocation()),
+                  applyTargetStateFactory
+                      .apply(robotState.getTargetAlgaeState().getSecond())
+                      .get());
+            }
+          },
           Set.of(drivetrain));
 
   private final Command scoreFactory =
@@ -126,7 +127,7 @@ public class RobotContainer {
   private final Command driveDefault =
       drivetrain.run(
           () -> {
-            if (Controlboard.getFieldCentric().getAsBoolean()) {
+            if (Dashboard.fieldCentric.get()) {
               if (!Dashboard.disableAutoFeatures.get()
                   && superstructure.getElevator().getMeasuredHeight().getInches() < 15.0
                   && wristRollers.hasCoral().getAsBoolean()
@@ -186,13 +187,11 @@ public class RobotContainer {
     // Auto aligning controls
     Controlboard.alignToReef()
         .and(() -> robotState.getReefZone().isPresent())
-        .toggleOnTrue(branchAlign);
+        .toggleOnTrue(autoAlign);
 
     Controlboard.driveController
         .rightStick()
-        .and(
-            () ->
-                Controlboard.getTranslation().get().getNorm() < 0.25)
+        .and(() -> Controlboard.getTranslation().get().getNorm() < 0.25)
         .whileTrue(
             Commands.parallel(
                 new DriveToPose(
@@ -204,16 +203,19 @@ public class RobotContainer {
                     .onlyIf(() -> !Dashboard.disableAutoFeatures.get()),
                 Commands.sequence(
                     Commands.waitUntil(
-                        () -> AllianceFlipUtil.get(drivetrain.getEstimatedPose().getX()
-                        > 
-                                FieldConstants.BLUE_BARGE_ALIGN
-                                    .getTranslation()
-                                    .minus(new Translation2d(3.0, 0)).getX(), 
-                            drivetrain.getEstimatedPose().getX() < 
-                                        FieldConstants.RED_BARGE_ALIGN
+                        () ->
+                            AllianceFlipUtil.get(
+                                    drivetrain.getEstimatedPose().getX()
+                                        > FieldConstants.BLUE_BARGE_ALIGN
+                                            .getTranslation()
+                                            .minus(new Translation2d(3.0, 0))
+                                            .getX(),
+                                    drivetrain.getEstimatedPose().getX()
+                                        < FieldConstants.RED_BARGE_ALIGN
                                             .getTranslation()
                                             .plus(new Translation2d(3.0, 0))
-                                    .getX()) || Dashboard.disableAutoFeatures.get()),
+                                            .getX())
+                                || Dashboard.disableAutoFeatures.get()),
                     applyTargetStateFactory.apply(SuperstructureState.BARGE_NET).get())));
 
     // Reef scoring/clearing controls
@@ -225,7 +227,7 @@ public class RobotContainer {
                         || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L4).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
-        .whileTrue(branchAlign);
+        .whileTrue(autoAlign);
 
     Controlboard.goToLevel3()
         .and(
@@ -235,7 +237,7 @@ public class RobotContainer {
                         || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L3).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
-        .whileTrue(branchAlign);
+        .whileTrue(autoAlign);
 
     Controlboard.goToLevel2()
         .and(
@@ -245,7 +247,7 @@ public class RobotContainer {
                         || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L2).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
-        .whileTrue(branchAlign);
+        .whileTrue(autoAlign);
 
     Controlboard.goToTrough()
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.TROUGH).get())
@@ -254,12 +256,8 @@ public class RobotContainer {
 
     Controlboard.goToAlgaeClear()
         .and(() -> Controlboard.getTranslation().get().getNorm() < 0.5)
-        .whileTrue(
-            Commands.parallel(
-                applyTargetStateFactory.apply(SuperstructureState.REEF_ALGAE_L2).get(),
-                wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)))
-        .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
-        .whileTrue(algaeClearFactory);
+        .whileTrue(algaeClearFactory)
+        .onFalse(Commands.runOnce(() -> algaeClearFactory.cancel()));
 
     // Intake controls
     Controlboard.feed()

@@ -11,12 +11,9 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import frc2025.Dashboard;
 import frc2025.Robot;
-import frc2025.constants.Constants;
 import frc2025.constants.FieldConstants;
 import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
@@ -92,7 +89,7 @@ public class VisionManager {
         Limelights.REEF_RIGHT, Limelights.REEF_LEFT, Limelights.FRONT_ELEVATOR, Limelights.CLIMBER
       };
 
-  //private final Notifier visionThread;
+  // private final Notifier visionThread;
 
   public static boolean hasEnabled = false;
 
@@ -177,26 +174,35 @@ public class VisionManager {
     PoseEstimate mtEstimate;
     PoseEstimate mt2Estimate =
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight.name());
-      
-    if(!hasEnabled){
+
+    if ((!hasEnabled || Dashboard.disableMegatag2.get())
+        && !Dashboard.disableAllVisionUpdates.get()) {
       mtEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelight.name());
-    if (isValidEstimate(mtEstimate)) {
-      //Logger.log("Vision/" + limelight.name() + "/MegaTagEstimate", mtEstimate.pose);
-      if (!hasEnabled || Dashboard.disableMegatag2.get()) {
-        double stds = 7.5;
+      if (!rejectEstimate(mtEstimate)) {
+        double stdFactor = Math.pow(mtEstimate.avgTagDist, 2.0) / mtEstimate.tagCount;
+        double xyStds = VisionConstants.xyStdBaseline * stdFactor;
+        double thetaStds = VisionConstants.thetaStdBaseline * stdFactor;
         drivetrain.addVisionMeasurement(
-            mtEstimate.pose, mtEstimate.timestampSeconds, VecBuilder.fill(stds, stds, stds * 2));
-        Logger.log("Vision/" + limelight.name() + "/XyStds", stds);
+            mtEstimate.pose,
+            mtEstimate.timestampSeconds,
+            VecBuilder.fill(xyStds, xyStds, thetaStds),
+            false);
+        Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);
+        Logger.log("Vision/" + limelight.name() + "/ThetaStds", thetaStds);
       }
     }
-  }
 
-    if (isValidEstimate(mt2Estimate) && hasEnabled && !Dashboard.disableMegatag2.get()) {
-      //Logger.log("Vision/" + limelight.name() + "/MegaTag2Estimate", mt2Estimate.pose);
-      double xyStds = Math.pow(0.8, mt2Estimate.tagCount) * (mt2Estimate.avgTagDist * 3);
+    if ((hasEnabled && !rejectEstimate(mt2Estimate) && !Dashboard.disableMegatag2.get())
+        && !Dashboard.disableAllVisionUpdates.get()) {
+      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.0) / mt2Estimate.tagCount;
+      double xyStds = VisionConstants.xyStdBaseline * stdFactor * VisionConstants.xyMt2StdFactor;
       drivetrain.addVisionMeasurement(
-          mt2Estimate.pose, mt2Estimate.timestampSeconds, VecBuilder.fill(xyStds, xyStds, 999999999.999999));
+          mt2Estimate.pose,
+          mt2Estimate.timestampSeconds,
+          VecBuilder.fill(xyStds, xyStds, Double.MAX_VALUE),
+          true);
       Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);
+      Logger.log("Vision/" + limelight.name() + "/ThetaStds", Double.MAX_VALUE);
     }
   }
 
@@ -240,18 +246,30 @@ public class VisionManager {
             });
   } */
 
-  private boolean isValidEstimate(PoseEstimate estimate) {
-    return estimate != null
-        && estimate.tagCount != 0
-        && FieldConstants.FIELD_AREA.contains(estimate.pose)
-        && !(Math.abs(drivetrain.getPigeon2().getAngularVelocityZWorld().getValueAsDouble()) > 540)
-        && !(drivetrain.getLinearVelocity().getNorm() > 3.0);
-        //&& (DriverStation.isDisabled() || drivetrain.getEstimatedPose().getTranslation().getDistance(estimate.pose.getTranslation()) < 3.0);
+  private boolean rejectEstimate(PoseEstimate estimate) {
+    return estimate == null
+        || estimate.tagCount != 0
+        || !FieldConstants.FIELD_AREA.contains(estimate.pose)
+        || (estimate.tagCount == 1 && estimate.rawFiducials[0].ambiguity > 0.3)
+        || (Math.abs(drivetrain.getPigeon2().getAngularVelocityZWorld().getValueAsDouble()) > 540)
+        || (drivetrain.getLinearVelocity().getNorm() > 3.0);
   }
 
-  public void periodic(){
+  public void periodic() {
     for (Limelight ll : limelights) {
       addGlobalPoseEstimate(ll);
+    }
+
+    if (Robot.isSimulation() && visionSim != null) {
+      visionSim.update(drivetrain.getEstimatedPose());
+      for (int i = 0; i < 4; i++) {
+        for (PhotonPipelineResult result : cameras[i].getAllUnreadResults()) {
+          writeToTable(
+              result,
+              NetworkTableInstance.getDefault().getTable(limelights[i].name()),
+              GeomUtil.pose3dToTransform3d(limelights[i].relativePosition()).inverse());
+        }
+      }
     }
   }
 

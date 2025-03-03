@@ -41,7 +41,7 @@ public class ClimbSequence extends Command {
         } else {
           climber.applyGoal(ClimberGoal.STOW_UNDER_FUNNEL);
         }
-        if(climber.atGoal(0.01) && climber.getGoal() == ClimberGoal.OUT){
+        if (climber.atGoal(0.01) && climber.getGoal() == ClimberGoal.OUT) {
           climber.setLatchServo(ServoGoal.RETRACT);
         }
         break;

@@ -19,8 +19,9 @@ import util.ScreamUtil;
 
 public class Controlboard {
 
-  public enum ScoringSide {
+  public enum ScoringLocation {
     LEFT,
+    CENTER,
     RIGHT;
   }
 
@@ -34,26 +35,12 @@ public class Controlboard {
   public static DoubleSupplier elevHeightSup;
 
   public static boolean fieldCentric = true;
-  public static boolean leftSide = false;
-
-  public static boolean isSwitchingSide = false;
 
   static {
-    driveController
-        .leftBumper()
-        .whileTrue(Commands.run(() -> leftSide = true))
-        .whileFalse(Commands.run(() -> leftSide = false));
     driveController.povRight().onTrue(Commands.runOnce(() -> fieldCentric = !fieldCentric));
   }
 
-  public static ScoringSide lastSide = ScoringSide.RIGHT;
-
-  public static void periodic() {
-    if (lastSide != (leftSide ? ScoringSide.LEFT : ScoringSide.RIGHT)) {
-      isSwitchingSide = true;
-    }
-    lastSide = (leftSide ? ScoringSide.LEFT : ScoringSide.RIGHT);
-  }
+  public static ScoringLocation lastSide = ScoringLocation.RIGHT;
 
   public static Command driverRumbleCommand(Supplier<RumbleType> type, double value, double time) {
     return Commands.startEnd(
@@ -113,10 +100,6 @@ public class Controlboard {
 
   public static BooleanSupplier getFieldCentric() {
     return () -> fieldCentric;
-  }
-
-  public static ScoringSide getScoringSide() {
-    return leftSide ? ScoringSide.LEFT : ScoringSide.RIGHT;
   }
 
   public static BooleanSupplier getSlowMode() {

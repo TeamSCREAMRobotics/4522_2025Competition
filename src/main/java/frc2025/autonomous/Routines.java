@@ -219,8 +219,9 @@ public class Routines {
         currentSequence.getNext(), // Move to algae
         new ParallelCommandGroup(
             setElevator(container, SuperstructureState.REEF_ALGAE_L1).withTimeout(0.25),
-            wristRollers.applyGoalCommand(
-                WristRollersGoal.INTAKE).withTimeout(intakeAlgae_TimeOut) // Grab algae 2
+            wristRollers
+                .applyGoalCommand(WristRollersGoal.INTAKE)
+                .withTimeout(intakeAlgae_TimeOut) // Grab algae 2
             ));
     // setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout));
   }
@@ -333,8 +334,9 @@ public class Routines {
         currentSequence.getNext(), // Move to algae
         new ParallelCommandGroup(
             setElevator(container, SuperstructureState.REEF_ALGAE_L1).withTimeout(0.25),
-            wristRollers.applyGoalCommand(
-                WristRollersGoal.INTAKE).withTimeout(intakeAlgae_TimeOut) // Grab algae 6
+            wristRollers
+                .applyGoalCommand(WristRollersGoal.INTAKE)
+                .withTimeout(intakeAlgae_TimeOut) // Grab algae 6
             ));
     // setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout));
   }

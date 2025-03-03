@@ -10,7 +10,7 @@ import frc2025.RobotContainer.Subsystems;
 import frc2025.constants.FieldConstants;
 import frc2025.constants.FieldConstants.AlgaeLevel;
 import frc2025.controlboard.Controlboard;
-import frc2025.controlboard.Controlboard.ScoringSide;
+import frc2025.controlboard.Controlboard.ScoringLocation;
 import frc2025.logging.Logger;
 import frc2025.sim.ComponentVisualizer;
 import frc2025.subsystems.drivetrain.Drivetrain;
@@ -70,36 +70,50 @@ public class RobotState {
     };
   }
 
-  public Pose2d getTargetBranchPose() {
-    ScoringSide side;
-
-    if (Controlboard.lastSide != Controlboard.getScoringSide() && !wristRollers.acquiredCoral()) {
-      side = Controlboard.lastSide;
+  public ScoringLocation getTargetScoringLocation() {
+    if (Controlboard.driveController.getHID().getLeftStickButton()) {
+      return ScoringLocation.CENTER;
+    } else if (Controlboard.driveController.getHID().getLeftBumperButton()) {
+      return ScoringLocation.LEFT;
     } else {
-      side = Controlboard.getScoringSide();
+      return ScoringLocation.RIGHT;
     }
-
-    return side == ScoringSide.RIGHT
-        ? AllianceFlipUtil.get(
-                FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-            .get(getReefZone().getAsInt())
-            .getFirst()
-        : AllianceFlipUtil.get(
-                FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-            .get(getReefZone().getAsInt())
-            .getSecond();
   }
 
-  public Pair<Pose2d, SuperstructureState> getTargetAlgaePose() {
+  public Pair<Pose2d, Pose2d> getTargetBranchPoses() {
+    return getTargetScoringLocation() == ScoringLocation.RIGHT
+        ? Pair.of(
+            AllianceFlipUtil.get(
+                    FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
+                .get(getReefZone().getAsInt())
+                .getFirst(),
+            AllianceFlipUtil.get(
+                    FieldConstants.BLUE_PRE_REEF_LOCATIONS, FieldConstants.RED_PRE_REEF_LOCATIONS)
+                .get(getReefZone().getAsInt())
+                .getFirst())
+        : Pair.of(
+            AllianceFlipUtil.get(
+                    FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
+                .get(getReefZone().getAsInt())
+                .getSecond(),
+            AllianceFlipUtil.get(
+                    FieldConstants.BLUE_PRE_REEF_LOCATIONS, FieldConstants.RED_PRE_REEF_LOCATIONS)
+                .get(getReefZone().getAsInt())
+                .getSecond());
+  }
+
+  public Pair<Pose2d, SuperstructureState> getTargetAlgaeState() {
     var pair =
         AllianceFlipUtil.get(
                 FieldConstants.BLUE_ALGAE_LOCATIONS, FieldConstants.RED_ALGAE_LOCATIONS)
             .get(getReefZone().getAsInt());
-    return Pair.of(
-        pair.getFirst(),
-        pair.getSecond() == AlgaeLevel.L1
-            ? SuperstructureState.REEF_ALGAE_L1
-            : SuperstructureState.REEF_ALGAE_L2);
+    return Pair.of(pair.getFirst(), mapAlgaeLevelToState(pair.getSecond()));
+  }
+
+  public SuperstructureState mapAlgaeLevelToState(AlgaeLevel algaeLevel) {
+    return algaeLevel == AlgaeLevel.L1
+        ? SuperstructureState.REEF_ALGAE_L1
+        : SuperstructureState.REEF_ALGAE_L2;
   }
 
   public OptionalInt getReefZone() {
@@ -122,8 +136,7 @@ public class RobotState {
     getReefZone()
         .ifPresent(
             reefZone -> {
-              Logger.log("Field/ScoringLocations", AllianceFlipUtil.get(FieldConstants.BLUE_ALGAE_LOCATIONS, FieldConstants.RED_ALGAE_LOCATIONS).get(reefZone).getFirst());
-              /* Logger.log(
+              Logger.log(
                   "Field/ScoringLocations",
                   new Pose2d[] {
                     AllianceFlipUtil.get(
@@ -135,11 +148,10 @@ public class RobotState {
                         .get(reefZone)
                         .getSecond()
                   },
-                  1.0); */
+                  1.0);
               Logger.log("Field/ReefZone", reefZone, 1.0);
             });
-    Logger.log("Controls/ScoringSide", Controlboard.getScoringSide());
-    Logger.log("Controls/IsSwitchingSide", Controlboard.isSwitchingSide);
+    Logger.log("Controls/ScoringSide", getTargetScoringLocation());
     if (Robot.isSimulation()) {
       visualizeComponents();
     }

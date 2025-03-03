@@ -31,7 +31,6 @@ public class Climber extends TalonFXSubsystem {
     funnelServo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
     latchServo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
 
-
     funnelServo.set(1);
     latchServo.set(1);
 
@@ -79,7 +78,7 @@ public class Climber extends TalonFXSubsystem {
   }
 
   public void setFunnelServo(double pos) {
-      funnelServo.set(pos);
+    funnelServo.set(pos);
   }
 
   public Command setManualFunnelServo(DoubleSupplier pos) {
@@ -95,7 +94,7 @@ public class Climber extends TalonFXSubsystem {
   }
 
   public void setLatchServo(double pos) {
-      latchServo.set(pos);
+    latchServo.set(pos);
   }
 
   public Command setManualLatchServo(DoubleSupplier pos) {

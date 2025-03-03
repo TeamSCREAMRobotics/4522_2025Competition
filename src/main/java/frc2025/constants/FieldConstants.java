@@ -30,8 +30,7 @@ public class FieldConstants {
   public static final Pose2d BLUE_BARGE_ALIGN =
       new Pose2d(7.7, FIELD_DIMENSIONS.getY() * 0.75, Rotation2d.kZero);
   public static final Pose2d RED_BARGE_ALIGN =
-      new Pose2d(
-          FIELD_DIMENSIONS.getX() - 7.7, FIELD_DIMENSIONS.getY() * 0.25, Rotation2d.k180deg);
+      new Pose2d(FIELD_DIMENSIONS.getX() - 7.7, FIELD_DIMENSIONS.getY() * 0.25, Rotation2d.k180deg);
 
   public static final Translation2d BLUE_REEF_CENTER =
       new Translation2d(Units.inchesToMeters(176.746), FIELD_DIMENSIONS.getY() / 2.0);
@@ -41,6 +40,9 @@ public class FieldConstants {
       new HexagonalPoseArea(BLUE_REEF_CENTER, Length.fromMeters(5), Rotation2d.fromDegrees(-30));
   public static final HexagonalPoseArea RED_REEF =
       new HexagonalPoseArea(RED_REEF_CENTER, Length.fromMeters(5), Rotation2d.fromDegrees(-30));
+
+  public static final Map<Integer, Pair<Pose2d, Pose2d>> BLUE_PRE_REEF_LOCATIONS = new HashMap<>();
+  public static final Map<Integer, Pair<Pose2d, Pose2d>> RED_PRE_REEF_LOCATIONS = new HashMap<>();
 
   public static final Map<Integer, Pair<Pose2d, Pose2d>> BLUE_REEF_LOCATIONS = new HashMap<>();
   public static final Map<Integer, Pair<Pose2d, Pose2d>> RED_REEF_LOCATIONS = new HashMap<>();
@@ -84,6 +86,9 @@ public class FieldConstants {
   public static final Translation2d BRANCH_TO_ROBOT =
       new Translation2d(Units.inchesToMeters(17.307500 + BRANCH_TO_REEF_EDGE.getInches()), 0.0);
 
+  public static final Translation2d PRE_REEF_OFFSET =
+      new Translation2d(Units.inchesToMeters(10), 0.0);
+
   public static final Translation2d SCORE_LOCATION_1 =
       REEF_CENTER_TO_TOP_BRANCH.plus(BRANCH_TO_ROBOT);
   public static final Translation2d SCORE_LOCATION_2 =
@@ -103,12 +108,32 @@ public class FieldConstants {
               new Pose2d(
                   BLUE_REEF_CENTER.plus(SCORE_LOCATION_2.rotateBy(rotation)), targetRotation)));
 
+      BLUE_PRE_REEF_LOCATIONS.put(
+          i,
+          new Pair<>(
+              new Pose2d(
+                  BLUE_REEF_CENTER.plus(SCORE_LOCATION_1.plus(PRE_REEF_OFFSET).rotateBy(rotation)),
+                  targetRotation),
+              new Pose2d(
+                  BLUE_REEF_CENTER.plus(SCORE_LOCATION_2.plus(PRE_REEF_OFFSET).rotateBy(rotation)),
+                  targetRotation)));
+
       RED_REEF_LOCATIONS.put(
           i,
           new Pair<>(
               new Pose2d(RED_REEF_CENTER.plus(SCORE_LOCATION_1.rotateBy(rotation)), targetRotation),
               new Pose2d(
                   RED_REEF_CENTER.plus(SCORE_LOCATION_2.rotateBy(rotation)), targetRotation)));
+
+      RED_PRE_REEF_LOCATIONS.put(
+          i,
+          new Pair<>(
+              new Pose2d(
+                  RED_REEF_CENTER.plus(SCORE_LOCATION_1.plus(PRE_REEF_OFFSET).rotateBy(rotation)),
+                  targetRotation),
+              new Pose2d(
+                  RED_REEF_CENTER.plus(SCORE_LOCATION_2.plus(PRE_REEF_OFFSET).rotateBy(rotation)),
+                  targetRotation)));
 
       BLUE_ALGAE_LOCATIONS.put(
           i,

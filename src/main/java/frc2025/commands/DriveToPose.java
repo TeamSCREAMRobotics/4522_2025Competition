@@ -9,7 +9,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc2025.RobotContainer.Subsystems;
-import frc2025.controlboard.Controlboard;
 import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.drivetrain.DrivetrainConstants;
@@ -90,7 +89,7 @@ public class DriveToPose extends Command {
     headingController.reset(
         currentPose.getRotation().getRadians(), drivetrain.getYawRate().getRadians());
     lastSetpointTranslation = currentPose.getTranslation();
-    Controlboard.isSwitchingSide = false;
+    // Controlboard.isSwitchingSide = false;
   }
 
   @Override

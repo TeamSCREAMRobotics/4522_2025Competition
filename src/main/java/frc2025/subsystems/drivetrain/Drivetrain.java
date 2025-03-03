@@ -18,9 +18,9 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -28,8 +28,6 @@ import frc2025.Robot;
 import frc2025.constants.Constants;
 import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.generated.TunerConstants.TunerSwerveDrivetrain;
-import frc2025.subsystems.vision.VisionManager;
-
 import java.util.function.Supplier;
 import lombok.Getter;
 import util.RunnableUtil.RunOnce;
@@ -92,7 +90,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
                     .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
         DrivetrainConstants.PATH_FOLLOWING_CONTROLLER,
         config,
-        () -> DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red,
+        () ->
+            DriverStation.getAlliance().isPresent()
+                && DriverStation.getAlliance().get() == Alliance.Red,
         this);
 
     registerTelemetry(this::logTelemetry);
@@ -181,15 +181,18 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     DrivetrainConstants.HEADING_CONTROLLER_PROFILED.reset(getHeading().getRadians());
   }
 
-  @Override
   public void addVisionMeasurement(
       Pose2d visionRobotPoseMeters,
       double timestampSeconds,
-      Matrix<N3, N1> visionMeasurementStdDevs) {
+      Matrix<N3, N1> visionMeasurementStdDevs,
+      boolean isMt2) {
     Logger.log("Vision/ActiveVisionMeasurement", visionRobotPoseMeters);
-    // Logger.log("Vision/ActiveStdDevs", visionMeasurementStdDevs);
     super.addVisionMeasurement(
-        !VisionManager.hasEnabled ? visionRobotPoseMeters : new Pose2d(visionRobotPoseMeters.getTranslation(), getHeading()), Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+        !isMt2
+            ? visionRobotPoseMeters
+            : new Pose2d(visionRobotPoseMeters.getTranslation(), getHeading()),
+        Utils.fpgaToCurrentTime(timestampSeconds),
+        visionMeasurementStdDevs);
   }
 
   public void stop() {

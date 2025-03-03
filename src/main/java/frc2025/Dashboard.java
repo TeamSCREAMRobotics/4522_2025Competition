@@ -4,6 +4,9 @@ import com.team4522.DashboardBoolean;
 import com.team4522.DashboardNumber;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc2025.constants.FieldConstants.AlgaeLevel;
 
 public class Dashboard {
 
@@ -24,6 +27,7 @@ public class Dashboard {
   public static DashboardBoolean disableCoralRequirement;
   public static DashboardBoolean disableMegatag2;
   public static DashboardBoolean zeroClimber;
+  public static SendableChooser<AlgaeLevel> wantedAlgaeLevel = new SendableChooser<>();
 
   private static Field2d field = new Field2d();
 
@@ -50,6 +54,13 @@ public class Dashboard {
     zeroElevator = new DashboardBoolean(overrides, "Zero Elevator", false);
     zeroClimber = new DashboardBoolean(overrides, "Zero Climber", false);
     fieldCentric = new DashboardBoolean(overrides, "Field Centric", true);
+
+    for (AlgaeLevel level : AlgaeLevel.values()) {
+      wantedAlgaeLevel.addOption(level.toString(), level);
+    }
+    wantedAlgaeLevel.setDefaultOption(AlgaeLevel.L1.name(), AlgaeLevel.L1);
+
+    SmartDashboard.putData("Wanted Algae Level", wantedAlgaeLevel);
   }
 
   public static void resetManualOverrides() {

@@ -11,10 +11,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.autonomous.AutoSelector.AutoMode;
 import frc2025.commands.DriveToPose;
-import frc2025.controlboard.Controlboard;
 import frc2025.logging.Logger;
 import frc2025.subsystems.vision.VisionManager;
 import java.util.ArrayList;
@@ -91,9 +89,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    autonomousCommand = autonomousCommand.beforeStarting(Commands.waitSeconds(0.01));
-
     if (autonomousCommand != null) {
+      // autonomousCommand = autonomousCommand.beforeStarting(Commands.waitSeconds(0.01));
       autonomousCommand.schedule();
     }
   }
@@ -112,9 +109,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {
-    Controlboard.periodic();
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void teleopExit() {}
