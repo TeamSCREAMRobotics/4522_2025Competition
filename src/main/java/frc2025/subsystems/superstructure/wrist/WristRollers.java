@@ -26,6 +26,7 @@ public class WristRollers extends TalonFXSubsystem {
 
   public enum WristRollersGoal implements TalonFXSubsystemGoal {
     IDLE(() -> hasCoral ? 0.0 : -2.0, ControlType.VOLTAGE),
+    IDLE_AUTO(() -> -2.0, ControlType.VOLTAGE),
     HOLD(() -> 0.0, ControlType.VOLTAGE),
     INTAKE(() -> 9.0, ControlType.VOLTAGE),
     INTAKE_ALGAE(() -> -12.0, ControlType.VOLTAGE),

@@ -84,7 +84,7 @@ public final class ElevatorConstants {
     CONFIGURATION.minUnitsLimit = ENCODER_MIN;
     CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
     CONFIGURATION.cruiseVelocity = 60.0; // 30.0
-    CONFIGURATION.acceleration = 90.0;
+    CONFIGURATION.acceleration = 60.0;
     CONFIGURATION.slot0 =
         new ScreamPIDConstants(60.0, 0, 0) // 60.0
             .getSlot0Configs(

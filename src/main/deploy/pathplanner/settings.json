@@ -19,7 +19,7 @@
     "Non-Processor Station",
     "Processor Station"
   ],
-  "defaultMaxVel": 2.5,
+  "defaultMaxVel": 2.75,
   "defaultMaxAccel": 2.75,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
