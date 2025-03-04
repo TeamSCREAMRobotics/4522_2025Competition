@@ -194,15 +194,15 @@ public class VisionManager {
 
     if ((hasEnabled && !rejectEstimate(mt2Estimate) && !Dashboard.disableMegatag2.get())
         && !Dashboard.disableAllVisionUpdates.get()) {
-      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.0) / mt2Estimate.tagCount;
+      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.5) / (mt2Estimate.tagCount * 0.5);
       double xyStds = VisionConstants.xyStdBaseline * stdFactor * VisionConstants.xyMt2StdFactor;
       drivetrain.addVisionMeasurement(
           mt2Estimate.pose,
           mt2Estimate.timestampSeconds,
-          VecBuilder.fill(xyStds, xyStds, Double.MAX_VALUE),
+          VecBuilder.fill(xyStds, xyStds, 999999999.0),
           true);
       Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);
-      Logger.log("Vision/" + limelight.name() + "/ThetaStds", Double.MAX_VALUE);
+      Logger.log("Vision/" + limelight.name() + "/ThetaStds", 999999999.0);
     }
   }
 
@@ -248,7 +248,7 @@ public class VisionManager {
 
   private boolean rejectEstimate(PoseEstimate estimate) {
     return estimate == null
-        || estimate.tagCount != 0
+        || estimate.tagCount == 0
         || !FieldConstants.FIELD_AREA.contains(estimate.pose)
         || (estimate.tagCount == 1 && estimate.rawFiducials[0].ambiguity > 0.3)
         || (Math.abs(drivetrain.getPigeon2().getAngularVelocityZWorld().getValueAsDouble()) > 540)

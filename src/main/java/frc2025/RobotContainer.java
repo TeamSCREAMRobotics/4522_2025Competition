@@ -105,20 +105,36 @@ public class RobotContainer {
 
   private final Command algaeClearFactory =
       Commands.defer(
-          () -> {
-            if (Dashboard.disableAutoFeatures.get() || robotState.getReefZone().isEmpty()) {
-              return applyTargetStateFactory
-                  .apply(robotState.mapAlgaeLevelToState(Dashboard.wantedAlgaeLevel.getSelected()))
-                  .get();
-            } else {
-              return Commands.parallel(
-                  new AutoAlign(this, () -> robotState.getTargetScoringLocation()),
-                  applyTargetStateFactory
-                      .apply(robotState.getTargetAlgaeState().getSecond())
-                      .get());
-            }
-          },
-          Set.of(drivetrain));
+          () ->
+              Commands.either(
+                  Commands.parallel(
+                      applyTargetStateFactory
+                          .apply(
+                              robotState.mapAlgaeLevelToState(
+                                  Dashboard.wantedAlgaeLevel.getSelected()))
+                          .get(),
+                      wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)),
+                  Commands.parallel(
+                      new AutoAlign(this, () -> robotState.getTargetScoringLocation()),
+                      applyTargetStateFactory
+                          .apply(robotState.getTargetAlgaeState().getSecond())
+                          .get(),
+                      wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)),
+                  () -> Dashboard.disableAutoFeatures.get() || robotState.getReefZone().isEmpty())
+          /*
+          if (Dashboard.disableAutoFeatures.get() || robotState.getReefZone().isEmpty()) {
+            return Commands.parallel(applyTargetStateFactory
+                .apply(robotState.mapAlgaeLevelToState(Dashboard.wantedAlgaeLevel.getSelected()))
+                .get(), wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE));
+          } else {
+            return Commands.parallel(
+                new AutoAlign(this, () -> robotState.getTargetScoringLocation()),
+                applyTargetStateFactory
+                    .apply(robotState.getTargetAlgaeState().getSecond())
+                    .get(),
+                wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE));
+           */ ,
+          Set.of(drivetrain, superstructure.getElevator(), superstructure.getWrist(), wristRollers));
 
   private final Command scoreFactory =
       Commands.defer(
@@ -191,7 +207,6 @@ public class RobotContainer {
 
     Controlboard.driveController
         .rightStick()
-        .and(() -> Controlboard.getTranslation().get().getNorm() < 0.25)
         .whileTrue(
             Commands.parallel(
                 new DriveToPose(
@@ -320,8 +335,11 @@ public class RobotContainer {
               drivetrain.getHelper().setLastAngle(drivetrain.getHeading());
             }));
 
-    superstructure.setDefaultCommand(
+    superstructure.getElevator().setDefaultCommand(
         applyTargetStateFactory.apply(SuperstructureState.FEEDING).get());
+
+        superstructure.getWrist().setDefaultCommand(
+            applyTargetStateFactory.apply(SuperstructureState.FEEDING).get());
   }
 
   public void configureManualOverrides() {

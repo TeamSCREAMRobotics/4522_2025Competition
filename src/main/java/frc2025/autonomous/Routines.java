@@ -36,6 +36,7 @@ public class Routines {
    */
 
   /* Test Auto Sequences */
+  private static final PathSequence leave = new PathSequence("Leave");
   private static final PathSequence maxSpeedTest = new PathSequence("MaxSpeed_Test");
 
   /* Processor Starting Side Sequences */
@@ -179,6 +180,14 @@ public class Routines {
         new DriveUntilAtPose(FieldConstants.BLUE_REEF_LOCATIONS.get(5).getSecond(), container));
   }
 
+  public static Command leave(RobotContainer container) {
+    currentSequence = leave;
+
+    return new SequentialCommandGroup(
+        currentSequence.getStart()
+    );
+  }
+
   /* Processor Starting Side Autos */
   public static Command processor_Side_E_C_D_2(RobotContainer container) {
     currentSequence = E_C_D_2;
@@ -193,7 +202,9 @@ public class Routines {
             .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
             .withTimeout(eject_TimeOut), // Score pre-load E-L4
         setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
-        new ParallelCommandGroup(currentSequence.getNext(), new AutoFeed(container)),
+        // new ParallelCommandGroup(currentSequence.getNext(), new AutoFeed(container)),
+        currentSequence.getNext().withDeadline(new AutoFeed(container)),
+        new DriveUntilAtPose(FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, container).withDeadline(new AutoFeed(container)),
         new ParallelRaceGroup(
             currentSequence.getNext(),
             new SequentialCommandGroup(
@@ -205,7 +216,9 @@ public class Routines {
             .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
             .withTimeout(eject_TimeOut), // Score pre-load C-L4
         setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
-        new ParallelCommandGroup(currentSequence.getNext(), new AutoFeed(container)),
+        // new ParallelCommandGroup(currentSequence.getNext(), new AutoFeed(container)),
+        currentSequence.getNext().withDeadline(new AutoFeed(container)),
+        new DriveUntilAtPose(FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, container).withDeadline(new AutoFeed(container)),
         new ParallelRaceGroup(
             currentSequence.getNext(),
             new SequentialCommandGroup(

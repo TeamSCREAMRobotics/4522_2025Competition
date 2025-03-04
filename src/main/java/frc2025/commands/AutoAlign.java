@@ -32,7 +32,7 @@ public class AutoAlign extends Command {
   private Supplier<ScoringLocation> location;
 
   private final ProfiledPIDController driveController =
-      new ProfiledPIDController(13.0, 0, 0, new Constraints(3.8, 8.0));
+      new ProfiledPIDController(8.5, 0, 0, new Constraints(3.8, 4.0));
   private final ProfiledPIDController headingController =
       new ProfiledPIDController(8.0, 0, 0, new Constraints(Units.degreesToRadians(360.0), 8.0));
 
@@ -137,8 +137,8 @@ public class AutoAlign extends Command {
     driveController.setConstraints(
         new Constraints(
             ScreamMath.mapRange(
-                clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 3.8, 1.5),
-            8.0));
+                clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 3.8, 1.0),
+            4.0));
 
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
     double ffScalar =
