@@ -171,15 +171,22 @@ public class VisionManager {
         0,
         0,
         0);
-    PoseEstimate mtEstimate;
     PoseEstimate mt2Estimate =
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight.name());
 
-    if ((!hasEnabled || Dashboard.disableMegatag2.get())
-        && !Dashboard.disableAllVisionUpdates.get()) {
-      mtEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelight.name());
+    boolean shouldUseMt1 = !hasEnabled || Dashboard.disableMegatag2.get();
+    boolean shouldUseMt2 =
+        hasEnabled && !rejectEstimate(mt2Estimate) && !Dashboard.disableMegatag2.get();
+
+    double stdFactor = 999999999.0;
+
+    if((shouldUseMt1 || shouldUseMt2) && !Dashboard.disableAllVisionUpdates.get()) {
+      stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.5) / (mt2Estimate.tagCount * 0.5);
+    } 
+
+    if (shouldUseMt1 && !Dashboard.disableAllVisionUpdates.get()) {
+      var mtEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelight.name());
       if (!rejectEstimate(mtEstimate)) {
-        double stdFactor = Math.pow(mtEstimate.avgTagDist, 2.0) / mtEstimate.tagCount;
         double xyStds = VisionConstants.xyStdBaseline * stdFactor;
         double thetaStds = VisionConstants.thetaStdBaseline * stdFactor;
         drivetrain.addVisionMeasurement(
@@ -192,9 +199,7 @@ public class VisionManager {
       }
     }
 
-    if ((hasEnabled && !rejectEstimate(mt2Estimate) && !Dashboard.disableMegatag2.get())
-        && !Dashboard.disableAllVisionUpdates.get()) {
-      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.5) / (mt2Estimate.tagCount * 0.5);
+    if (shouldUseMt2 && !Dashboard.disableAllVisionUpdates.get()) {
       double xyStds = VisionConstants.xyStdBaseline * stdFactor * VisionConstants.xyMt2StdFactor;
       drivetrain.addVisionMeasurement(
           mt2Estimate.pose,

@@ -2,6 +2,7 @@ package frc2025.subsystems.superstructure.elevator;
 
 import data.Length;
 import drivers.TalonFXSubsystem;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -10,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc2025.logging.Logger;
 import java.util.function.DoubleSupplier;
 import math.Conversions;
+import math.ScreamMath;
 
 public class Elevator extends TalonFXSubsystem {
 
@@ -82,6 +84,15 @@ public class Elevator extends TalonFXSubsystem {
 
   public static double heightToRotations(Length height) {
     return Conversions.linearDistanceToRotations(height, ElevatorConstants.PULLEY_CIRCUMFERENCE);
+  }
+
+  public double getDriveScalar() {
+    double clampedHeight =
+        MathUtil.clamp(
+            getMeasuredHeight().getInches(), 0.0, ElevatorConstants.MAX_HEIGHT.getInches());
+
+    return ScreamMath.mapRange(
+        clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 3.8, 1.0);
   }
 
   private double startTime = 0.0;

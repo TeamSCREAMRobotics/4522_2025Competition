@@ -19,9 +19,7 @@ import frc2025.controlboard.Controlboard.ScoringLocation;
 import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.superstructure.elevator.Elevator;
-import frc2025.subsystems.superstructure.elevator.ElevatorConstants;
 import java.util.function.Supplier;
-import math.ScreamMath;
 import util.GeomUtil;
 
 public class AutoAlign extends Command {
@@ -128,17 +126,7 @@ public class AutoAlign extends Command {
                     .getTranslation()
                     .getDistance(this.targetPose.get().getFirst().getTranslation()));
 
-    double clampedHeight =
-        MathUtil.clamp(
-            elevator.getMeasuredHeight().getInches(),
-            0.0,
-            ElevatorConstants.MAX_HEIGHT.getInches());
-
-    driveController.setConstraints(
-        new Constraints(
-            ScreamMath.mapRange(
-                clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 3.8, 1.0),
-            4.0));
+    driveController.setConstraints(new Constraints(elevator.getDriveScalar(), 4.0));
 
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
     double ffScalar =
@@ -196,10 +184,7 @@ public class AutoAlign extends Command {
         currentPose
             .getTranslation()
             .getDistance(this.targetPose.get().getFirst().getTranslation()));
-    Logger.log(
-        "AutoAlign/ElevHeightScalar",
-        ScreamMath.mapRange(
-            clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 3.8, 1.5));
+    Logger.log("AutoAlign/ElevHeightScalar", elevator.getDriveScalar());
   }
 
   @Override

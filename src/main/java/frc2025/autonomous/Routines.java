@@ -183,9 +183,7 @@ public class Routines {
   public static Command leave(RobotContainer container) {
     currentSequence = leave;
 
-    return new SequentialCommandGroup(
-        currentSequence.getStart()
-    );
+    return new SequentialCommandGroup(currentSequence.getStart());
   }
 
   /* Processor Starting Side Autos */
@@ -204,7 +202,8 @@ public class Routines {
         setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
         // new ParallelCommandGroup(currentSequence.getNext(), new AutoFeed(container)),
         currentSequence.getNext().withDeadline(new AutoFeed(container)),
-        new DriveUntilAtPose(FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, container).withDeadline(new AutoFeed(container)),
+        new DriveUntilAtPose(FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, container)
+            .withDeadline(new AutoFeed(container)),
         new ParallelRaceGroup(
             currentSequence.getNext(),
             new SequentialCommandGroup(
@@ -218,7 +217,8 @@ public class Routines {
         setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
         // new ParallelCommandGroup(currentSequence.getNext(), new AutoFeed(container)),
         currentSequence.getNext().withDeadline(new AutoFeed(container)),
-        new DriveUntilAtPose(FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, container).withDeadline(new AutoFeed(container)),
+        new DriveUntilAtPose(FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, container)
+            .withDeadline(new AutoFeed(container)),
         new ParallelRaceGroup(
             currentSequence.getNext(),
             new SequentialCommandGroup(

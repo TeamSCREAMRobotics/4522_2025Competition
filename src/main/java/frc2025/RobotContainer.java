@@ -6,7 +6,6 @@ package frc2025;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -14,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc2025.autonomous.AutoSelector;
 import frc2025.commands.AutoAlign;
 import frc2025.commands.ClimbSequence;
-import frc2025.commands.DriveToPose;
 import frc2025.commands.Feed;
 import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard;
@@ -120,21 +118,9 @@ public class RobotContainer {
                           .apply(robotState.getTargetAlgaeState().getSecond())
                           .get(),
                       wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)),
-                  () -> Dashboard.disableAutoFeatures.get() || robotState.getReefZone().isEmpty())
-          /*
-          if (Dashboard.disableAutoFeatures.get() || robotState.getReefZone().isEmpty()) {
-            return Commands.parallel(applyTargetStateFactory
-                .apply(robotState.mapAlgaeLevelToState(Dashboard.wantedAlgaeLevel.getSelected()))
-                .get(), wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE));
-          } else {
-            return Commands.parallel(
-                new AutoAlign(this, () -> robotState.getTargetScoringLocation()),
-                applyTargetStateFactory
-                    .apply(robotState.getTargetAlgaeState().getSecond())
-                    .get(),
-                wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE));
-           */ ,
-          Set.of(drivetrain, superstructure.getElevator(), superstructure.getWrist(), wristRollers));
+                  () -> Dashboard.disableAutoFeatures.get() || robotState.getReefZone().isEmpty()),
+          Set.of(
+              drivetrain, superstructure.getElevator(), superstructure.getWrist(), wristRollers));
 
   private final Command scoreFactory =
       Commands.defer(
@@ -208,30 +194,42 @@ public class RobotContainer {
     Controlboard.driveController
         .rightStick()
         .whileTrue(
+            /* Commands.parallel(
+            new DriveToPose(
+                    subsystems,
+                    () ->
+                        AllianceFlipUtil.get(
+                            FieldConstants.BLUE_BARGE_ALIGN, FieldConstants.RED_BARGE_ALIGN),
+                    () -> Controlboard.getTranslation().get().getY())
+                .onlyIf(() -> !Dashboard.disableAutoFeatures.get()), */
+            /* Commands.sequence(
+            Commands.waitUntil(
+                () ->
+                    AllianceFlipUtil.get(
+                            drivetrain.getEstimatedPose().getX()
+                                > FieldConstants.BLUE_BARGE_ALIGN
+                                    .getTranslation()
+                                    .minus(new Translation2d(3.0, 0))
+                                    .getX(),
+                            drivetrain.getEstimatedPose().getX()
+                                < FieldConstants.RED_BARGE_ALIGN
+                                    .getTranslation()
+                                    .plus(new Translation2d(3.0, 0))
+                                    .getX())
+                        || Dashboard.disableAutoFeatures.get()) */
             Commands.parallel(
-                new DriveToPose(
-                        subsystems,
+                    drivetrain.applyRequest(
                         () ->
-                            AllianceFlipUtil.get(
-                                FieldConstants.BLUE_BARGE_ALIGN, FieldConstants.RED_BARGE_ALIGN),
-                        () -> Controlboard.getTranslation().get().getY())
-                    .onlyIf(() -> !Dashboard.disableAutoFeatures.get()),
-                Commands.sequence(
-                    Commands.waitUntil(
-                        () ->
-                            AllianceFlipUtil.get(
-                                    drivetrain.getEstimatedPose().getX()
-                                        > FieldConstants.BLUE_BARGE_ALIGN
-                                            .getTranslation()
-                                            .minus(new Translation2d(3.0, 0))
-                                            .getX(),
-                                    drivetrain.getEstimatedPose().getX()
-                                        < FieldConstants.RED_BARGE_ALIGN
-                                            .getTranslation()
-                                            .plus(new Translation2d(3.0, 0))
-                                            .getX())
-                                || Dashboard.disableAutoFeatures.get()),
-                    applyTargetStateFactory.apply(SuperstructureState.BARGE_NET).get())));
+                            drivetrain
+                                .getHelper()
+                                .getFacingAngleProfiled(
+                                    Controlboard.getTranslation()
+                                        .get()
+                                        .times(superstructure.getElevator().getDriveScalar() * 0.5),
+                                    AllianceFlipUtil.getFwdHeading(),
+                                    DrivetrainConstants.HEADING_CONTROLLER_PROFILED)),
+                    applyTargetStateFactory.apply(SuperstructureState.BARGE_NET).get())
+                .beforeStarting(() -> drivetrain.resetHeadingController()));
 
     // Reef scoring/clearing controls
     Controlboard.goToLevel4()
@@ -335,11 +333,13 @@ public class RobotContainer {
               drivetrain.getHelper().setLastAngle(drivetrain.getHeading());
             }));
 
-    superstructure.getElevator().setDefaultCommand(
-        applyTargetStateFactory.apply(SuperstructureState.FEEDING).get());
+    superstructure
+        .getElevator()
+        .setDefaultCommand(applyTargetStateFactory.apply(SuperstructureState.FEEDING).get());
 
-        superstructure.getWrist().setDefaultCommand(
-            applyTargetStateFactory.apply(SuperstructureState.FEEDING).get());
+    superstructure
+        .getWrist()
+        .setDefaultCommand(applyTargetStateFactory.apply(SuperstructureState.FEEDING).get());
   }
 
   public void configureManualOverrides() {
