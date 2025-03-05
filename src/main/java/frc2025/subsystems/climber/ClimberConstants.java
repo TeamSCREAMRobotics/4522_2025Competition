@@ -34,7 +34,7 @@ public class ClimberConstants {
     CONFIGURATION.sensorToMechRatio = REDUCTION;
     CONFIGURATION.enableSupplyCurrentLimit = true;
     CONFIGURATION.supplyCurrentLimit = 40;
-    CONFIGURATION.cruiseVelocity = 50.0;
+    CONFIGURATION.cruiseVelocity = 30.0;
     CONFIGURATION.acceleration = 30.0;
     CONFIGURATION.slot0 =
         new ScreamPIDConstants(75.0, 0, 0).getSlot0Configs(new FeedforwardConstants());

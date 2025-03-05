@@ -30,7 +30,7 @@ public class AutoAlign extends Command {
   private Supplier<ScoringLocation> location;
 
   private final ProfiledPIDController driveController =
-      new ProfiledPIDController(8.5, 0, 0, new Constraints(3.8, 4.0));
+      new ProfiledPIDController(10.0, 0, 0.0, new Constraints(3.8, 4.0));
   private final ProfiledPIDController headingController =
       new ProfiledPIDController(8.0, 0, 0, new Constraints(Units.degreesToRadians(360.0), 8.0));
 

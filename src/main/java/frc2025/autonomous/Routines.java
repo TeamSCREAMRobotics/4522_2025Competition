@@ -24,7 +24,7 @@ public class Routines {
   private static double eject_TimeOut = 0.25;
   private static double intakeAlgae_TimeOut = 1.5;
   private static double elevatorAfterFeed_TimeOut = 0.5;
-  private static double elevator_Timeout = 0.5;
+  private static double elevator_Timeout = 0.35;
 
   private static final BiFunction<SuperstructureState, RobotContainer, Supplier<Command>>
       applyTargetStateFactory =

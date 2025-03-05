@@ -236,7 +236,7 @@ public class RobotContainer {
         .and(
             () ->
                 Controlboard.getTranslation().get().getNorm() < 0.25
-                    && (wristRollers.hasCoral().getAsBoolean()
+                    && (WristRollers.hasCoral
                         || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L4).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
@@ -246,7 +246,7 @@ public class RobotContainer {
         .and(
             () ->
                 Controlboard.getTranslation().get().getNorm() < 0.25
-                    && (wristRollers.hasCoral().getAsBoolean()
+                    && (WristRollers.hasCoral
                         || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L3).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
@@ -256,7 +256,7 @@ public class RobotContainer {
         .and(
             () ->
                 Controlboard.getTranslation().get().getNorm() < 0.25
-                    && (wristRollers.hasCoral().getAsBoolean()
+                    && (WristRollers.hasCoral
                         || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L2).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
