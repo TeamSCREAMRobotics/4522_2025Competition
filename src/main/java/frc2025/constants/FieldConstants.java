@@ -105,7 +105,7 @@ public class FieldConstants {
       new Translation2d(Units.inchesToMeters(30.738196), -Units.inchesToMeters(6.633604));
 
   public static final Translation2d BRANCH_TO_ROBOT =
-      new Translation2d(Units.inchesToMeters(17.3075 + 1 + BRANCH_TO_REEF_EDGE.getInches()), 0.0);
+      new Translation2d(Units.inchesToMeters(17.3075 + 0.5 + BRANCH_TO_REEF_EDGE.getInches()), 0.0);
 
   public static final Translation2d PRE_REEF_OFFSET =
       new Translation2d(Units.inchesToMeters(10), 0.0);

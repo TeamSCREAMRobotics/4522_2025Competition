@@ -29,6 +29,7 @@ public class Dashboard {
   public static DashboardBoolean zeroClimber;
   public static SendableChooser<AlgaeLevel> wantedAlgaeLevel = new SendableChooser<>();
   public static DashboardBoolean disableClimber;
+  public static DashboardBoolean unjam;
 
   private static Field2d field = new Field2d();
 
@@ -51,11 +52,12 @@ public class Dashboard {
     disableAllVisionUpdates = new DashboardBoolean(overrides, "Disable Vision Updates", false);
     disableMegatag2 = new DashboardBoolean(overrides, "Disable MegaTag2", false);
     disableAutoFeatures = new DashboardBoolean(overrides, "Disable Auto Features", false);
-    disableCoralRequirement = new DashboardBoolean(overrides, "Disable Coral Requirement", false);
+    disableCoralRequirement = new DashboardBoolean(overrides, "Disable Coral Requirement", true);
     zeroElevator = new DashboardBoolean(overrides, "Zero Elevator", false);
     zeroClimber = new DashboardBoolean(overrides, "Zero Climber", false);
     fieldCentric = new DashboardBoolean(overrides, "Field Centric", true);
     disableClimber = new DashboardBoolean(overrides, "Disable Climber", false);
+    unjam = new DashboardBoolean(overrides, "Unjam", false);
 
     for (AlgaeLevel level : AlgaeLevel.values()) {
       wantedAlgaeLevel.addOption(level.toString(), level);

@@ -12,7 +12,7 @@ public class AutoSelector {
   public enum AutoMode {
     DO_NOTHING(container -> Commands.none()),
     TEST(container -> Routines.test(container)),
-    // LEAVE(container -> Routines.test(container)),
+    LEAVE(container -> Routines.leave(container)),
     MID_G_4N(container -> Routines.middle_Side_G_4N(container)),
     MID_H_4N(container -> Routines.middle_Side_H_4N(container)),
     PROCESSOR_ECD2(container -> Routines.processor_Side_E_C_D_2(container)),

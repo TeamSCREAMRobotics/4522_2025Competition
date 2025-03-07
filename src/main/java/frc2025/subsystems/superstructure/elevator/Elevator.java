@@ -23,12 +23,12 @@ public class Elevator extends TalonFXSubsystem {
 
   public enum ElevatorGoal implements TalonFXSubsystemGoal {
     HOME(Length.kZero),
-    FEED(Length.fromInches(2.15)),
+    FEED(Length.fromInches(2.05)),
     TROUGH_FEED(Length.fromInches(13.0)),
     TROUGH(Length.fromInches(2.0)),
-    L2(Length.fromInches(23.5)),
-    L3(Length.fromInches(39.5)),
-    L4(Length.fromInches(64.6)),
+    L2(Length.fromInches(24.5)),
+    L3(Length.fromInches(40.5)),
+    L4(Length.fromInches(64.8)),
     CLEAR_ALGAE_L1(Length.fromInches(14.1)),
     CLEAR_ALGAE_L2(Length.fromInches(29.611)),
     BARGE(Length.fromInches(70.203)),

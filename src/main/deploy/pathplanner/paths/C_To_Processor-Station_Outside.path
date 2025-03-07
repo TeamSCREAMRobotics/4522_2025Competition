@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.686,
-        "y": 2.976
+        "x": 3.59695945945946,
+        "y": 2.8391891891891885
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.677786167164159,
-        "y": 2.3468048259933343
+        "x": 4.588745626623619,
+        "y": 2.209994015182523
       },
       "isLocked": false,
       "linkedName": "Coral_C"
@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 1.544349989890233,
-        "y": 0.7339318631278252
+        "x": 1.6008445945945946,
+        "y": 0.6849662162162156
       },
       "prevControl": {
-        "x": 2.8530737704918034,
-        "y": 0.6864241803278684
+        "x": 2.909568375196165,
+        "y": 0.6374585334162588
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,8 +49,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.75,
+    "maxVelocity": 2.25,
+    "maxAcceleration": 2.3,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

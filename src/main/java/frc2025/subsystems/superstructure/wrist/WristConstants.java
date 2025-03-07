@@ -64,7 +64,7 @@ public class WristConstants {
 
     CANcoderConfiguration config = new CANcoderConfiguration();
     config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.625;
-    config.MagnetSensor.MagnetOffset = -0.589111328125 + 0.25;
+    config.MagnetSensor.MagnetOffset = -0.52587890625 + 0.25;
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     WRIST_CONFIG.cancoderConstants = new CANCoderConstants(new CANDevice(4), config);
 

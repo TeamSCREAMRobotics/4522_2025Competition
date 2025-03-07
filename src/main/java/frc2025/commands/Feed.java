@@ -30,7 +30,7 @@ public class Feed extends Command {
   @Override
   public void execute() {
     rollers.applyGoal(WristRollersGoal.INTAKE);
-    if (rollers.acquiredCoral()) {
+    if (rollers.hasCoral().getAsBoolean()) {
       hasSeenPiece = true;
     }
   }

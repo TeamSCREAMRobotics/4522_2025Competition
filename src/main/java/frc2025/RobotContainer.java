@@ -134,7 +134,7 @@ public class RobotContainer {
             if (Dashboard.fieldCentric.get()) {
               if (!Dashboard.disableAutoFeatures.get()
                   && superstructure.getElevator().getMeasuredHeight().getInches() < 15.0
-                  && wristRollers.hasCoral().getAsBoolean()
+                  && wristRollers.hasCoral
                   && !(Math.abs(Controlboard.getRotation().getAsDouble()) > 0.5)
                   && !Controlboard.groundIntake().getAsBoolean()) {
                 drivetrain.setControl(
@@ -396,6 +396,8 @@ public class RobotContainer {
                         climber.setDefaultCommand(
                             climber.applyGoalCommand(TalonFXSubsystem.defaultGoal)))
                 .ignoringDisable(true));
+
+    new Trigger(() -> Dashboard.unjam.get()).whileTrue(Commands.defer(() -> superstructure.getElevator().applyVoltageCommand(() -> 1.25).alongWith(wristRollers.applyVoltageCommand(() -> 9.0)), Set.of(superstructure.getElevator(), wristRollers, superstructure.getWrist())));
   }
 
   public Command getAutonomousCommand() {

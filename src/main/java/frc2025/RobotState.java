@@ -51,7 +51,7 @@ public class RobotState {
         case FEEDING:
           return wristRollers
               .applyGoalCommand(WristRollersGoal.EJECT_ALGAE)
-              .andThen(() -> WristRollers.resetBeam());
+              .alongWith(Commands.waitSeconds(0.1).andThen(() -> WristRollers.resetBeam()));
         case REEF_L2:
         case REEF_L3:
         case REEF_L4:

@@ -49,10 +49,10 @@ public class VisionManager {
         new Limelight(
             "limelight-reefa",
             new Pose3d(
-                0.213194,
-                -0.268550,
-                0.202070,
-                new Rotation3d(0, -Units.degreesToRadians(20.0), Units.degreesToRadians(30))));
+               0.257199,
+                -0.240415,
+                0.197419,
+                new Rotation3d(0, -Units.degreesToRadians(20.0), Units.degreesToRadians(35))));
     public static final Limelight STATION =
         new Limelight(
             "limelight-station",
@@ -86,7 +86,7 @@ public class VisionManager {
   private final Drivetrain drivetrain;
   private final Limelight[] limelights =
       new Limelight[] {
-        Limelights.REEF_RIGHT, Limelights.REEF_LEFT, Limelights.STATION, Limelights.CLIMBER
+        /* Limelights.REEF_RIGHT,  */Limelights.REEF_LEFT, Limelights.STATION, Limelights.CLIMBER
       };
 
   // private final Notifier visionThread;
