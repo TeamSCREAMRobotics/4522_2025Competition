@@ -4,7 +4,9 @@
 
 package frc2025;
 
+import drivers.TalonFXSubsystem;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -32,8 +34,6 @@ import frc2025.subsystems.vision.VisionManager;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import drivers.TalonFXSubsystem;
 import lombok.Getter;
 import util.AllianceFlipUtil;
 
@@ -180,6 +180,12 @@ public class RobotContainer {
                 ElevatorConstants.MAX_HEIGHT.getInches());
 
     autoSelector = new AutoSelector(this);
+
+    if (Robot.isSimulation()) {
+      drivetrain.resetPose(
+          AllianceFlipUtil.get(
+              Pose2d.kZero, new Pose2d(FieldConstants.FIELD_DIMENSIONS, Rotation2d.k180deg)));
+    }
   }
 
   private void configureBindings() {
@@ -273,6 +279,7 @@ public class RobotContainer {
 
     // Intake controls
     Controlboard.feed()
+        .and(() -> !WristRollers.hasCoral || Dashboard.disableCoralRequirement.get())
         .whileTrue(
             Commands.parallel(
                 new Feed(wristRollers),
@@ -383,7 +390,12 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     new Trigger(() -> Dashboard.disableClimber.get())
-        .whileTrue(Commands.runOnce(() -> climber.setDefaultCommand(climber.applyGoalCommand(TalonFXSubsystem.defaultGoal))).ignoringDisable(true));
+        .whileTrue(
+            Commands.runOnce(
+                    () ->
+                        climber.setDefaultCommand(
+                            climber.applyGoalCommand(TalonFXSubsystem.defaultGoal)))
+                .ignoringDisable(true));
   }
 
   public Command getAutonomousCommand() {

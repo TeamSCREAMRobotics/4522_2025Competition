@@ -8,8 +8,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc2025.RobotContainer;
 import frc2025.autonomous.auto_commands.DriveUntilAtPose;
+import frc2025.commands.AutoAlign;
 import frc2025.commands.Feed;
 import frc2025.constants.FieldConstants;
+import frc2025.controlboard.Controlboard.ScoringLocation;
 import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureState;
 import frc2025.subsystems.superstructure.wrist.WristRollers;
 import frc2025.subsystems.superstructure.wrist.WristRollers.WristRollersGoal;
@@ -172,10 +174,7 @@ public class Routines {
   public static Command test(RobotContainer container) {
     currentSequence = E_C_D_2;
 
-    return new SequentialCommandGroup(
-        new Feed(container),
-        new PrintCommand("Done")
-    );
+    return new SequentialCommandGroup(new Feed(container), new PrintCommand("Done"));
   }
 
   public static Command leave(RobotContainer container) {
@@ -192,12 +191,14 @@ public class Routines {
     return new SequentialCommandGroup(
         new ParallelRaceGroup(
             currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
-        new DriveUntilAtPose(
-            AllianceFlipUtil.get(
-                    FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                .get(5)
-                .getSecond(),
-            container).withTimeout(driveUntil_Timeout),
+        /* new DriveUntilAtPose(
+        AllianceFlipUtil.get(
+                FieldConstants.BLUE_REEF_LOCATIONS,
+                FieldConstants.RED_REEF_LOCATIONS_FLIPPED)
+            .get(5)
+            .getSecond(),
+        container) */
+        new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout),
         // new WaitCommand(0.25),
         wristRollers
             .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
@@ -216,12 +217,7 @@ public class Routines {
             new SequentialCommandGroup(
                 new WaitCommand(elevatorAfterFeed_TimeOut),
                 setElevator(container, SuperstructureState.REEF_L4))),
-        new DriveUntilAtPose(
-            AllianceFlipUtil.get(
-                    FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                .get(4)
-                .getSecond(),
-            container).withTimeout(driveUntil_Timeout),
+        new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout),
         // new WaitCommand(0.25),
         wristRollers
             .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
@@ -240,12 +236,7 @@ public class Routines {
             new SequentialCommandGroup(
                 new WaitCommand(elevatorAfterFeed_TimeOut),
                 setElevator(container, SuperstructureState.REEF_L4))),
-        new DriveUntilAtPose(
-            AllianceFlipUtil.get(
-                    FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                .get(4)
-                .getFirst(),
-            container).withTimeout(driveUntil_Timeout),
+        new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(driveUntil_Timeout),
         // new WaitCommand(0.25),
         wristRollers
             .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
@@ -267,12 +258,7 @@ public class Routines {
     return new SequentialCommandGroup(
         new ParallelRaceGroup(
             currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
-        new DriveUntilAtPose(
-            AllianceFlipUtil.get(
-                    FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                .get(0)
-                .getSecond(),
-            container).withTimeout(driveUntil_Timeout),
+        new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout),
         wristRollers
             .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
             .withTimeout(eject_TimeOut), // Score pre-load G-L4
@@ -302,12 +288,7 @@ public class Routines {
     return new SequentialCommandGroup(
         new ParallelRaceGroup(
             currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
-        new DriveUntilAtPose(
-            AllianceFlipUtil.get(
-                    FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                .get(0)
-                .getSecond(),
-            container).withTimeout(driveUntil_Timeout),
+        new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout),
         wristRollers
             .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
             .withTimeout(eject_TimeOut), // Score pre-load G-L4
@@ -338,12 +319,7 @@ public class Routines {
     return new SequentialCommandGroup(
         new ParallelRaceGroup(
             currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
-        new DriveUntilAtPose(
-            AllianceFlipUtil.get(
-                    FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                .get(1)
-                .getFirst(),
-            container).withTimeout(driveUntil_Timeout),
+        new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(driveUntil_Timeout),
         // new WaitCommand(0.25),
         wristRollers
             .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
@@ -362,12 +338,7 @@ public class Routines {
             new SequentialCommandGroup(
                 new WaitCommand(elevatorAfterFeed_TimeOut),
                 setElevator(container, SuperstructureState.REEF_L4))),
-        new DriveUntilAtPose(
-            AllianceFlipUtil.get(
-                    FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                .get(2)
-                .getFirst(),
-            container).withTimeout(driveUntil_Timeout),
+        new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(driveUntil_Timeout),
         // new WaitCommand(0.25),
         wristRollers
             .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
@@ -386,12 +357,7 @@ public class Routines {
             new SequentialCommandGroup(
                 new WaitCommand(elevatorAfterFeed_TimeOut),
                 setElevator(container, SuperstructureState.REEF_L4))),
-        new DriveUntilAtPose(
-            AllianceFlipUtil.get(
-                    FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                .get(2)
-                .getSecond(),
-            container).withTimeout(driveUntil_Timeout),
+        new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout),
         // new WaitCommand(0.25),
         wristRollers
             .applyGoalCommand(WristRollersGoal.EJECT_CORAL)

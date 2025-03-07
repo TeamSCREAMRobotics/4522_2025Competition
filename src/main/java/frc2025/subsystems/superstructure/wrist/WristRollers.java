@@ -13,57 +13,57 @@ import java.util.function.DoubleSupplier;
 
 public class WristRollers extends TalonFXSubsystem {
 
-  private final static CANrange beam = new CANrange(0);
-    public static boolean hasCoral = true;
-  
-    private final Debouncer beamDebouncer = new Debouncer(0.1); //0.0875
-  
-    public WristRollers(TalonFXSubsystemConfiguration config) {
-      super(config, WristRollersGoal.IDLE);
-  
-      beam.getDistance().setUpdateFrequency(300.0);
+  private static final CANrange beam = new CANrange(0);
+  public static boolean hasCoral = true;
+
+  private final Debouncer beamDebouncer = new Debouncer(0.1); // 0.0875
+
+  public WristRollers(TalonFXSubsystemConfiguration config) {
+    super(config, WristRollersGoal.IDLE);
+
+    beam.getDistance().setUpdateFrequency(300.0);
+  }
+
+  public enum WristRollersGoal implements TalonFXSubsystemGoal {
+    IDLE(() -> acquiredCoral() ? 1.0 : -1.0, ControlType.VOLTAGE),
+    IDLE_AUTO(() -> -2.0, ControlType.VOLTAGE),
+    HOLD(() -> 0.0, ControlType.VOLTAGE),
+    INTAKE(() -> 7.0, ControlType.VOLTAGE),
+    INTAKE_ALGAE(() -> -12.0, ControlType.VOLTAGE),
+    INTAKE_TROUGH(() -> -9.0, ControlType.VOLTAGE),
+    EJECT_CORAL(() -> 12.0, ControlType.VOLTAGE),
+    EJECT_ALGAE(() -> 12.0, ControlType.VOLTAGE);
+
+    public final DoubleSupplier voltage;
+    public final ControlType controlType;
+
+    private WristRollersGoal(DoubleSupplier voltage, ControlType controlType) {
+      this.voltage = voltage;
+      this.controlType = controlType;
     }
-  
-    public enum WristRollersGoal implements TalonFXSubsystemGoal {
-      IDLE(() -> acquiredCoral() ? 1.0 : -1.0, ControlType.VOLTAGE),
-      IDLE_AUTO(() -> -2.0, ControlType.VOLTAGE),
-      HOLD(() -> 0.0, ControlType.VOLTAGE),
-      INTAKE(() -> 7.0, ControlType.VOLTAGE),
-      INTAKE_ALGAE(() -> -12.0, ControlType.VOLTAGE),
-      INTAKE_TROUGH(() -> -9.0, ControlType.VOLTAGE),
-      EJECT_CORAL(() -> 12.0, ControlType.VOLTAGE),
-      EJECT_ALGAE(() -> 12.0, ControlType.VOLTAGE);
-  
-      public final DoubleSupplier voltage;
-      public final ControlType controlType;
-  
-      private WristRollersGoal(DoubleSupplier voltage, ControlType controlType) {
-        this.voltage = voltage;
-        this.controlType = controlType;
-      }
-  
-      @Override
-      public ControlType controlType() {
-        return controlType;
-      }
-  
-      @Override
-      public DoubleSupplier target() {
-        return voltage;
-      }
-  
-      @Override
-      public DoubleSupplier feedForward() {
-        return () -> 0.0;
-      }
+
+    @Override
+    public ControlType controlType() {
+      return controlType;
     }
-  
-    private static double getBeamDistanceInches() {
-        return Units.metersToInches(beam.getDistance().getValueAsDouble());
+
+    @Override
+    public DoubleSupplier target() {
+      return voltage;
     }
-  
-    public static boolean acquiredCoral() {
-      return getBeamDistanceInches() < 2.0;
+
+    @Override
+    public DoubleSupplier feedForward() {
+      return () -> 0.0;
+    }
+  }
+
+  private static double getBeamDistanceInches() {
+    return Units.metersToInches(beam.getDistance().getValueAsDouble());
+  }
+
+  public static boolean acquiredCoral() {
+    return getBeamDistanceInches() < 2.0;
   }
 
   public BooleanSupplier hasCoral() {

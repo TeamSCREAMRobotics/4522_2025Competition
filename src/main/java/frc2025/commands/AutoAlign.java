@@ -29,6 +29,8 @@ public class AutoAlign extends Command {
   private final Elevator elevator;
   private Supplier<ScoringLocation> location;
 
+  private boolean keepPose = false;
+
   private final ProfiledPIDController driveController =
       new ProfiledPIDController(10.0, 0, 0.0, new Constraints(3.8, 4.0));
   private final ProfiledPIDController headingController =
@@ -40,7 +42,7 @@ public class AutoAlign extends Command {
   private double driveErrorAbs = 0.0;
   private double headingErrorAbs = 0.0;
 
-  private final double driveTolerance = 0.01;
+  private final double driveTolerance = 0.019;
   private final double headingTolerance = Units.degreesToRadians(1.0);
 
   private final double ffMinRadius = 0.1;
@@ -55,7 +57,7 @@ public class AutoAlign extends Command {
     switch (location.get()) {
       case LEFT:
       case RIGHT:
-        targetPose = () -> container.getRobotState().getTargetBranchPoses();
+        targetPose = () -> container.getRobotState().getTargetBranchPoses(location.get());
         break;
       case CENTER:
         targetPose =
@@ -68,6 +70,38 @@ public class AutoAlign extends Command {
         targetPose = () -> Pair.of(drivetrain.getEstimatedPose(), drivetrain.getEstimatedPose());
         break;
     }
+
+    keepPose = false;
+
+    headingController.enableContinuousInput(-Math.PI, Math.PI);
+
+    addRequirements(drivetrain);
+  }
+
+  public AutoAlign(RobotContainer container, ScoringLocation location) {
+    this.container = container;
+    this.drivetrain = container.getSubsystems().drivetrain();
+    this.elevator = container.getSubsystems().superstructure().getElevator();
+    this.location = () -> location;
+
+    switch (location) {
+      case LEFT:
+      case RIGHT:
+        targetPose = () -> container.getRobotState().getTargetBranchPoses(location);
+        break;
+      case CENTER:
+        targetPose =
+            () ->
+                Pair.of(
+                    container.getRobotState().getTargetAlgaeState().getFirst(),
+                    container.getRobotState().getTargetAlgaeState().getFirst());
+        break;
+      default:
+        targetPose = () -> Pair.of(drivetrain.getEstimatedPose(), drivetrain.getEstimatedPose());
+        break;
+    }
+
+    keepPose = true;
 
     headingController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -100,10 +134,11 @@ public class AutoAlign extends Command {
   @Override
   public void execute() {
     Pose2d currentPose = drivetrain.getEstimatedPose();
+    if(!keepPose){
     switch (location.get()) {
       case LEFT:
       case RIGHT:
-        targetPose = () -> container.getRobotState().getTargetBranchPoses();
+        targetPose = () -> container.getRobotState().getTargetBranchPoses(location.get());
         break;
       case CENTER:
         targetPose =
@@ -116,6 +151,7 @@ public class AutoAlign extends Command {
         targetPose = () -> Pair.of(drivetrain.getEstimatedPose(), drivetrain.getEstimatedPose());
         break;
     }
+  }
     Pose2d targetPose =
         this.targetPose
             .get()
@@ -123,8 +159,9 @@ public class AutoAlign extends Command {
             .interpolate(
                 this.targetPose.get().getSecond(),
                 currentPose
-                    .getTranslation()
-                    .getDistance(this.targetPose.get().getFirst().getTranslation()));
+                        .getTranslation()
+                        .getDistance(this.targetPose.get().getFirst().getTranslation())
+                    * 1.5);
 
     driveController.setConstraints(new Constraints(elevator.getDriveScalar(), 4.0));
 

@@ -65,6 +65,8 @@ public class FieldConstants {
 
   public static final Map<Integer, Pair<Pose2d, Pose2d>> BLUE_REEF_LOCATIONS = new HashMap<>();
   public static final Map<Integer, Pair<Pose2d, Pose2d>> RED_REEF_LOCATIONS = new HashMap<>();
+  public static final Map<Integer, Pair<Pose2d, Pose2d>> RED_REEF_LOCATIONS_FLIPPED =
+      new HashMap<>();
 
   public static final Map<Integer, Pair<Pose2d, AlgaeLevel>> BLUE_ALGAE_LOCATIONS = new HashMap<>();
   public static final Map<Integer, Pair<Pose2d, AlgaeLevel>> RED_ALGAE_LOCATIONS = new HashMap<>();
@@ -103,7 +105,7 @@ public class FieldConstants {
       new Translation2d(Units.inchesToMeters(30.738196), -Units.inchesToMeters(6.633604));
 
   public static final Translation2d BRANCH_TO_ROBOT =
-      new Translation2d(Units.inchesToMeters(17.307500 + BRANCH_TO_REEF_EDGE.getInches()), 0.0);
+      new Translation2d(Units.inchesToMeters(17.3075 + 1 + BRANCH_TO_REEF_EDGE.getInches()), 0.0);
 
   public static final Translation2d PRE_REEF_OFFSET =
       new Translation2d(Units.inchesToMeters(10), 0.0);
@@ -117,54 +119,67 @@ public class FieldConstants {
   static {
     for (int i = 0; i < 6; i++) {
       Rotation2d rotation = Rotation2d.fromDegrees(i * 60);
-      Rotation2d targetRotation = Rotation2d.fromDegrees((i * 60) + 180);
+      Rotation2d poseRotation = Rotation2d.fromDegrees((i * 60) + 180);
 
       BLUE_REEF_LOCATIONS.put(
           i,
           new Pair<>(
+              new Pose2d(BLUE_REEF_CENTER.plus(SCORE_LOCATION_1.rotateBy(rotation)), poseRotation),
               new Pose2d(
-                  BLUE_REEF_CENTER.plus(SCORE_LOCATION_1.rotateBy(rotation)), targetRotation),
-              new Pose2d(
-                  BLUE_REEF_CENTER.plus(SCORE_LOCATION_2.rotateBy(rotation)), targetRotation)));
+                  BLUE_REEF_CENTER.plus(SCORE_LOCATION_2.rotateBy(rotation)), poseRotation)));
 
       BLUE_PRE_REEF_LOCATIONS.put(
           i,
           new Pair<>(
               new Pose2d(
                   BLUE_REEF_CENTER.plus(SCORE_LOCATION_1.plus(PRE_REEF_OFFSET).rotateBy(rotation)),
-                  targetRotation),
+                  poseRotation),
               new Pose2d(
                   BLUE_REEF_CENTER.plus(SCORE_LOCATION_2.plus(PRE_REEF_OFFSET).rotateBy(rotation)),
-                  targetRotation)));
+                  poseRotation)));
 
       RED_REEF_LOCATIONS.put(
           i,
           new Pair<>(
-              new Pose2d(RED_REEF_CENTER.plus(SCORE_LOCATION_1.rotateBy(rotation)), targetRotation),
-              new Pose2d(
-                  RED_REEF_CENTER.plus(SCORE_LOCATION_2.rotateBy(rotation)), targetRotation)));
+              new Pose2d(RED_REEF_CENTER.plus(SCORE_LOCATION_1.rotateBy(rotation)), poseRotation),
+              new Pose2d(RED_REEF_CENTER.plus(SCORE_LOCATION_2.rotateBy(rotation)), poseRotation)));
 
       RED_PRE_REEF_LOCATIONS.put(
           i,
           new Pair<>(
               new Pose2d(
                   RED_REEF_CENTER.plus(SCORE_LOCATION_1.plus(PRE_REEF_OFFSET).rotateBy(rotation)),
-                  targetRotation),
+                  poseRotation),
               new Pose2d(
                   RED_REEF_CENTER.plus(SCORE_LOCATION_2.plus(PRE_REEF_OFFSET).rotateBy(rotation)),
-                  targetRotation)));
+                  poseRotation)));
 
       BLUE_ALGAE_LOCATIONS.put(
           i,
           Pair.of(
-              new Pose2d(BLUE_REEF_CENTER.plus(ALGAE_LOCATION.rotateBy(rotation)), targetRotation),
+              new Pose2d(BLUE_REEF_CENTER.plus(ALGAE_LOCATION.rotateBy(rotation)), poseRotation),
               getAlgaeLevel(i)));
 
       RED_ALGAE_LOCATIONS.put(
           i,
           Pair.of(
-              new Pose2d(RED_REEF_CENTER.plus(ALGAE_LOCATION.rotateBy(rotation)), targetRotation),
+              new Pose2d(RED_REEF_CENTER.plus(ALGAE_LOCATION.rotateBy(rotation)), poseRotation),
               getAlgaeLevel(i + 1)));
+    }
+
+    for (int i = 0; i < 6; i++) {
+      Rotation2d rotation = Rotation2d.fromDegrees((i * 60) + 180);
+      Rotation2d poseRotation = Rotation2d.fromDegrees((i * 60));
+
+      RED_REEF_LOCATIONS_FLIPPED.put(
+          i,
+          new Pair<>(
+              new Pose2d(
+                  RED_REEF_CENTER.plus(SCORE_LOCATION_1.plus(PRE_REEF_OFFSET).rotateBy(rotation)),
+                  poseRotation),
+              new Pose2d(
+                  RED_REEF_CENTER.plus(SCORE_LOCATION_2.plus(PRE_REEF_OFFSET).rotateBy(rotation)),
+                  poseRotation)));
     }
   }
 

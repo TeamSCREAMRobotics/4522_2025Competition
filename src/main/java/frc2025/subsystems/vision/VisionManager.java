@@ -86,7 +86,7 @@ public class VisionManager {
   private final Drivetrain drivetrain;
   private final Limelight[] limelights =
       new Limelight[] {
-        /* Limelights.REEF_RIGHT,  */Limelights.REEF_LEFT, Limelights.STATION, Limelights.CLIMBER
+        Limelights.REEF_RIGHT, Limelights.REEF_LEFT, Limelights.STATION, Limelights.CLIMBER
       };
 
   // private final Notifier visionThread;
@@ -120,7 +120,7 @@ public class VisionManager {
       reefRight = new PhotonCamera("reefA");
       reefLeft = new PhotonCamera("reefB");
       frontElevator = new PhotonCamera("elevator");
-      climber = new PhotonCamera("station");
+      climber = new PhotonCamera("climber");
       cameras = new PhotonCamera[] {reefRight, reefLeft, frontElevator, climber};
 
       visionSim = new VisionSystemSim("main");
@@ -201,8 +201,13 @@ public class VisionManager {
           mt2Estimate.timestampSeconds,
           VecBuilder.fill(xyStds, xyStds, 999999999.0),
           true);
+      Logger.log("Vision/" + limelight.name() + "/PoseEstimate", mt2Estimate.pose);
       Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);
       Logger.log("Vision/" + limelight.name() + "/ThetaStds", 999999999.0);
+    } else {
+      Logger.log("Vision/" + limelight.name() + "/PoseEstimate", Pose2d.kZero);
+      Logger.log("Vision/" + limelight.name() + "/XyStds", 0.0);
+      Logger.log("Vision/" + limelight.name() + "/ThetaStds", 0.0);
     }
   }
 
@@ -262,7 +267,7 @@ public class VisionManager {
 
     if (Robot.isSimulation() && visionSim != null) {
       visionSim.update(drivetrain.getEstimatedPose());
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < limelights.length; i++) {
         for (PhotonPipelineResult result : cameras[i].getAllUnreadResults()) {
           writeToTable(
               result,

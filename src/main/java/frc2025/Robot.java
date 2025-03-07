@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
             .withCaptureDs(true)
             .withCaptureNt(true)
             .withLogExtras(true)
-            .withNtPublish(false)
+            .withNtPublish(true)
             .withLogEntryQueueCapacity(2000));
     Logger.setEnabled(true);
 
