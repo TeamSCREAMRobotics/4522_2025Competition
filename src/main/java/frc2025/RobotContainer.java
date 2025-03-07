@@ -32,6 +32,8 @@ import frc2025.subsystems.vision.VisionManager;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import drivers.TalonFXSubsystem;
 import lombok.Getter;
 import util.AllianceFlipUtil;
 
@@ -236,8 +238,7 @@ public class RobotContainer {
         .and(
             () ->
                 Controlboard.getTranslation().get().getNorm() < 0.25
-                    && (WristRollers.hasCoral
-                        || Dashboard.disableCoralRequirement.get()))
+                    && (WristRollers.hasCoral || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L4).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
         .whileTrue(autoAlign);
@@ -246,8 +247,7 @@ public class RobotContainer {
         .and(
             () ->
                 Controlboard.getTranslation().get().getNorm() < 0.25
-                    && (WristRollers.hasCoral
-                        || Dashboard.disableCoralRequirement.get()))
+                    && (WristRollers.hasCoral || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L3).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
         .whileTrue(autoAlign);
@@ -256,8 +256,7 @@ public class RobotContainer {
         .and(
             () ->
                 Controlboard.getTranslation().get().getNorm() < 0.25
-                    && (WristRollers.hasCoral
-                        || Dashboard.disableCoralRequirement.get()))
+                    && (WristRollers.hasCoral || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L2).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
         .whileTrue(autoAlign);
@@ -382,6 +381,9 @@ public class RobotContainer {
                       Dashboard.zeroClimber.set(false);
                     })
                 .ignoringDisable(true));
+
+    new Trigger(() -> Dashboard.disableClimber.get())
+        .whileTrue(Commands.runOnce(() -> climber.setDefaultCommand(climber.applyGoalCommand(TalonFXSubsystem.defaultGoal))).ignoringDisable(true));
   }
 
   public Command getAutonomousCommand() {

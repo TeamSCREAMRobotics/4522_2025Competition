@@ -34,7 +34,7 @@ public class Climber extends TalonFXSubsystem {
     funnelServo.set(1);
     latchServo.set(1);
 
-    // resetPosition(0.0);
+    resetPosition(0.0);
   }
 
   public enum ClimberGoal implements TalonFXSubsystemGoal {

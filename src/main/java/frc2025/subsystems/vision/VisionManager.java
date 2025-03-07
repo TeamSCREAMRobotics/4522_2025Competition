@@ -57,9 +57,9 @@ public class VisionManager {
         new Limelight(
             "limelight-station",
             new Pose3d(
-              -Units.inchesToMeters(1.492570),
-              -Units.inchesToMeters(5.0),
-              Units.inchesToMeters(40.156036),
+                -Units.inchesToMeters(1.492570),
+                -Units.inchesToMeters(5.0),
+                Units.inchesToMeters(40.156036),
                 new Rotation3d(0.0, -Units.degreesToRadians(30), Math.PI)));
     public static final Limelight CLIMBER =
         new Limelight(
@@ -86,7 +86,7 @@ public class VisionManager {
   private final Drivetrain drivetrain;
   private final Limelight[] limelights =
       new Limelight[] {
-        Limelights.REEF_RIGHT, Limelights.REEF_LEFT, Limelights.STATION, Limelights.CLIMBER
+        /* Limelights.REEF_RIGHT,  */Limelights.REEF_LEFT, Limelights.STATION, Limelights.CLIMBER
       };
 
   // private final Notifier visionThread;
@@ -149,8 +149,7 @@ public class VisionManager {
       visionSim.addCamera(
           reefLeftSim, GeomUtil.pose3dToTransform3d(Limelights.REEF_LEFT.relativePosition()));
       visionSim.addCamera(
-          frontElevatorSim,
-          GeomUtil.pose3dToTransform3d(Limelights.STATION.relativePosition()));
+          frontElevatorSim, GeomUtil.pose3dToTransform3d(Limelights.STATION.relativePosition()));
       visionSim.addCamera(
           climberSim, GeomUtil.pose3dToTransform3d(Limelights.CLIMBER.relativePosition()));
 
@@ -195,7 +194,7 @@ public class VisionManager {
     }
 
     if (shouldUseMt2 && !Dashboard.disableAllVisionUpdates.get()) {
-      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.5) / (mt2Estimate.tagCount * 0.5);
+      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.2) / (mt2Estimate.tagCount * 0.5);
       double xyStds = VisionConstants.xyStdBaseline * stdFactor * VisionConstants.xyMt2StdFactor;
       drivetrain.addVisionMeasurement(
           mt2Estimate.pose,

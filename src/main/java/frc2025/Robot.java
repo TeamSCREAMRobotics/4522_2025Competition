@@ -4,6 +4,7 @@
 
 package frc2025;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.hal.AllianceStationID;
@@ -38,9 +39,9 @@ public class Robot extends TimedRobot {
         new DogLogOptions()
             .withCaptureDs(true)
             .withCaptureNt(true)
-            .withLogExtras(false)
-            .withNtPublish(true)
-            .withLogEntryQueueCapacity(5000));
+            .withLogExtras(true)
+            .withNtPublish(false)
+            .withLogEntryQueueCapacity(2000));
     Logger.setEnabled(true);
 
     CommandScheduler.getInstance().onCommandInitialize((command) -> allCommands.add(command));
@@ -85,6 +86,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledExit() {
     VisionManager.hasEnabled = true;
+    robotContainer.getSubsystems().climber().setNeutralMode(NeutralModeValue.Brake);
   }
 
   @Override

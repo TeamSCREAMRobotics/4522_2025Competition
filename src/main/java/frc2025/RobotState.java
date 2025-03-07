@@ -49,7 +49,7 @@ public class RobotState {
         case BARGE_NET:
         case HOME:
         case FEEDING:
-          return wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE);
+          return wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE).andThen(() -> WristRollers.resetBeam());
         case REEF_L2:
         case REEF_L3:
         case REEF_L4:
