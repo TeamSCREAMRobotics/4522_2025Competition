@@ -37,7 +37,6 @@ public class Feed extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    rollers.applyGoal(WristRollersGoal.IDLE);
     if (!interrupted) {
       WristRollers.hasCoral = true;
     }

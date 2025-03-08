@@ -190,7 +190,7 @@ public class Routines {
     WristRollers wristRollers = container.getSubsystems().wristRollers();
 
     return new SequentialCommandGroup(
-        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.IDLE)),
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.IDLE), wristRollers),
         new ParallelRaceGroup(
             currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
         /* new DriveUntilAtPose(
@@ -206,6 +206,7 @@ public class Routines {
             .withTimeout(eject_TimeOut), // Score pre-load E-L4
         setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
         new ParallelCommandGroup(currentSequence.getNext(), new Feed(container)),
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.IDLE), wristRollers),
         // currentSequence.getNext().withDeadline(new Feed(container)),
         // TODO - something wrong with the cordinates
         // new DriveUntilAtPose(
@@ -225,6 +226,7 @@ public class Routines {
             .withTimeout(eject_TimeOut), // Score pre-load C-L4
         setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
         new ParallelCommandGroup(currentSequence.getNext(), new Feed(container)),
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.IDLE), wristRollers),
         // currentSequence.getNext().withDeadline(new Feed(container)),
         // TODO - something wrong with the cordinates
         // new DriveUntilAtPose(
@@ -324,6 +326,7 @@ public class Routines {
             .withTimeout(eject_TimeOut), // Score pre-load J-L4
         setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
         new ParallelCommandGroup(currentSequence.getNext(), new Feed(container)),
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.IDLE), wristRollers),
         // currentSequence.getNext().withDeadline(new Feed(container)),
         // TODO - something wrong with the cordinates
         // new DriveUntilAtPose(
@@ -343,6 +346,7 @@ public class Routines {
             .withTimeout(eject_TimeOut), // Score pre-load L-L4
         setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
         new ParallelCommandGroup(currentSequence.getNext(), new Feed(container)),
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.IDLE), wristRollers),
         // currentSequence.getNext().withDeadline(new Feed(container)),
         // TODO - something wrong with the cordinates
         // new DriveUntilAtPose(
