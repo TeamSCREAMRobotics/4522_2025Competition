@@ -4,7 +4,9 @@
 
 package frc2025;
 
+import drivers.TalonFXSubsystem;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -132,7 +134,7 @@ public class RobotContainer {
             if (Dashboard.fieldCentric.get()) {
               if (!Dashboard.disableAutoFeatures.get()
                   && superstructure.getElevator().getMeasuredHeight().getInches() < 15.0
-                  && wristRollers.hasCoral().getAsBoolean()
+                  && wristRollers.hasCoral
                   && !(Math.abs(Controlboard.getRotation().getAsDouble()) > 0.5)
                   && !Controlboard.groundIntake().getAsBoolean()) {
                 drivetrain.setControl(
@@ -178,6 +180,12 @@ public class RobotContainer {
                 ElevatorConstants.MAX_HEIGHT.getInches());
 
     autoSelector = new AutoSelector(this);
+
+    if (Robot.isSimulation()) {
+      drivetrain.resetPose(
+          AllianceFlipUtil.get(
+              Pose2d.kZero, new Pose2d(FieldConstants.FIELD_DIMENSIONS, Rotation2d.k180deg)));
+    }
   }
 
   private void configureBindings() {
@@ -236,8 +244,7 @@ public class RobotContainer {
         .and(
             () ->
                 Controlboard.getTranslation().get().getNorm() < 0.25
-                    && (WristRollers.hasCoral
-                        || Dashboard.disableCoralRequirement.get()))
+                    && (WristRollers.hasCoral || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L4).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
         .whileTrue(autoAlign);
@@ -246,8 +253,7 @@ public class RobotContainer {
         .and(
             () ->
                 Controlboard.getTranslation().get().getNorm() < 0.25
-                    && (WristRollers.hasCoral
-                        || Dashboard.disableCoralRequirement.get()))
+                    && (WristRollers.hasCoral || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L3).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
         .whileTrue(autoAlign);
@@ -256,8 +262,7 @@ public class RobotContainer {
         .and(
             () ->
                 Controlboard.getTranslation().get().getNorm() < 0.25
-                    && (WristRollers.hasCoral
-                        || Dashboard.disableCoralRequirement.get()))
+                    && (WristRollers.hasCoral || Dashboard.disableCoralRequirement.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L2).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
         .whileTrue(autoAlign);
@@ -274,6 +279,7 @@ public class RobotContainer {
 
     // Intake controls
     Controlboard.feed()
+        .and(() -> !WristRollers.hasCoral || Dashboard.disableCoralRequirement.get())
         .whileTrue(
             Commands.parallel(
                 new Feed(wristRollers),
@@ -382,6 +388,16 @@ public class RobotContainer {
                       Dashboard.zeroClimber.set(false);
                     })
                 .ignoringDisable(true));
+
+    new Trigger(() -> Dashboard.disableClimber.get())
+        .whileTrue(
+            Commands.runOnce(
+                    () ->
+                        climber.setDefaultCommand(
+                            climber.applyGoalCommand(TalonFXSubsystem.defaultGoal)))
+                .ignoringDisable(true));
+
+    new Trigger(() -> Dashboard.unjam.get()).whileTrue(Commands.defer(() -> superstructure.getElevator().applyVoltageCommand(() -> 1.25).alongWith(wristRollers.applyVoltageCommand(() -> 9.0)), Set.of(superstructure.getElevator(), wristRollers, superstructure.getWrist())));
   }
 
   public Command getAutonomousCommand() {

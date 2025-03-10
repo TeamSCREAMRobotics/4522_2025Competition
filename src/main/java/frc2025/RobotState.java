@@ -49,7 +49,9 @@ public class RobotState {
         case BARGE_NET:
         case HOME:
         case FEEDING:
-          return wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE);
+          return wristRollers
+              .applyGoalCommand(WristRollersGoal.EJECT_ALGAE)
+              .alongWith(Commands.waitSeconds(0.1).andThen(() -> WristRollers.resetBeam()));
         case REEF_L2:
         case REEF_L3:
         case REEF_L4:
@@ -80,8 +82,8 @@ public class RobotState {
     }
   }
 
-  public Pair<Pose2d, Pose2d> getTargetBranchPoses() {
-    return getTargetScoringLocation() == ScoringLocation.RIGHT
+  public Pair<Pose2d, Pose2d> getTargetBranchPoses(ScoringLocation location) {
+    return location == ScoringLocation.RIGHT
         ? Pair.of(
             AllianceFlipUtil.get(
                     FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
@@ -139,14 +141,8 @@ public class RobotState {
               Logger.log(
                   "Field/ScoringLocations",
                   new Pose2d[] {
-                    AllianceFlipUtil.get(
-                            FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                        .get(reefZone)
-                        .getFirst(),
-                    AllianceFlipUtil.get(
-                            FieldConstants.BLUE_REEF_LOCATIONS, FieldConstants.RED_REEF_LOCATIONS)
-                        .get(reefZone)
-                        .getSecond()
+                    FieldConstants.RED_REEF_LOCATIONS_FLIPPED.get(reefZone).getFirst(),
+                    FieldConstants.RED_REEF_LOCATIONS_FLIPPED.get(reefZone).getSecond(),
                   },
                   1.0);
               Logger.log("Field/ReefZone", reefZone, 1.0);

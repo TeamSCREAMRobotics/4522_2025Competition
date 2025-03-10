@@ -13,10 +13,10 @@ import java.util.function.DoubleSupplier;
 
 public class WristRollers extends TalonFXSubsystem {
 
-  private final CANrange beam = new CANrange(0);
+  private static final CANrange beam = new CANrange(0);
   public static boolean hasCoral = true;
 
-  private final Debouncer beamDebouncer = new Debouncer(0.08);
+  private final Debouncer beamDebouncer = new Debouncer(0.1); // 0.0875
 
   public WristRollers(TalonFXSubsystemConfiguration config) {
     super(config, WristRollersGoal.IDLE);
@@ -25,14 +25,14 @@ public class WristRollers extends TalonFXSubsystem {
   }
 
   public enum WristRollersGoal implements TalonFXSubsystemGoal {
-    IDLE(() -> hasCoral ? 0.0 : -2.0, ControlType.VOLTAGE),
+    IDLE(() -> acquiredCoral() ? 1.0 : -1.0, ControlType.VOLTAGE),
     IDLE_AUTO(() -> -2.0, ControlType.VOLTAGE),
     HOLD(() -> 0.0, ControlType.VOLTAGE),
-    INTAKE(() -> 9.0, ControlType.VOLTAGE),
+    INTAKE(() -> 7.0, ControlType.VOLTAGE),
     INTAKE_ALGAE(() -> -12.0, ControlType.VOLTAGE),
     INTAKE_TROUGH(() -> -9.0, ControlType.VOLTAGE),
     EJECT_CORAL(() -> 12.0, ControlType.VOLTAGE),
-    EJECT_ALGAE(() -> 12.0, ControlType.VOLTAGE);
+    EJECT_ALGAE(() -> 9.0, ControlType.VOLTAGE);
 
     public final DoubleSupplier voltage;
     public final ControlType controlType;
@@ -58,11 +58,11 @@ public class WristRollers extends TalonFXSubsystem {
     }
   }
 
-  private double getBeamDistanceInches() {
+  private static double getBeamDistanceInches() {
     return Units.metersToInches(beam.getDistance().getValueAsDouble());
   }
 
-  public boolean acquiredCoral() {
+  public static boolean acquiredCoral() {
     return getBeamDistanceInches() < 2.0;
   }
 

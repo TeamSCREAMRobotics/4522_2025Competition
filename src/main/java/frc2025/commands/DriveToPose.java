@@ -40,7 +40,7 @@ public class DriveToPose extends Command {
 
   private BooleanSupplier slowMode = () -> false;
 
-  private final double driveTolerance = 0.02;
+  private final double driveTolerance = 0.019;
 
   private final double logFrequency = 0.5;
 

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.145,
-        "y": 2.245
+        "x": 6.047635135135136,
+        "y": 2.305574324324324
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.317520491803278,
-        "y": 1.4296618852459004
+        "x": 5.220155626938414,
+        "y": 1.4902362095702242
       },
       "isLocked": false,
       "linkedName": "Processor_Starting"
     },
     {
       "anchor": {
-        "x": 3.9744693469206807,
-        "y": 2.812
+        "x": 3.932939189189189,
+        "y": 2.6909628378378376
       },
       "prevControl": {
-        "x": 3.7042008196721308,
-        "y": 1.9930840163934418
+        "x": 3.662670661940639,
+        "y": 1.8720468542312796
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.75,
+    "maxVelocity": 2.25,
+    "maxAcceleration": 2.3,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "folder": "z~Junior-Senior",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 160.0
   },
   "useDefaultConstraints": true
 }

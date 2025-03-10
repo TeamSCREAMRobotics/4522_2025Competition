@@ -49,17 +49,17 @@ public class VisionManager {
         new Limelight(
             "limelight-reefa",
             new Pose3d(
-                0.213194,
-                -0.268550,
-                0.202070,
-                new Rotation3d(0, -Units.degreesToRadians(20.0), Units.degreesToRadians(30))));
+               0.257199,
+                -0.240415,
+                0.197419,
+                new Rotation3d(0, -Units.degreesToRadians(20.0), Units.degreesToRadians(35))));
     public static final Limelight STATION =
         new Limelight(
             "limelight-station",
             new Pose3d(
-              -Units.inchesToMeters(1.492570),
-              -Units.inchesToMeters(5.0),
-              Units.inchesToMeters(40.156036),
+                -Units.inchesToMeters(1.492570),
+                -Units.inchesToMeters(5.0),
+                Units.inchesToMeters(40.156036),
                 new Rotation3d(0.0, -Units.degreesToRadians(30), Math.PI)));
     public static final Limelight CLIMBER =
         new Limelight(
@@ -86,7 +86,7 @@ public class VisionManager {
   private final Drivetrain drivetrain;
   private final Limelight[] limelights =
       new Limelight[] {
-        Limelights.REEF_RIGHT, Limelights.REEF_LEFT, Limelights.STATION, Limelights.CLIMBER
+        /* Limelights.REEF_RIGHT,  */Limelights.REEF_LEFT, Limelights.STATION, Limelights.CLIMBER
       };
 
   // private final Notifier visionThread;
@@ -120,7 +120,7 @@ public class VisionManager {
       reefRight = new PhotonCamera("reefA");
       reefLeft = new PhotonCamera("reefB");
       frontElevator = new PhotonCamera("elevator");
-      climber = new PhotonCamera("station");
+      climber = new PhotonCamera("climber");
       cameras = new PhotonCamera[] {reefRight, reefLeft, frontElevator, climber};
 
       visionSim = new VisionSystemSim("main");
@@ -149,8 +149,7 @@ public class VisionManager {
       visionSim.addCamera(
           reefLeftSim, GeomUtil.pose3dToTransform3d(Limelights.REEF_LEFT.relativePosition()));
       visionSim.addCamera(
-          frontElevatorSim,
-          GeomUtil.pose3dToTransform3d(Limelights.STATION.relativePosition()));
+          frontElevatorSim, GeomUtil.pose3dToTransform3d(Limelights.STATION.relativePosition()));
       visionSim.addCamera(
           climberSim, GeomUtil.pose3dToTransform3d(Limelights.CLIMBER.relativePosition()));
 
@@ -195,15 +194,20 @@ public class VisionManager {
     }
 
     if (shouldUseMt2 && !Dashboard.disableAllVisionUpdates.get()) {
-      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.5) / (mt2Estimate.tagCount * 0.5);
+      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.2) / (mt2Estimate.tagCount * 0.5);
       double xyStds = VisionConstants.xyStdBaseline * stdFactor * VisionConstants.xyMt2StdFactor;
       drivetrain.addVisionMeasurement(
           mt2Estimate.pose,
           mt2Estimate.timestampSeconds,
           VecBuilder.fill(xyStds, xyStds, 999999999.0),
           true);
+      Logger.log("Vision/" + limelight.name() + "/PoseEstimate", mt2Estimate.pose);
       Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);
       Logger.log("Vision/" + limelight.name() + "/ThetaStds", 999999999.0);
+    } else {
+      Logger.log("Vision/" + limelight.name() + "/PoseEstimate", Pose2d.kZero);
+      Logger.log("Vision/" + limelight.name() + "/XyStds", 0.0);
+      Logger.log("Vision/" + limelight.name() + "/ThetaStds", 0.0);
     }
   }
 
@@ -263,7 +267,7 @@ public class VisionManager {
 
     if (Robot.isSimulation() && visionSim != null) {
       visionSim.update(drivetrain.getEstimatedPose());
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < limelights.length; i++) {
         for (PhotonPipelineResult result : cameras[i].getAllUnreadResults()) {
           writeToTable(
               result,

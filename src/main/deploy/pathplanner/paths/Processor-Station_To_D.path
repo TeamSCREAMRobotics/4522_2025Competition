@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.544349989890233,
-        "y": 0.7339318631278252
+        "x": 1.5217905405405403,
+        "y": 0.625675675675675
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.282348305019154,
-        "y": 1.2815790991865401
+        "x": 2.259788855669461,
+        "y": 1.1733229117343897
       },
       "isLocked": false,
       "linkedName": "Processor_Station"
     },
     {
       "anchor": {
-        "x": 3.9744693469206807,
-        "y": 2.812
+        "x": 3.932939189189189,
+        "y": 2.6909628378378376
       },
       "prevControl": {
-        "x": 3.39195252320107,
-        "y": 2.119247187933041
+        "x": 3.350422365469578,
+        "y": 1.9982100257708786
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.75,
+    "maxVelocity": 2.25,
+    "maxAcceleration": 2.3,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

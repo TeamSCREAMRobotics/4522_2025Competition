@@ -18,7 +18,7 @@ public class ClimberConstants {
   static {
     CONFIGURATION.name = "Climber";
 
-    CONFIGURATION.codeEnabled = true;
+    CONFIGURATION.codeEnabled = false;
     CONFIGURATION.logTelemetry = false;
     CONFIGURATION.debugMode = false;
 
@@ -34,10 +34,10 @@ public class ClimberConstants {
     CONFIGURATION.sensorToMechRatio = REDUCTION;
     CONFIGURATION.enableSupplyCurrentLimit = true;
     CONFIGURATION.supplyCurrentLimit = 40;
-    CONFIGURATION.cruiseVelocity = 30.0;
-    CONFIGURATION.acceleration = 30.0;
+    CONFIGURATION.cruiseVelocity = 0.125; // 1.25
+    CONFIGURATION.acceleration = 0.15; // 0.75
     CONFIGURATION.slot0 =
-        new ScreamPIDConstants(75.0, 0, 0).getSlot0Configs(new FeedforwardConstants());
+        new ScreamPIDConstants(25.0, 0, 0).getSlot0Configs(new FeedforwardConstants()); // 75
     CONFIGURATION.positionThreshold = 0.005;
   }
 }

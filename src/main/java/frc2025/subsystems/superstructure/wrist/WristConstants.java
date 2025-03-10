@@ -64,7 +64,7 @@ public class WristConstants {
 
     CANcoderConfiguration config = new CANcoderConfiguration();
     config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.625;
-    config.MagnetSensor.MagnetOffset = -0.589111328125 + 0.25;
+    config.MagnetSensor.MagnetOffset = -0.52587890625 + 0.25;
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     WRIST_CONFIG.cancoderConstants = new CANCoderConstants(new CANDevice(4), config);
 
@@ -80,9 +80,9 @@ public class WristConstants {
     WRIST_CONFIG.cruiseVelocity = 30.0;
     WRIST_CONFIG.acceleration = 30.0;
     WRIST_CONFIG.slot0 =
-        new ScreamPIDConstants(27.5, 0, 0)
+        new ScreamPIDConstants(42.5, 0, 0)
             .getSlot0Configs(new FeedforwardConstants(0, 0, 0.6, 0, GravityTypeValue.Arm_Cosine));
-    WRIST_CONFIG.positionThreshold = Units.degreesToRotations(5.0);
+    WRIST_CONFIG.positionThreshold = Units.degreesToRotations(3.0);
   }
 
   public static final TalonFXSubsystemConfiguration ROLLERS_CONFIG =

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.145,
-        "y": 5.83
+        "x": 6.0328125,
+        "y": 6.203792613636363
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.13245596710049,
-        "y": 5.61067794949396
+        "x": 5.0202684671004905,
+        "y": 5.984470563130323
       },
       "isLocked": false,
       "linkedName": "Non-Processor_Starting"
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.75,
+    "maxVelocity": 2.25,
+    "maxAcceleration": 2.3,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "folder": "Starting_Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -144.26984402557244
   },
   "useDefaultConstraints": true
 }
