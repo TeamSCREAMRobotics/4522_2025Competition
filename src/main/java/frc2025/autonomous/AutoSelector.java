@@ -15,8 +15,8 @@ public class AutoSelector {
     LEAVE(container -> Routines.leave(container)),
     MID_G_4N(container -> Routines.middle_Side_G_4N(container)),
     MID_H_4N(container -> Routines.middle_Side_H_4N(container)),
-    PROCESSOR_EDC2(container -> Routines.processor_Side_E_D_C_2(container)),
-    NONPROCESSOR_JLK6(container -> Routines.nonProcessor_Side_J_L_K_6(container));
+    PROCESSOR_EDC(container -> Routines.processor_Side_E_D_C(container)),
+    NONPROCESSOR_JLK(container -> Routines.nonProcessor_Side_J_L_K(container));
 
     private final Function<RobotContainer, Command> factory;
 

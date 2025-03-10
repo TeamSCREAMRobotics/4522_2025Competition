@@ -25,9 +25,8 @@ public class Routines {
   private static PathSequence currentSequence;
   private static double eject_TimeOut = 0.25;
   private static double intakeAlgae_TimeOut = 1.5;
-  private static double elevatorAfterFeed_TimeOut = 1.0;
   private static double elevator_Timeout = 0.35;
-  private static double driveUntil_Timeout = 2.5;
+  private static double align_Timeout = 2.5;
 
   private static final BiFunction<SuperstructureState, RobotContainer, Supplier<Command>>
       applyTargetStateFactory =
@@ -41,7 +40,6 @@ public class Routines {
 
   /* Test Auto Sequences */
   private static final PathSequence leave = new PathSequence("Leave");
-  private static final PathSequence maxSpeedTest = new PathSequence("MaxSpeed_Test");
 
   /* Processor Starting Side Sequences */
   private static final PathSequence E_D_C_B_1 =
@@ -64,14 +62,13 @@ public class Routines {
           "C_To_Processor-Station",
           "Processor-Station_To_D",
           "D_To_2");
-  private static final PathSequence E_D_C_2 =
+  private static final PathSequence E_D_C =
       new PathSequence(
           "Processor-Starting_To_E",
           "E_To_Processor-Station",
           "Processor-Station_To_D",
           "D_To_Processor-Station",
-          "Processor-Station_To_C",
-          "C_To_2");
+          "Processor-Station_To_C");
   private static final PathSequence D_D_C_C_2P =
       new PathSequence(
           "Processor-Starting_To_D",
@@ -125,14 +122,13 @@ public class Routines {
           "L_To_Non-Processor-Station",
           "Non-Processor-Station_To_K",
           "K_To_6");
-  private static final PathSequence J_L_K_6 =
+  private static final PathSequence J_L_K =
       new PathSequence(
           "Non-Processor-Starting_To_J",
           "J_To_Non-Processor-Station",
           "Non-Processor-Station_To_L",
           "L_To_Non-Processor-Station",
-          "Non-Processor-Station_To_K",
-          "K_To_6");
+          "Non-Processor-Station_To_K");
   private static final PathSequence J_K_L_A_1 =
       new PathSequence(
           "Non-Processor-Starting_To_J",
@@ -173,7 +169,7 @@ public class Routines {
 
   /* Testing Autos */
   public static Command test(RobotContainer container) {
-    currentSequence = E_D_C_2;
+    currentSequence = null;
 
     return new SequentialCommandGroup(new Feed(container), new PrintCommand("Done"));
   }
@@ -185,102 +181,73 @@ public class Routines {
   }
 
   /* Processor Starting Side Autos */
-  public static Command processor_Side_E_D_C_2(RobotContainer container) {
-    currentSequence = E_D_C_2;
+  public static Command processor_Side_E_D_C(RobotContainer container) {
+    currentSequence = E_D_C;
     WristRollers wristRollers = container.getSubsystems().wristRollers();
 
     return new SequentialCommandGroup(
         Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
-        new ParallelRaceGroup(
-            currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
-        new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout),
-        // new WaitCommand(0.25),
-        container.getRobotState().getScoreCommand().get()
-            .withTimeout(eject_TimeOut), // Score pre-load E-L4
-        setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
-        new ParallelCommandGroup(currentSequence.getNext(), new Feed(container)),
-        // currentSequence.getNext().withDeadline(new Feed(container)),
-        // TODO - something wrong with the cordinates
-        // new DriveUntilAtPose(
-        //         AllianceFlipUtil.get(
-        //             FieldConstants.BLUE_NONPROCESSOR_FEEDER_ALIGN,
-        //             FieldConstants.RED_NONPROCESSOR_FEEDER_ALIGN),
-        //         container)
-        //     .withDeadline(new Feed(container)),
-        new ParallelRaceGroup(
-            new SequentialCommandGroup(
-            new ParallelRaceGroup(
-                currentSequence.getNext(),
-                new SequentialCommandGroup(
-                    new WaitCommand(elevatorAfterFeed_TimeOut),
-                    setElevator(container, SuperstructureState.REEF_L4))),
-            new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(driveUntil_Timeout)),
-            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
+        currentSequence.getStart(),
+        setSuperstructure(container, SuperstructureState.REEF_L4)
+        .withDeadline(
+            new AutoAlign(container, ScoringLocation.LEFT).withTimeout(align_Timeout)
         ),
-        // new WaitCommand(0.25),
-        container.getRobotState().getScoreCommand().get()
-            .withTimeout(eject_TimeOut), // Score pre-load C-L4
-        setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
-        new ParallelCommandGroup(currentSequence.getNext(), new Feed(container)),
-        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
-        // currentSequence.getNext().withDeadline(new Feed(container)),
-        // TODO - something wrong with the cordinates
-        // new DriveUntilAtPose(
-        //         AllianceFlipUtil.get(
-        //             FieldConstants.BLUE_NONPROCESSOR_FEEDER_ALIGN,
-        //             FieldConstants.RED_NONPROCESSOR_FEEDER_ALIGN),
-        //         container)
-        //     .withDeadline(new Feed(container)),
-        new ParallelRaceGroup(
-            new SequentialCommandGroup(
-            new ParallelRaceGroup(
-                currentSequence.getNext(),
-                new SequentialCommandGroup(
-                    new WaitCommand(elevatorAfterFeed_TimeOut),
-                    setElevator(container, SuperstructureState.REEF_L4))),
-            new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout)),
-            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
+        container.getRobotState().getScoreCommand().get() // Score on E-L4
+            .withTimeout(eject_TimeOut), // TODO - is needed or does scoreCommand end?
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
+        currentSequence.getNext().withDeadline(new Feed(container)),
+        Commands.runOnce(() -> wristRollers.applyGoalCommand(WristRollersGoal.IDLE), wristRollers),
+        // TODO - move to feeder station with deadline of feed command
+        currentSequence.getNext(),
+        setSuperstructure(container, SuperstructureState.REEF_L4)
+        .withDeadline(
+            new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(align_Timeout)
         ),
-        // new WaitCommand(0.25),
-        container.getRobotState().getScoreCommand().get()
-            .withTimeout(eject_TimeOut), // Score pre-load D-L4
-        currentSequence.getNext(), // Move to algae
-        new ParallelRaceGroup(
-            setElevator(container, SuperstructureState.REEF_ALGAE_L1)
-                .withTimeout(intakeAlgae_TimeOut),
-            wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE) // Grab algae 2
-            ),
-        setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout));
+        container.getRobotState().getScoreCommand().get() // Score on D-L4
+            .withTimeout(eject_TimeOut), // TODO - is needed or does scoreCommand end?
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
+        currentSequence.getNext().withDeadline(new Feed(container)),
+        Commands.runOnce(() -> wristRollers.applyGoalCommand(WristRollersGoal.IDLE), wristRollers),
+        // TODO - move to feeder station with deadline of feed command
+        currentSequence.getNext(),
+        setSuperstructure(container, SuperstructureState.REEF_L4)
+        .withDeadline(
+            new AutoAlign(container, ScoringLocation.LEFT).withTimeout(align_Timeout)
+        ),
+        container.getRobotState().getScoreCommand().get() // Score on C-L4
+            .withTimeout(eject_TimeOut), // TODO - is needed or does scoreCommand end?
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout)
+    );
   }
 
-  /* Middle Starting Side Autos */
+  /* Middle Starting Side Autos */  // TODO : rework
   public static Command middle_Side_G_4N(RobotContainer container) {
     currentSequence = G_4N;
     WristRollers wristRollers = container.getSubsystems().wristRollers();
 
     return new SequentialCommandGroup(
         new ParallelRaceGroup(
-            currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
-        new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout),
+            currentSequence.getStart(), setSuperstructure(container, SuperstructureState.REEF_L4)),
+        new AutoAlign(container, ScoringLocation.LEFT).withTimeout(align_Timeout),
         container.getRobotState().getScoreCommand().get()
             .withTimeout(eject_TimeOut), // Score pre-load G-L4
         currentSequence.getNext(), // Move to algae
         new ParallelRaceGroup(
-            setElevator(container, SuperstructureState.REEF_ALGAE_L1)
+            setSuperstructure(container, SuperstructureState.REEF_ALGAE_L1)
                 .withTimeout(intakeAlgae_TimeOut),
             wristRollers
                 .applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)
                 .withTimeout(1.5)
                 .andThen(wristRollers.applyGoalCommand(WristRollersGoal.IDLE_AUTO)) // Grab algae 4
             ),
-        setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
         currentSequence.getNext(),
-        setElevator(container, SuperstructureState.BARGE_NET).withTimeout(1.5),
+        setSuperstructure(container, SuperstructureState.BARGE_NET).withTimeout(1.5),
         new DriveUntilAtPose(
             AllianceFlipUtil.get(FieldConstants.BLUE_BARGE_ALIGN, FieldConstants.RED_BARGE_ALIGN),
             container),
         wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE), // Score algae 4
-        setElevator(container, SuperstructureState.FEEDING));
+        setSuperstructure(container, SuperstructureState.FEEDING));
   }
 
   public static Command middle_Side_H_4N(RobotContainer container) {
@@ -289,101 +256,71 @@ public class Routines {
 
     return new SequentialCommandGroup(
         new ParallelRaceGroup(
-            currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
-        new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout),
+            currentSequence.getStart(), setSuperstructure(container, SuperstructureState.REEF_L4)),
+        new AutoAlign(container, ScoringLocation.LEFT).withTimeout(align_Timeout),
         container.getRobotState().getScoreCommand().get()
             .withTimeout(eject_TimeOut), // Score pre-load G-L4
         currentSequence.getNext(), // Move to algae
         new ParallelRaceGroup(
-            setElevator(container, SuperstructureState.REEF_ALGAE_L1)
+            setSuperstructure(container, SuperstructureState.REEF_ALGAE_L1)
                 .withTimeout(intakeAlgae_TimeOut),
             wristRollers
                 .applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)
                 .withTimeout(1.5)
                 .andThen(wristRollers.applyGoalCommand(WristRollersGoal.IDLE_AUTO)) // Grab algae 4
             ),
-        setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
         currentSequence.getNext(),
-        setElevator(container, SuperstructureState.BARGE_NET).withTimeout(1.5),
+        setSuperstructure(container, SuperstructureState.BARGE_NET).withTimeout(1.5),
         new DriveUntilAtPose(
             AllianceFlipUtil.get(FieldConstants.BLUE_BARGE_ALIGN, FieldConstants.RED_BARGE_ALIGN),
             container),
         wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE), // Score algae 4
-        setElevator(container, SuperstructureState.FEEDING));
+        setSuperstructure(container, SuperstructureState.FEEDING));
   }
 
   /* Non-Processor Starting Side Autos */
-  public static Command nonProcessor_Side_J_L_K_6(RobotContainer container) {
-    currentSequence = J_L_K_6;
+  public static Command nonProcessor_Side_J_L_K(RobotContainer container) {
+    currentSequence = J_L_K;
     WristRollers wristRollers = container.getSubsystems().wristRollers();
 
     return new SequentialCommandGroup(
         Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
-        new ParallelRaceGroup(
-            currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
-        new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(driveUntil_Timeout),
-        // new WaitCommand(0.25),
-        container.getRobotState().getScoreCommand().get()
-            .withTimeout(eject_TimeOut), // Score pre-load J-L4
-        setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
-        new ParallelCommandGroup(currentSequence.getNext(), new Feed(container)),
-        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
-        // currentSequence.getNext().withDeadline(new Feed(container)),
-        // TODO - something wrong with the cordinates
-        // new DriveUntilAtPose(
-        //         AllianceFlipUtil.get(
-        //             FieldConstants.BLUE_NONPROCESSOR_FEEDER_ALIGN,
-        //             FieldConstants.RED_NONPROCESSOR_FEEDER_ALIGN),
-        //         container)
-        //     .withDeadline(new Feed(container)),
-        new ParallelRaceGroup(
-            new SequentialCommandGroup(
-            new ParallelRaceGroup(
-                currentSequence.getNext(),
-                new SequentialCommandGroup(
-                    new WaitCommand(elevatorAfterFeed_TimeOut),
-                    setElevator(container, SuperstructureState.REEF_L4))),
-            new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout)),
-            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
+        currentSequence.getStart(),
+        setSuperstructure(container, SuperstructureState.REEF_L4)
+        .withDeadline(
+            new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(align_Timeout)
         ),
-        // new WaitCommand(0.25),
-        container.getRobotState().getScoreCommand().get()
-            .withTimeout(eject_TimeOut), // Score pre-load L-L4
-        setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
-        new ParallelCommandGroup(currentSequence.getNext(), new Feed(container)),
-        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.IDLE), wristRollers),
-        // currentSequence.getNext().withDeadline(new Feed(container)),
-        // TODO - something wrong with the cordinates
-        // new DriveUntilAtPose(
-        //         AllianceFlipUtil.get(
-        //             FieldConstants.BLUE_NONPROCESSOR_FEEDER_ALIGN,
-        //             FieldConstants.RED_NONPROCESSOR_FEEDER_ALIGN),
-        //         container)
-        //     .withDeadline(new Feed(container)),
-        new ParallelRaceGroup(
-            new SequentialCommandGroup(
-            new ParallelRaceGroup(
-                currentSequence.getNext(),
-                new SequentialCommandGroup(
-                    new WaitCommand(elevatorAfterFeed_TimeOut),
-                    setElevator(container, SuperstructureState.REEF_L4))),
-            new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout)),
-            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
+        container.getRobotState().getScoreCommand().get() // Score on J-L4
+            .withTimeout(eject_TimeOut), // TODO - is needed or does scoreCommand end?
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
+        currentSequence.getNext().withDeadline(new Feed(container)),
+        Commands.runOnce(() -> wristRollers.applyGoalCommand(WristRollersGoal.IDLE), wristRollers),
+        // TODO - move to feeder station with deadline of feed command
+        currentSequence.getNext(),
+        setSuperstructure(container, SuperstructureState.REEF_L4)
+        .withDeadline(
+            new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(align_Timeout)
         ),
-        // new WaitCommand(0.25),
-        container.getRobotState().getScoreCommand().get()
-            .withTimeout(eject_TimeOut), // Score pre-load K-L4
-        currentSequence.getNext(), // Move to algae
-        new ParallelRaceGroup(
-            setElevator(container, SuperstructureState.REEF_ALGAE_L1)
-                .withTimeout(intakeAlgae_TimeOut),
-            wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE) // Grab algae 6
-            ),
-        setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout));
+        container.getRobotState().getScoreCommand().get() // Score on L-L4
+            .withTimeout(eject_TimeOut), // TODO - is needed or does scoreCommand end?
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
+        currentSequence.getNext().withDeadline(new Feed(container)),
+        Commands.runOnce(() -> wristRollers.applyGoalCommand(WristRollersGoal.IDLE), wristRollers),
+        // TODO - move to feeder station with deadline of feed command
+        currentSequence.getNext(),
+        setSuperstructure(container, SuperstructureState.REEF_L4)
+        .withDeadline(
+            new AutoAlign(container, ScoringLocation.LEFT).withTimeout(align_Timeout)
+        ),
+        container.getRobotState().getScoreCommand().get() // Score on K-L4
+            .withTimeout(eject_TimeOut), // TODO - is needed or does scoreCommand end?
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout)
+    );
   }
 
   /* Helper Commands */
-  public static final Command setElevator(RobotContainer container, SuperstructureState goalState) {
+  public static final Command setSuperstructure(RobotContainer container, SuperstructureState goalState) {
     return applyTargetStateFactory.apply(goalState, container).get();
   }
 }

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.0328125,
-        "y": 6.203792613636363
+        "x": 5.682010135135134,
+        "y": 5.951942567567567
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.001542008196722,
-        "y": 6.658474990685543
+        "x": 4.650739643331856,
+        "y": 6.406624944616747
       },
       "isLocked": false,
       "linkedName": "Non-Processor_Starting"

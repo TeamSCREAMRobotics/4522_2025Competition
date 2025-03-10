@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.039152695495092,
-        "y": 2.5103676981358802
+        "x": 5.819618537211324,
+        "y": 2.4080849631441583
       },
       "isLocked": false,
       "linkedName": "Processor_Starting"
@@ -20,8 +20,8 @@
         "y": 2.8391891891891885
       },
       "prevControl": {
-        "x": 5.813772361381161,
-        "y": 2.6734322033077693
+        "x": 5.441982865326428,
+        "y": 2.6126961019211636
       },
       "nextControl": null,
       "isLocked": false,
