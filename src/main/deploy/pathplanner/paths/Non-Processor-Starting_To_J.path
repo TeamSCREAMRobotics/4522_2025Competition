@@ -48,7 +48,7 @@
   "folder": "Starting_Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -144.26984402557244
   },
   "useDefaultConstraints": true
 }

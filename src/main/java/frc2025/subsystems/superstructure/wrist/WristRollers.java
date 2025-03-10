@@ -28,7 +28,7 @@ public class WristRollers extends TalonFXSubsystem {
     IDLE(() -> acquiredCoral() ? 1.0 : -1.0, ControlType.VOLTAGE),
     IDLE_AUTO(() -> -2.0, ControlType.VOLTAGE),
     HOLD(() -> 0.0, ControlType.VOLTAGE),
-    INTAKE(() -> 10.0, ControlType.VOLTAGE),
+    INTAKE(() -> 7.0, ControlType.VOLTAGE),
     INTAKE_ALGAE(() -> -12.0, ControlType.VOLTAGE),
     INTAKE_TROUGH(() -> -9.0, ControlType.VOLTAGE),
     EJECT_CORAL(() -> 12.0, ControlType.VOLTAGE),

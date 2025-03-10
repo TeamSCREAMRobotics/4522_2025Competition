@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.800030664457103,
-        "y": 2.2710485933363884
+        "x": 5.5930743243243235,
+        "y": 2.266047297297297
       },
       "isLocked": false,
       "linkedName": "Processor_Starting"
@@ -48,7 +48,7 @@
   "folder": "Starting_Coral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 160.0
   },
   "useDefaultConstraints": true
 }

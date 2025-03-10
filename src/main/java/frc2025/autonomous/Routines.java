@@ -64,14 +64,14 @@ public class Routines {
           "C_To_Processor-Station",
           "Processor-Station_To_D",
           "D_To_2");
-  private static final PathSequence E_C_D_2 =
+  private static final PathSequence E_D_C_2 =
       new PathSequence(
           "Processor-Starting_To_E",
           "E_To_Processor-Station",
-          "Processor-Station_To_C",
-          "C_To_Processor-Station",
           "Processor-Station_To_D",
-          "D_To_2");
+          "D_To_Processor-Station",
+          "Processor-Station_To_C",
+          "C_To_2");
   private static final PathSequence D_D_C_C_2P =
       new PathSequence(
           "Processor-Starting_To_D",
@@ -173,7 +173,7 @@ public class Routines {
 
   /* Testing Autos */
   public static Command test(RobotContainer container) {
-    currentSequence = E_C_D_2;
+    currentSequence = E_D_C_2;
 
     return new SequentialCommandGroup(new Feed(container), new PrintCommand("Done"));
   }
@@ -185,62 +185,62 @@ public class Routines {
   }
 
   /* Processor Starting Side Autos */
-  public static Command processor_Side_E_C_D_2(RobotContainer container) {
-    currentSequence = E_C_D_2;
+  public static Command processor_Side_E_D_C_2(RobotContainer container) {
+    currentSequence = E_D_C_2;
     WristRollers wristRollers = container.getSubsystems().wristRollers();
 
     return new SequentialCommandGroup(
-        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.IDLE), wristRollers),
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
         new ParallelRaceGroup(
             currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
-        /* new DriveUntilAtPose(
-        AllianceFlipUtil.get(
-                FieldConstants.BLUE_REEF_LOCATIONS,
-                FieldConstants.RED_REEF_LOCATIONS_FLIPPED)
-            .get(5)
-            .getSecond(),
-        container) */
         new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout),
         // new WaitCommand(0.25),
         container.getRobotState().getScoreCommand().get()
             .withTimeout(eject_TimeOut), // Score pre-load E-L4
         setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
         new ParallelCommandGroup(currentSequence.getNext(), new Feed(container)),
-        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.IDLE), wristRollers),
         // currentSequence.getNext().withDeadline(new Feed(container)),
         // TODO - something wrong with the cordinates
         // new DriveUntilAtPose(
         //         AllianceFlipUtil.get(
-        //             FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN,
-        //             FieldConstants.RED_PROCESSOR_FEEDER_ALIGN),
+        //             FieldConstants.BLUE_NONPROCESSOR_FEEDER_ALIGN,
+        //             FieldConstants.RED_NONPROCESSOR_FEEDER_ALIGN),
         //         container)
         //     .withDeadline(new Feed(container)),
         new ParallelRaceGroup(
-            currentSequence.getNext(),
             new SequentialCommandGroup(
-                new WaitCommand(elevatorAfterFeed_TimeOut),
-                setElevator(container, SuperstructureState.REEF_L4))),
-        new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout),
+            new ParallelRaceGroup(
+                currentSequence.getNext(),
+                new SequentialCommandGroup(
+                    new WaitCommand(elevatorAfterFeed_TimeOut),
+                    setElevator(container, SuperstructureState.REEF_L4))),
+            new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(driveUntil_Timeout)),
+            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
+        ),
         // new WaitCommand(0.25),
         container.getRobotState().getScoreCommand().get()
             .withTimeout(eject_TimeOut), // Score pre-load C-L4
         setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
         new ParallelCommandGroup(currentSequence.getNext(), new Feed(container)),
-        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.IDLE), wristRollers),
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
         // currentSequence.getNext().withDeadline(new Feed(container)),
         // TODO - something wrong with the cordinates
         // new DriveUntilAtPose(
         //         AllianceFlipUtil.get(
-        //             FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN,
-        //             FieldConstants.RED_PROCESSOR_FEEDER_ALIGN),
+        //             FieldConstants.BLUE_NONPROCESSOR_FEEDER_ALIGN,
+        //             FieldConstants.RED_NONPROCESSOR_FEEDER_ALIGN),
         //         container)
         //     .withDeadline(new Feed(container)),
         new ParallelRaceGroup(
-            currentSequence.getNext(),
             new SequentialCommandGroup(
-                new WaitCommand(elevatorAfterFeed_TimeOut),
-                setElevator(container, SuperstructureState.REEF_L4))),
-        new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(driveUntil_Timeout),
+            new ParallelRaceGroup(
+                currentSequence.getNext(),
+                new SequentialCommandGroup(
+                    new WaitCommand(elevatorAfterFeed_TimeOut),
+                    setElevator(container, SuperstructureState.REEF_L4))),
+            new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout)),
+            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
+        ),
         // new WaitCommand(0.25),
         container.getRobotState().getScoreCommand().get()
             .withTimeout(eject_TimeOut), // Score pre-load D-L4
@@ -318,6 +318,7 @@ public class Routines {
     WristRollers wristRollers = container.getSubsystems().wristRollers();
 
     return new SequentialCommandGroup(
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
         new ParallelRaceGroup(
             currentSequence.getStart(), setElevator(container, SuperstructureState.REEF_L4)),
         new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(driveUntil_Timeout),
@@ -326,7 +327,7 @@ public class Routines {
             .withTimeout(eject_TimeOut), // Score pre-load J-L4
         setElevator(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
         new ParallelCommandGroup(currentSequence.getNext(), new Feed(container)),
-        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.IDLE), wristRollers),
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
         // currentSequence.getNext().withDeadline(new Feed(container)),
         // TODO - something wrong with the cordinates
         // new DriveUntilAtPose(
@@ -336,11 +337,15 @@ public class Routines {
         //         container)
         //     .withDeadline(new Feed(container)),
         new ParallelRaceGroup(
-            currentSequence.getNext(),
             new SequentialCommandGroup(
-                new WaitCommand(elevatorAfterFeed_TimeOut),
-                setElevator(container, SuperstructureState.REEF_L4))),
-        new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(driveUntil_Timeout),
+            new ParallelRaceGroup(
+                currentSequence.getNext(),
+                new SequentialCommandGroup(
+                    new WaitCommand(elevatorAfterFeed_TimeOut),
+                    setElevator(container, SuperstructureState.REEF_L4))),
+            new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout)),
+            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
+        ),
         // new WaitCommand(0.25),
         container.getRobotState().getScoreCommand().get()
             .withTimeout(eject_TimeOut), // Score pre-load L-L4
@@ -356,11 +361,15 @@ public class Routines {
         //         container)
         //     .withDeadline(new Feed(container)),
         new ParallelRaceGroup(
-            currentSequence.getNext(),
             new SequentialCommandGroup(
-                new WaitCommand(elevatorAfterFeed_TimeOut),
-                setElevator(container, SuperstructureState.REEF_L4))),
-        new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout),
+            new ParallelRaceGroup(
+                currentSequence.getNext(),
+                new SequentialCommandGroup(
+                    new WaitCommand(elevatorAfterFeed_TimeOut),
+                    setElevator(container, SuperstructureState.REEF_L4))),
+            new AutoAlign(container, ScoringLocation.LEFT).withTimeout(driveUntil_Timeout)),
+            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
+        ),
         // new WaitCommand(0.25),
         container.getRobotState().getScoreCommand().get()
             .withTimeout(eject_TimeOut), // Score pre-load K-L4
