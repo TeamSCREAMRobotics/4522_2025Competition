@@ -231,8 +231,8 @@ public class AutoAlign extends Command {
     drivetrain.stop();
   }
 
-  // @Override
-  // public boolean isFinished() {
-  //     return isAuto && currentDistance < driveTolerance;
-  // }
+  @Override
+  public boolean isFinished() {
+      return isAuto && currentDistance < driveTolerance;
+  }
 }

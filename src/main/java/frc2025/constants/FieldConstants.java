@@ -56,9 +56,9 @@ public class FieldConstants {
   public static final Translation2d RED_REEF_CENTER = FIELD_DIMENSIONS.minus(BLUE_REEF_CENTER);
 
   public static final HexagonalPoseArea BLUE_REEF =
-      new HexagonalPoseArea(BLUE_REEF_CENTER, Length.fromMeters(5), Rotation2d.fromDegrees(-30));
+      new HexagonalPoseArea(BLUE_REEF_CENTER, Length.fromMeters(10), Rotation2d.fromDegrees(-30));
   public static final HexagonalPoseArea RED_REEF =
-      new HexagonalPoseArea(RED_REEF_CENTER, Length.fromMeters(5), Rotation2d.fromDegrees(-30));
+      new HexagonalPoseArea(RED_REEF_CENTER, Length.fromMeters(10), Rotation2d.fromDegrees(-30));
 
   public static final Map<Integer, Pair<Pose2d, Pose2d>> BLUE_PRE_REEF_LOCATIONS = new HashMap<>();
   public static final Map<Integer, Pair<Pose2d, Pose2d>> RED_PRE_REEF_LOCATIONS = new HashMap<>();

@@ -86,7 +86,7 @@ public class VisionManager {
   private final Drivetrain drivetrain;
   private final Limelight[] limelights =
       new Limelight[] {
-        /* Limelights.REEF_RIGHT,  */Limelights.REEF_LEFT, Limelights.STATION, Limelights.CLIMBER
+        Limelights.REEF_RIGHT, Limelights.REEF_LEFT, Limelights.STATION, Limelights.CLIMBER
       };
 
   // private final Notifier visionThread;

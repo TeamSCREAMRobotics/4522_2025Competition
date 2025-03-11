@@ -14,10 +14,12 @@ import frc2025.commands.Feed;
 import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard.ScoringLocation;
 import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureState;
+import frc2025.subsystems.superstructure.elevator.Elevator;
 import frc2025.subsystems.superstructure.wrist.WristRollers;
 import frc2025.subsystems.superstructure.wrist.WristRollers.WristRollersGoal;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
+
 import util.AllianceFlipUtil;
 import util.PathSequence;
 
@@ -26,7 +28,8 @@ public class Routines {
   private static double eject_TimeOut = 0.25;
   private static double intakeAlgae_TimeOut = 1.5;
   private static double elevator_Timeout = 0.35;
-  private static double align_Timeout = 2.5;
+  private static double align_Timeout = 3.5;
+  private static double path_Timeout = 0.75;
 
   private static final BiFunction<SuperstructureState, RobotContainer, Supplier<Command>>
       applyTargetStateFactory =
@@ -169,9 +172,12 @@ public class Routines {
 
   /* Testing Autos */
   public static Command test(RobotContainer container) {
-    currentSequence = null;
+    currentSequence = E_D_C;
 
-    return new SequentialCommandGroup(new Feed(container), new PrintCommand("Done"));
+    return new SequentialCommandGroup(
+        currentSequence.getStart().withTimeout(0.25),
+        new AutoAlign(container, ScoringLocation.LEFT)
+    );
   }
 
   public static Command leave(RobotContainer container) {
@@ -181,38 +187,117 @@ public class Routines {
   }
 
   /* Processor Starting Side Autos */
-  public static Command processor_Side_E_D_C(RobotContainer container) {
+  /*public static Command processor_Side_E_D_C_Align(RobotContainer container) {
     currentSequence = E_D_C;
     WristRollers wristRollers = container.getSubsystems().wristRollers();
+    Elevator elevator = container.getSubsystems().superstructure().getElevator();
 
     return new SequentialCommandGroup(
         Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
-        currentSequence.getStart(),
-        setSuperstructure(container, SuperstructureState.REEF_L4)
-        .withDeadline(
-            new AutoAlign(container, ScoringLocation.LEFT).withTimeout(align_Timeout)
+        new SequentialCommandGroup(
+                currentSequence.getStart().withTimeout(0.5),
+                setSuperstructure(container, SuperstructureState.REEF_L4)
+                .until(
+                    () -> elevator.atGoal()
+                )
+                .alongWith(
+                    new AutoAlign(container, ScoringLocation.LEFT).withTimeout(align_Timeout)
+                )
+            ),
+        container.getRobotState().getScoreCommand().get() // Score on E-L4
+            .withTimeout(eject_TimeOut),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
+        currentSequence.getNext().withDeadline(new Feed(container)),
+        // TODO - move to feeder station with deadline of feed command
+        new ParallelRaceGroup(
+            new SequentialCommandGroup(
+                currentSequence.getNext().withTimeout(path_Timeout),
+                setSuperstructure(container, SuperstructureState.REEF_L4)
+                .until(
+                    () -> elevator.atGoal()
+                )
+                .alongWith(
+                    new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(align_Timeout)
+                )
+            ),
+            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
         ),
+        container.getRobotState().getScoreCommand().get() // Score on D-L4
+            .withTimeout(eject_TimeOut),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
+        currentSequence.getNext().withDeadline(new Feed(container)),
+        // TODO - move to feeder station with deadline of feed command
+        new ParallelRaceGroup(
+            new SequentialCommandGroup(
+                currentSequence.getNext().withTimeout(path_Timeout),
+                setSuperstructure(container, SuperstructureState.REEF_L4)
+                .until(
+                    () -> elevator.atGoal()
+                )
+                .alongWith(
+                    new AutoAlign(container, ScoringLocation.LEFT).withTimeout(align_Timeout)
+                )
+            ),
+            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
+        ),
+        container.getRobotState().getScoreCommand().get() // Score on C-L4
+            .withTimeout(eject_TimeOut),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout)
+    );
+  }*/
+
+  public static Command processor_Side_E_D_C(RobotContainer container) {
+    currentSequence = E_D_C;
+    WristRollers wristRollers = container.getSubsystems().wristRollers();
+    Elevator elevator = container.getSubsystems().superstructure().getElevator();
+
+    return new SequentialCommandGroup(
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
+        new SequentialCommandGroup(
+                currentSequence.getStart(),
+                setSuperstructure(container, SuperstructureState.REEF_L4)
+                .until(
+                    () -> elevator.atGoal()
+                )
+                .alongWith(
+                    new AutoAlign(container, ScoringLocation.LEFT).withTimeout(align_Timeout)
+                )
+            ),
         container.getRobotState().getScoreCommand().get() // Score on E-L4
             .withTimeout(eject_TimeOut), // TODO - is needed or does scoreCommand end?
         setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
         currentSequence.getNext().withDeadline(new Feed(container)),
-        Commands.runOnce(() -> wristRollers.applyGoalCommand(WristRollersGoal.IDLE), wristRollers),
         // TODO - move to feeder station with deadline of feed command
-        currentSequence.getNext(),
-        setSuperstructure(container, SuperstructureState.REEF_L4)
-        .withDeadline(
-            new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(align_Timeout)
+        new ParallelRaceGroup(
+            new SequentialCommandGroup(
+                currentSequence.getNext(),
+                setSuperstructure(container, SuperstructureState.REEF_L4)
+                .until(
+                    () -> elevator.atGoal()
+                )
+                .alongWith(
+                    new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(align_Timeout)
+                )
+            ),
+            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
         ),
         container.getRobotState().getScoreCommand().get() // Score on D-L4
             .withTimeout(eject_TimeOut), // TODO - is needed or does scoreCommand end?
         setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout),
         currentSequence.getNext().withDeadline(new Feed(container)),
-        Commands.runOnce(() -> wristRollers.applyGoalCommand(WristRollersGoal.IDLE), wristRollers),
         // TODO - move to feeder station with deadline of feed command
-        currentSequence.getNext(),
-        setSuperstructure(container, SuperstructureState.REEF_L4)
-        .withDeadline(
-            new AutoAlign(container, ScoringLocation.LEFT).withTimeout(align_Timeout)
+        new ParallelRaceGroup(
+            new SequentialCommandGroup(
+                currentSequence.getNext(),
+                setSuperstructure(container, SuperstructureState.REEF_L4)
+                .until(
+                    () -> elevator.atGoal()
+                )
+                .alongWith(
+                    new AutoAlign(container, ScoringLocation.LEFT).withTimeout(align_Timeout)
+                )
+            ),
+            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
         ),
         container.getRobotState().getScoreCommand().get() // Score on C-L4
             .withTimeout(eject_TimeOut), // TODO - is needed or does scoreCommand end?

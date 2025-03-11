@@ -89,6 +89,6 @@ public final class ElevatorConstants {
         new ScreamPIDConstants(60.0, 0, 0) // 60.0
             .getSlot0Configs(
                 new FeedforwardConstants(0, 0.0, 0.65, 0, GravityTypeValue.Elevator_Static));
-    CONFIGURATION.positionThreshold = Elevator.heightToRotations(Length.fromInches(4.0));
+    CONFIGURATION.positionThreshold = Elevator.heightToRotations(Length.fromInches(0.25)); // 4.0
   }
 }
