@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import zones.HexagonalPoseArea;
 import zones.RectangularPoseArea;
@@ -71,24 +72,9 @@ public class FieldConstants {
   public static final Map<Integer, Pair<Pose2d, AlgaeLevel>> BLUE_ALGAE_LOCATIONS = new HashMap<>();
   public static final Map<Integer, Pair<Pose2d, AlgaeLevel>> RED_ALGAE_LOCATIONS = new HashMap<>();
 
-  public static final Map<Integer, Pair<Integer, Pose2d>> BLUE_REEF_TAGS = new HashMap<>();
-  public static final Map<Integer, Pair<Integer, Pose2d>> RED_REEF_TAGS = new HashMap<>();
-
-  static {
-    BLUE_REEF_TAGS.put(0, getTagPair(21));
-    BLUE_REEF_TAGS.put(1, getTagPair(20));
-    BLUE_REEF_TAGS.put(2, getTagPair(19));
-    BLUE_REEF_TAGS.put(3, getTagPair(18));
-    BLUE_REEF_TAGS.put(4, getTagPair(17));
-    BLUE_REEF_TAGS.put(5, getTagPair(22));
-
-    RED_REEF_TAGS.put(0, getTagPair(7));
-    RED_REEF_TAGS.put(1, getTagPair(8));
-    RED_REEF_TAGS.put(2, getTagPair(9));
-    RED_REEF_TAGS.put(3, getTagPair(10));
-    RED_REEF_TAGS.put(4, getTagPair(11));
-    RED_REEF_TAGS.put(5, getTagPair(6));
-  }
+  public static final int[] ALL_TAGS = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
+  public static final int[] BLUE_REEF_TAGS = new int[]{22, 21, 20, 19, 18, 17};
+  public static final int[] RED_REEF_TAGS = new int[]{11, 10, 9, 8, 7, 6};
 
   private static Pair<Integer, Pose2d> getTagPair(int id) {
     return Pair.of(
@@ -105,7 +91,7 @@ public class FieldConstants {
       new Translation2d(Units.inchesToMeters(30.738196), -Units.inchesToMeters(6.633604));
 
   public static final Translation2d BRANCH_TO_ROBOT =
-      new Translation2d(Units.inchesToMeters(17.3075 + 0.5 + BRANCH_TO_REEF_EDGE.getInches()), 0.0);
+      new Translation2d(Units.inchesToMeters(17.3075 + 0.1 + BRANCH_TO_REEF_EDGE.getInches()), 0.0);
 
   public static final Translation2d PRE_REEF_OFFSET =
       new Translation2d(Units.inchesToMeters(10), 0.0);

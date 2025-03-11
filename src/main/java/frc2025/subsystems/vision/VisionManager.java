@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -32,6 +33,7 @@ import util.AllianceFlipUtil;
 import util.GeomUtil;
 import vision.LimelightHelpers;
 import vision.LimelightHelpers.PoseEstimate;
+import vision.LimelightHelpers.RawFiducial;
 import vision.LimelightVision.Limelight;
 
 public class VisionManager {
@@ -95,6 +97,10 @@ public class VisionManager {
 
   public VisionManager(Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
+
+    LimelightHelpers.SetFiducialIDFiltersOverride(Limelights.REEF_LEFT.name(), AllianceFlipUtil.get(FieldConstants.BLUE_REEF_TAGS, FieldConstants.RED_REEF_TAGS));
+    LimelightHelpers.SetFiducialIDFiltersOverride(Limelights.REEF_RIGHT.name(), AllianceFlipUtil.get(FieldConstants.BLUE_REEF_TAGS, FieldConstants.RED_REEF_TAGS));
+
 
     /* visionThread =
         new Notifier(
@@ -211,45 +217,18 @@ public class VisionManager {
     }
   }
 
-  /*   private void addSpecializedPoseEstimate(Limelight limelight) {
-    if (getReefZone().isEmpty()) {
-      return;
-    }
-    Pair<Integer, Pose2d> desiredTag =
-        AllianceFlipUtil.get(FieldConstants.BLUE_REEF_TAGS, FieldConstants.RED_REEF_TAGS)
-            .get(getReefZone().getAsInt());
-    Logger.log("Vision/DesiredTag", desiredTag.getFirst());
-    RawFiducial[] results = LimelightHelpers.getRawFiducials(limelight.name());
+    private void addSpecializedPoseEstimate(Limelight limelight) {
+     var estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight.name());
 
-    Arrays.stream(results)
-        .filter(target -> target.id == desiredTag.getFirst())
-        .forEach(
-            target -> {
-              double distance = target.distToRobot;
-              Logger.log("Vision/" + limelight.name() + "/DistanceToTarget", distance);
-              Rotation2d camToTag =
-                  drivetrain
-                      .getHeading()
-                      .plus(
-                          Rotation2d.fromDegrees(
-                              Units.radiansToDegrees(
-                                      limelight.relativePosition().getRotation().getZ())
-                                  - target.txnc));
-              Translation2d fieldToCamera =
-                  new Pose2d(desiredTag.getSecond().getTranslation(), camToTag.plus(Rotation2d.kPi))
-                      .transformBy(
-                          GeomUtil.translationToTransform(new Translation2d(distance, 0.0)))
-                      .getTranslation();
-              Pose2d fieldToRobot =
-                  new Pose2d(fieldToCamera, drivetrain.getHeading())
-                      .transformBy(
-                          new Transform2d(limelight.relativePosition().toPose2d(), Pose2d.kZero));
-              drivetrain.specializedPoseEstimate.addVisionMeasurement(
-                  new Pose2d(fieldToRobot.getTranslation(), drivetrain.getHeading()),
-                  Timer.getFPGATimestamp() - (LimelightVision.getLatency(limelight) / 1000.0),
-                  VecBuilder.fill(10.0, 10.0, 999999999));
-            });
-  } */
+     if(!rejectEstimate(estimate)){
+      double stdFactor = Math.pow(estimate.avgTagDist, 2.2) / (estimate.tagCount * 0.5);
+      double xyStds = VisionConstants.xyStdBaseline * stdFactor * VisionConstants.xyMt2StdFactor;
+      drivetrain.addSpecializedMeasurement(
+          estimate.pose,
+          estimate.timestampSeconds,
+          VecBuilder.fill(xyStds, xyStds, 999999999.0));
+     }
+    }
 
   private boolean rejectEstimate(PoseEstimate estimate) {
     return estimate == null
@@ -264,6 +243,9 @@ public class VisionManager {
     for (Limelight ll : limelights) {
       addGlobalPoseEstimate(ll);
     }
+
+    addSpecializedPoseEstimate(Limelights.REEF_LEFT);
+    addSpecializedPoseEstimate(Limelights.REEF_RIGHT);
 
     if (Robot.isSimulation() && visionSim != null) {
       visionSim.update(drivetrain.getEstimatedPose());

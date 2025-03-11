@@ -69,7 +69,7 @@ public class AutoAlign extends Command {
                       container.getRobotState().getTargetAlgaeState().getFirst());
           break;
         default:
-          targetPose = () -> Pair.of(drivetrain.getEstimatedPose(), drivetrain.getEstimatedPose());
+          targetPose = () -> Pair.of(drivetrain.getSpecializedPoseEstimate(), drivetrain.getSpecializedPoseEstimate());
           break;
       }
   
@@ -99,7 +99,7 @@ public class AutoAlign extends Command {
                       container.getRobotState().getTargetAlgaeState().getFirst());
           break;
         default:
-          targetPose = () -> Pair.of(drivetrain.getEstimatedPose(), drivetrain.getEstimatedPose());
+          targetPose = () -> Pair.of(drivetrain.getSpecializedPoseEstimate(), drivetrain.getSpecializedPoseEstimate());
           break;
       }
   
@@ -112,7 +112,7 @@ public class AutoAlign extends Command {
   
     @Override
     public void initialize() {
-      Pose2d currentPose = drivetrain.getEstimatedPose();
+      Pose2d currentPose = drivetrain.getSpecializedPoseEstimate();
       Twist2d fieldVel = drivetrain.getFieldVelocity();
       Translation2d linearFieldVel = new Translation2d(fieldVel.dx, fieldVel.dy);
       driveController.reset(
@@ -135,7 +135,7 @@ public class AutoAlign extends Command {
   
     @Override
     public void execute() {
-      Pose2d currentPose = drivetrain.getEstimatedPose();
+      Pose2d currentPose = drivetrain.getSpecializedPoseEstimate();
       if(!isAuto){
       switch (location.get()) {
         case LEFT:
@@ -150,7 +150,7 @@ public class AutoAlign extends Command {
                       container.getRobotState().getTargetAlgaeState().getFirst());
           break;
         default:
-          targetPose = () -> Pair.of(drivetrain.getEstimatedPose(), drivetrain.getEstimatedPose());
+          targetPose = () -> Pair.of(drivetrain.getSpecializedPoseEstimate(), drivetrain.getSpecializedPoseEstimate());
           break;
       }
     }

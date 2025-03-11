@@ -140,10 +140,9 @@ public class RobotContainer {
                 drivetrain.setControl(
                     drivetrain
                         .getHelper()
-                        .getPointingAtProfiled(
+                        .getFacingAngleProfiled(
                             Controlboard.getTranslation().get(),
-                            AllianceFlipUtil.get(
-                                FieldConstants.BLUE_REEF_CENTER, FieldConstants.RED_REEF_CENTER),
+                            robotState.getTargetAlgaeState().getFirst().getRotation(),
                             DrivetrainConstants.HEADING_CONTROLLER_PROFILED));
               } else {
                 drivetrain.setControl(
@@ -234,7 +233,7 @@ public class RobotContainer {
                                     Controlboard.getTranslation()
                                         .get()
                                         .times(superstructure.getElevator().getDriveScalar() * 0.5),
-                                    AllianceFlipUtil.getFwdHeading(),
+                                    AllianceFlipUtil.get(Rotation2d.fromDegrees(45), Rotation2d.fromDegrees(-135)),
                                     DrivetrainConstants.HEADING_CONTROLLER_PROFILED)),
                     applyTargetStateFactory.apply(SuperstructureState.BARGE_NET).get())
                 .beforeStarting(() -> drivetrain.resetHeadingController()));
