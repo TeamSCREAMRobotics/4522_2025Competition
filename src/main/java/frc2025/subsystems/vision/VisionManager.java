@@ -88,7 +88,7 @@ public class VisionManager {
   private final Drivetrain drivetrain;
   private final Limelight[] limelights =
       new Limelight[] {
-        Limelights.REEF_RIGHT, Limelights.REEF_LEFT, Limelights.STATION, Limelights.CLIMBER
+        Limelights.REEF_RIGHT, Limelights.REEF_LEFT, Limelights.STATION, //Limelights.CLIMBER
       };
 
   // private final Notifier visionThread;
@@ -207,7 +207,7 @@ public class VisionManager {
           mt2Estimate.timestampSeconds,
           VecBuilder.fill(xyStds, xyStds, 999999999.0),
           true);
-      Logger.log("Vision/" + limelight.name() + "/PoseEstimate", mt2Estimate.pose);
+      Logger.log("Vision/" + limelight.name() + "/PoseEstimate", mt2Estimate.pose, 2.5);
       Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);
       Logger.log("Vision/" + limelight.name() + "/ThetaStds", 999999999.0);
     } else {

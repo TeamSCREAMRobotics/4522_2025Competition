@@ -135,7 +135,7 @@ public class RobotState {
   }
 
   public void logTelemetry() {
-    getReefZone()
+    /* getReefZone()
         .ifPresent(
             reefZone -> {
               Logger.log(
@@ -146,8 +146,8 @@ public class RobotState {
                   },
                   1.0);
               Logger.log("Field/ReefZone", reefZone, 1.0);
-            });
-    Logger.log("Controls/ScoringSide", getTargetScoringLocation());
+            }); */
+    //Logger.log("Controls/ScoringSide", getTargetScoringLocation());
     if (Robot.isSimulation()) {
       visualizeComponents();
     }

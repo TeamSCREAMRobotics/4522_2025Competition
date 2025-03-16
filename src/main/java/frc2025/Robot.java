@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.hal.AllianceStationID;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -50,6 +51,8 @@ public class Robot extends TimedRobot {
 
     FollowPathCommand.warmupCommand().schedule();
     DriveToPose.warmup(robotContainer.getSubsystems());
+
+    Threads.setCurrentThreadPriority(true, 10);
   }
 
   @Override
@@ -86,7 +89,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledExit() {
     VisionManager.hasEnabled = true;
-    robotContainer.getSubsystems().climber().setNeutralMode(NeutralModeValue.Brake);
+    //robotContainer.getSubsystems().climber().setNeutralMode(NeutralModeValue.Brake);
   }
 
   @Override

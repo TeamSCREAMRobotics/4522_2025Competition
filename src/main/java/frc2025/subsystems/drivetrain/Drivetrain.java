@@ -33,6 +33,7 @@ import frc2025.subsystems.drivetrain.generated.TunerConstants.TunerSwerveDrivetr
 import java.util.function.Supplier;
 import lombok.Getter;
 import util.RunnableUtil.RunOnce;
+import util.AllianceFlipUtil;
 import util.ScreamUtil;
 
 /**
@@ -102,6 +103,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     if (Robot.isSimulation()) {
       startSimThread();
     }
+
+    //resetRotation(AllianceFlipUtil.getFwdHeading().plus(Rotation2d.k180deg));
 
     System.out.println("[Init] Drivetrain initialization complete!");
   }
@@ -187,10 +190,10 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       Pose2d visionRobotPoseMeters,
       double timestampSeconds,
       Matrix<N3, N1> visionMeasurementStdDevs,
-      boolean isMt2) {
+      boolean rejectHeading) {
     Logger.log("Vision/ActiveGlobalVisionMeasurement", visionRobotPoseMeters);
     super.addVisionMeasurement(
-        !isMt2
+        !rejectHeading
             ? visionRobotPoseMeters
             : new Pose2d(visionRobotPoseMeters.getTranslation(), getHeading()),
         Utils.fpgaToCurrentTime(timestampSeconds),

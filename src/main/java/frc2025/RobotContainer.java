@@ -392,11 +392,15 @@ public class RobotContainer {
         .whileTrue(
             Commands.runOnce(
                     () ->
-                        climber.setDefaultCommand(
-                            climber.applyGoalCommand(TalonFXSubsystem.defaultGoal)))
+                        climber.emergencyStop())
                 .ignoringDisable(true));
 
     new Trigger(() -> Dashboard.unjam.get()).whileTrue(Commands.defer(() -> superstructure.getElevator().applyVoltageCommand(() -> 1.25).alongWith(wristRollers.applyVoltageCommand(() -> 9.0)), Set.of(superstructure.getElevator(), wristRollers, superstructure.getWrist())));
+
+    new Trigger(() -> Dashboard.submitRotationOverride.get()).onTrue(Commands.runOnce(() -> {
+        drivetrain.resetRotation(Rotation2d.fromDegrees(Dashboard.rotationOverride.get()));
+        Dashboard.submitRotationOverride.set(false);
+    }).ignoringDisable(true));
   }
 
   public Command getAutonomousCommand() {

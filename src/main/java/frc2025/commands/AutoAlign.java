@@ -135,6 +135,9 @@ public class AutoAlign extends Command {
   
     @Override
     public void execute() {
+      if(targetPose == null){
+        return;
+      }
       Pose2d currentPose = drivetrain.getSpecializedPoseEstimate();
       if(!isAuto){
       switch (location.get()) {
@@ -233,6 +236,6 @@ public class AutoAlign extends Command {
 
   @Override
   public boolean isFinished() {
-      return isAuto && currentDistance < driveTolerance;
+      return targetPose == null || (isAuto && currentDistance < driveTolerance);
   }
 }
