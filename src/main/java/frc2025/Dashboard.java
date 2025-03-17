@@ -32,6 +32,7 @@ public class Dashboard {
   public static DashboardBoolean unjam;
   public static DashboardNumber rotationOverride;
   public static DashboardBoolean submitRotationOverride;
+  public static DashboardBoolean useGlobalEstimateForAutoAlign;
 
   private static Field2d field = new Field2d();
 
@@ -62,6 +63,7 @@ public class Dashboard {
     unjam = new DashboardBoolean(overrides, "Unjam", false);
     rotationOverride = new DashboardNumber(overrides, "Reset Rotation", 0.0);
     submitRotationOverride = new DashboardBoolean(overrides, "Submit Rotation Override", false);
+    useGlobalEstimateForAutoAlign = new DashboardBoolean(overrides, "Global Estimate For AA", false);
 
     for (AlgaeLevel level : AlgaeLevel.values()) {
       wantedAlgaeLevel.addOption(level.toString(), level);

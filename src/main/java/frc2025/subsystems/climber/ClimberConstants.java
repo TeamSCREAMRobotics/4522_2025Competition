@@ -10,7 +10,7 @@ import pid.ScreamPIDConstants.FeedforwardConstants;
 
 public class ClimberConstants {
 
-  public static final double REDUCTION = 201.6;
+  public static final double REDUCTION = 556.875; // 201.6
 
   public static final TalonFXSubsystemConfiguration CONFIGURATION =
       new TalonFXSubsystemConfiguration();

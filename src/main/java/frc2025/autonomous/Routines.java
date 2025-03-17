@@ -176,12 +176,17 @@ public class Routines {
 
   /* Testing Autos */
   public static Command test(RobotContainer container) {
-    currentSequence = leave;
+    currentSequence = E_D_C;
     WristRollers wristRollers = container.getSubsystems().wristRollers();
 
     return new SequentialCommandGroup(
         Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
-        currentSequence.getStart()
+        currentSequence.getNext().raceWith(
+            new Feed(container)
+        ),
+        new Feed(container).andThen(
+            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
+        )
     );
   }
 
@@ -445,7 +450,7 @@ public class Routines {
     WristRollers wristRollers = container.getSubsystems().wristRollers();
     Elevator elevator = container.getSubsystems().superstructure().getElevator();
 
-    return new SequentialCommandGroup(
+    return new SequentialCommandGroup(    
         Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
         currentSequence.getStart().raceWith(
             new SequentialCommandGroup(

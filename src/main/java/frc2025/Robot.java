@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc2025.autonomous.AutoSelector.AutoMode;
 import frc2025.commands.DriveToPose;
 import frc2025.logging.Logger;
+import frc2025.subsystems.superstructure.wrist.WristRollers;
 import frc2025.subsystems.vision.VisionManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,6 +112,7 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    WristRollers.hasCoral = false;
   }
 
   @Override

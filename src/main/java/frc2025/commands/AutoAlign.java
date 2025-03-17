@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc2025.Dashboard;
 import frc2025.RobotContainer;
 import frc2025.controlboard.Controlboard.ScoringLocation;
 import frc2025.logging.Logger;
@@ -138,7 +139,12 @@ public class AutoAlign extends Command {
       if(targetPose == null){
         return;
       }
-      Pose2d currentPose = drivetrain.getSpecializedPoseEstimate();
+      Pose2d currentPose;
+      if(Dashboard.useGlobalEstimateForAutoAlign.get()){
+        currentPose = drivetrain.getEstimatedPose();
+      } else {
+        currentPose = drivetrain.getSpecializedPoseEstimate();
+      }
       if(!isAuto){
       switch (location.get()) {
         case LEFT:

@@ -59,7 +59,7 @@ public class RobotState {
               .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
               .alongWith(Commands.waitSeconds(0.1).andThen(() -> WristRollers.resetBeam()));
         case TROUGH:
-          return wristRollers.applyGoalCommand(WristRollersGoal.EJECT_CORAL);
+          return wristRollers.applyGoalCommand(WristRollersGoal.TROUGH);
         case PROCESSOR:
           return wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE);
         case INTAKE:
@@ -83,6 +83,9 @@ public class RobotState {
   }
 
   public Pair<Pose2d, Pose2d> getTargetBranchPoses(ScoringLocation location) {
+    if(getReefZone().isEmpty()){
+      return Pair.of(drivetrain.getEstimatedPose(), drivetrain.getEstimatedPose());
+    }
     return location == ScoringLocation.RIGHT
         ? Pair.of(
             AllianceFlipUtil.get(

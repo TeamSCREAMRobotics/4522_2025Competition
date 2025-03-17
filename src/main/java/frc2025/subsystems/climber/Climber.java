@@ -42,13 +42,14 @@ public class Climber extends TalonFXSubsystem {
     HOLD_FUNNEL(-0.03),
     STOW_UNDER_FUNNEL(-0.069),
     OUT(0.345), // 0.335
-    CLIMB(-0.04); // -0.055
+    CLIMB(-0.030); // -0.025
 
     private double targetRotations;
 
     private ClimberGoal(double targetRotations) {
       this.targetRotations = targetRotations;
     }
+
 
     @Override
     public ControlType controlType() {
