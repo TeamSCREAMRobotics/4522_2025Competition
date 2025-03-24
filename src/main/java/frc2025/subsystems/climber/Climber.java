@@ -42,7 +42,7 @@ public class Climber extends TalonFXSubsystem {
     HOLD_FUNNEL(-0.03),
     STOW_UNDER_FUNNEL(-0.069),
     OUT(0.345), // 0.335
-    CLIMB(-0.030); // -0.025
+    CLIMB(-0.0221); // -0.025
 
     private double targetRotations;
 

@@ -20,6 +20,7 @@ import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.OptionalInt;
 import org.photonvision.PhotonCamera;
@@ -98,8 +99,8 @@ public class VisionManager {
   public VisionManager(Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
 
-    LimelightHelpers.SetFiducialIDFiltersOverride(Limelights.REEF_LEFT.name(), AllianceFlipUtil.get(FieldConstants.BLUE_REEF_TAGS, FieldConstants.RED_REEF_TAGS));
-    LimelightHelpers.SetFiducialIDFiltersOverride(Limelights.REEF_RIGHT.name(), AllianceFlipUtil.get(FieldConstants.BLUE_REEF_TAGS, FieldConstants.RED_REEF_TAGS));
+    LimelightHelpers.SetFiducialIDFiltersOverride(Limelights.REEF_LEFT.name(), FieldConstants.REEF_TAGS);
+    LimelightHelpers.SetFiducialIDFiltersOverride(Limelights.REEF_RIGHT.name(), FieldConstants.REEF_TAGS);
 
 
     /* visionThread =
