@@ -34,7 +34,7 @@ public final class ElevatorConstants {
       MAX_HEIGHT.getInches() / PULLEY_CIRCUMFERENCE.getInches();
   public static final double ENCODER_MIN = 0.0;
 
-  public static final double REDUCTION = (50.0 / 20.0) * (36.0 / 14.0);
+  public static final double REDUCTION = 5.3125; //(50.0 / 20.0) * (36.0 / 14.0);
 
   public static final ElevatorSim SIM =
       new ElevatorSim(
@@ -79,12 +79,12 @@ public final class ElevatorConstants {
 
     CONFIGURATION.neutralMode = NeutralModeValue.Brake;
     CONFIGURATION.sensorToMechRatio = REDUCTION;
-    // CONFIGURATION.enableSupplyCurrentLimit = true;
-    // CONFIGURATION.supplyCurrentLimit = 40;
+    CONFIGURATION.enableSupplyCurrentLimit = true;
+    CONFIGURATION.supplyCurrentLimit = 65;
     CONFIGURATION.minUnitsLimit = ENCODER_MIN;
     CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
-    CONFIGURATION.cruiseVelocity = 60.0; // 30.0
-    CONFIGURATION.acceleration = 25.0;
+    CONFIGURATION.cruiseVelocity = 80.0; // 30.0
+    CONFIGURATION.acceleration = 40.0;
     CONFIGURATION.slot0 =
         new ScreamPIDConstants(60.0, 0, 0) // 60.0
             .getSlot0Configs(

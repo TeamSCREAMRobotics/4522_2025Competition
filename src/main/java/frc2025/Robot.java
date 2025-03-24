@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.hal.AllianceStationID;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc2025.autonomous.AutoSelector.AutoMode;
 import frc2025.commands.DriveToPose;
 import frc2025.logging.Logger;
+import frc2025.subsystems.superstructure.wrist.WristRollers;
 import frc2025.subsystems.vision.VisionManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +52,8 @@ public class Robot extends TimedRobot {
 
     FollowPathCommand.warmupCommand().schedule();
     DriveToPose.warmup(robotContainer.getSubsystems());
+
+    Threads.setCurrentThreadPriority(true, 10);
   }
 
   @Override
@@ -86,7 +90,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledExit() {
     VisionManager.hasEnabled = true;
-    robotContainer.getSubsystems().climber().setNeutralMode(NeutralModeValue.Brake);
+    //robotContainer.getSubsystems().climber().setNeutralMode(NeutralModeValue.Brake);
   }
 
   @Override
@@ -108,6 +112,7 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    WristRollers.hasCoral = false;
   }
 
   @Override

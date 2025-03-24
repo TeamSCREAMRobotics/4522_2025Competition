@@ -75,6 +75,7 @@ public class FieldConstants {
   public static final int[] ALL_TAGS = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
   public static final int[] BLUE_REEF_TAGS = new int[]{22, 21, 20, 19, 18, 17};
   public static final int[] RED_REEF_TAGS = new int[]{11, 10, 9, 8, 7, 6};
+  public static final int[] REEF_TAGS = new int[]{22, 21, 20, 19, 18, 17, 11, 10, 9, 8, 7, 6};
 
   private static Pair<Integer, Pose2d> getTagPair(int id) {
     return Pair.of(

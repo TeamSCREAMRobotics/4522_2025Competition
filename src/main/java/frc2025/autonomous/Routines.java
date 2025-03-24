@@ -1,5 +1,6 @@
 package frc2025.autonomous;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -176,10 +177,16 @@ public class Routines {
   /* Testing Autos */
   public static Command test(RobotContainer container) {
     currentSequence = E_D_C;
+    WristRollers wristRollers = container.getSubsystems().wristRollers();
 
     return new SequentialCommandGroup(
-        currentSequence.getStart().withTimeout(0.25),
-        new AutoAlign(container, ScoringLocation.LEFT)
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
+        currentSequence.getNext().raceWith(
+            new Feed(container)
+        ),
+        new Feed(container).andThen(
+            wristRollers.applyGoalCommand(WristRollersGoal.IDLE)
+        )
     );
   }
 
@@ -343,7 +350,50 @@ public class Routines {
     Elevator elevator = container.getSubsystems().superstructure().getElevator();
 
     return new SequentialCommandGroup(
-        
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
+        currentSequence.getStart().raceWith(
+            new SequentialCommandGroup(
+                new WaitCommand(0.25),
+                setSuperstructure(container, SuperstructureState.REEF_L4)
+            )
+        ).andThen(
+            setSuperstructure(container, SuperstructureState.REEF_L4)
+            .until(
+                () -> elevator.atGoal()
+            )
+            .alongWith(
+                new AutoAlign(container, ScoringLocation.RIGHT).withTimeout(align_Timeout)
+            )
+        ),
+        container.getRobotState().getScoreCommand().get() // Score on H-L4
+            .withTimeout(coralEject_TimeOut),
+        currentSequence.getNext(),
+        new AutoAlign(container, ScoringLocation.CENTER).alongWith(
+            setSuperstructure(container, SuperstructureState.REEF_ALGAE_L1).withDeadline(
+                wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE).withTimeout(intakeAlgae_TimeOut)
+            ).andThen(
+                wristRollers.applyGoalCommand(WristRollersGoal.IDLE_AUTO).until(
+                    () -> wristRollers.getGoal() == (TalonFXSubsystemGoal) WristRollersGoal.IDLE_AUTO
+                )
+            )
+        ),
+        setSuperstructure(container, SuperstructureState.FEEDING).raceWith(
+            new SequentialCommandGroup(
+                new WaitUntilCommand(() -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED),
+                currentSequence.getNext()
+            )
+        ),
+        setSuperstructure(container, SuperstructureState.BARGE_NET).until(
+            () -> elevator.atGoal()
+        ),
+        new DriveUntilAtPose(
+            AllianceFlipUtil.get(
+                FieldConstants.BLUE_BARGE_ALIGN, FieldConstants.RED_BARGE_ALIGN),
+        container),
+        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE).withTimeout(algaeEject_TimeOut), // Score algae 4
+        setSuperstructure(container, SuperstructureState.FEEDING).until(
+            () -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED
+        )
     );
   }
 
@@ -400,7 +450,7 @@ public class Routines {
     WristRollers wristRollers = container.getSubsystems().wristRollers();
     Elevator elevator = container.getSubsystems().superstructure().getElevator();
 
-    return new SequentialCommandGroup(
+    return new SequentialCommandGroup(    
         Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
         currentSequence.getStart().raceWith(
             new SequentialCommandGroup(

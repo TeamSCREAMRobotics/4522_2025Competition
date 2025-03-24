@@ -20,6 +20,7 @@ import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.OptionalInt;
 import org.photonvision.PhotonCamera;
@@ -88,7 +89,7 @@ public class VisionManager {
   private final Drivetrain drivetrain;
   private final Limelight[] limelights =
       new Limelight[] {
-        Limelights.REEF_RIGHT, Limelights.REEF_LEFT, Limelights.STATION, Limelights.CLIMBER
+        Limelights.REEF_RIGHT, Limelights.REEF_LEFT, Limelights.STATION, //Limelights.CLIMBER
       };
 
   // private final Notifier visionThread;
@@ -98,8 +99,8 @@ public class VisionManager {
   public VisionManager(Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
 
-    LimelightHelpers.SetFiducialIDFiltersOverride(Limelights.REEF_LEFT.name(), AllianceFlipUtil.get(FieldConstants.BLUE_REEF_TAGS, FieldConstants.RED_REEF_TAGS));
-    LimelightHelpers.SetFiducialIDFiltersOverride(Limelights.REEF_RIGHT.name(), AllianceFlipUtil.get(FieldConstants.BLUE_REEF_TAGS, FieldConstants.RED_REEF_TAGS));
+    LimelightHelpers.SetFiducialIDFiltersOverride(Limelights.REEF_LEFT.name(), FieldConstants.REEF_TAGS);
+    LimelightHelpers.SetFiducialIDFiltersOverride(Limelights.REEF_RIGHT.name(), FieldConstants.REEF_TAGS);
 
 
     /* visionThread =
@@ -207,7 +208,7 @@ public class VisionManager {
           mt2Estimate.timestampSeconds,
           VecBuilder.fill(xyStds, xyStds, 999999999.0),
           true);
-      Logger.log("Vision/" + limelight.name() + "/PoseEstimate", mt2Estimate.pose);
+      Logger.log("Vision/" + limelight.name() + "/PoseEstimate", mt2Estimate.pose, 2.5);
       Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);
       Logger.log("Vision/" + limelight.name() + "/ThetaStds", 999999999.0);
     } else {

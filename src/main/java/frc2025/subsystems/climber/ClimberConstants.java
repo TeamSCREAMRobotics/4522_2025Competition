@@ -10,7 +10,7 @@ import pid.ScreamPIDConstants.FeedforwardConstants;
 
 public class ClimberConstants {
 
-  public static final double REDUCTION = 198.0;
+  public static final double REDUCTION = 556.875; // 201.6
 
   public static final TalonFXSubsystemConfiguration CONFIGURATION =
       new TalonFXSubsystemConfiguration();
@@ -18,26 +18,26 @@ public class ClimberConstants {
   static {
     CONFIGURATION.name = "Climber";
 
-    CONFIGURATION.codeEnabled = false;
+    CONFIGURATION.codeEnabled = true;
     CONFIGURATION.logTelemetry = false;
     CONFIGURATION.debugMode = false;
 
     CONFIGURATION.masterConstants =
-        new TalonFXConstants(new CANDevice(12), InvertedValue.CounterClockwise_Positive);
+    new TalonFXConstants(new CANDevice(12), InvertedValue.Clockwise_Positive); // Right Climber
 
     CONFIGURATION.slaveConstants =
         new TalonFXConstants[] {
-          new TalonFXConstants(new CANDevice(13), InvertedValue.CounterClockwise_Positive)
+          new TalonFXConstants(new CANDevice(13), InvertedValue.CounterClockwise_Positive) // Left Climber
         };
 
-    CONFIGURATION.neutralMode = NeutralModeValue.Coast;
+    CONFIGURATION.neutralMode = NeutralModeValue.Brake;
     CONFIGURATION.sensorToMechRatio = REDUCTION;
     CONFIGURATION.enableSupplyCurrentLimit = true;
     CONFIGURATION.supplyCurrentLimit = 40;
-    CONFIGURATION.cruiseVelocity = 0.125; // 1.25
-    CONFIGURATION.acceleration = 0.15; // 0.75
+    CONFIGURATION.cruiseVelocity = 0.35; // 1.25
+    CONFIGURATION.acceleration = 0.75; // 0.75
     CONFIGURATION.slot0 =
-        new ScreamPIDConstants(25.0, 0, 0).getSlot0Configs(new FeedforwardConstants()); // 75
+        new ScreamPIDConstants(90.0, 0, 0).getSlot0Configs(new FeedforwardConstants()); // 75
     CONFIGURATION.positionThreshold = 0.005;
   }
 }
