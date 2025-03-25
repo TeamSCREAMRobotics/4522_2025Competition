@@ -83,7 +83,7 @@ public class RobotState {
   }
 
   public Pair<Pose2d, Pose2d> getTargetBranchPoses(ScoringLocation location) {
-    if(getReefZone().isEmpty()){
+    if (getReefZone().isEmpty()) {
       return Pair.of(drivetrain.getEstimatedPose(), drivetrain.getEstimatedPose());
     }
     return location == ScoringLocation.RIGHT
@@ -139,18 +139,18 @@ public class RobotState {
 
   public void logTelemetry() {
     /* getReefZone()
-        .ifPresent(
-            reefZone -> {
-              Logger.log(
-                  "Field/ScoringLocations",
-                  new Pose2d[] {
-                    FieldConstants.RED_REEF_LOCATIONS_FLIPPED.get(reefZone).getFirst(),
-                    FieldConstants.RED_REEF_LOCATIONS_FLIPPED.get(reefZone).getSecond(),
-                  },
-                  1.0);
-              Logger.log("Field/ReefZone", reefZone, 1.0);
-            }); */
-    //Logger.log("Controls/ScoringSide", getTargetScoringLocation());
+    .ifPresent(
+        reefZone -> {
+          Logger.log(
+              "Field/ScoringLocations",
+              new Pose2d[] {
+                FieldConstants.RED_REEF_LOCATIONS_FLIPPED.get(reefZone).getFirst(),
+                FieldConstants.RED_REEF_LOCATIONS_FLIPPED.get(reefZone).getSecond(),
+              },
+              1.0);
+          Logger.log("Field/ReefZone", reefZone, 1.0);
+        }); */
+    // Logger.log("Controls/ScoringSide", getTargetScoringLocation());
     if (Robot.isSimulation()) {
       visualizeComponents();
     }

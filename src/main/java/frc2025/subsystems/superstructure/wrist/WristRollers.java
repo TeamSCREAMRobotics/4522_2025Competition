@@ -19,7 +19,7 @@ public class WristRollers extends TalonFXSubsystem {
   private final Debouncer beamDebouncer = new Debouncer(0.1); // 0.0875
 
   public WristRollers(TalonFXSubsystemConfiguration config) {
-    super(config, WristRollersGoal.IDLE);
+    super(config);
 
     beam.getDistance().setUpdateFrequency(300.0);
   }
@@ -28,7 +28,7 @@ public class WristRollers extends TalonFXSubsystem {
     IDLE(() -> acquiredCoral() ? 1.0 : -1.0, ControlType.VOLTAGE),
     IDLE_AUTO(() -> -2.0, ControlType.VOLTAGE),
     HOLD(() -> 0.0, ControlType.VOLTAGE),
-    INTAKE(() -> 7.0, ControlType.VOLTAGE),
+    INTAKE(() -> 5.0, ControlType.VOLTAGE),
     INTAKE_ALGAE(() -> -12.0, ControlType.VOLTAGE),
     INTAKE_TROUGH(() -> -9.0, ControlType.VOLTAGE),
     EJECT_CORAL(() -> 12.0, ControlType.VOLTAGE),
@@ -64,7 +64,7 @@ public class WristRollers extends TalonFXSubsystem {
   }
 
   public static boolean acquiredCoral() {
-    return getBeamDistanceInches() < 2.0;
+    return getBeamDistanceInches() < 2.25;
   }
 
   public BooleanSupplier hasCoral() {

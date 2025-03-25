@@ -34,7 +34,7 @@ public final class ElevatorConstants {
       MAX_HEIGHT.getInches() / PULLEY_CIRCUMFERENCE.getInches();
   public static final double ENCODER_MIN = 0.0;
 
-  public static final double REDUCTION = 5.3125; //(50.0 / 20.0) * (36.0 / 14.0);
+  public static final double REDUCTION = 5.3125; // (50.0 / 20.0) * (36.0 / 14.0);
 
   public static final ElevatorSim SIM =
       new ElevatorSim(

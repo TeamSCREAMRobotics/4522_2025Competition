@@ -26,7 +26,7 @@ public class Climber extends TalonFXSubsystem {
   public static boolean hasClimbed = false;
 
   public Climber(TalonFXSubsystemConfiguration config) {
-    super(config, ClimberGoal.HOLD_FUNNEL);
+    super(config, ClimberGoal.HOME);
 
     funnelServo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
     latchServo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
@@ -49,7 +49,6 @@ public class Climber extends TalonFXSubsystem {
     private ClimberGoal(double targetRotations) {
       this.targetRotations = targetRotations;
     }
-
 
     @Override
     public ControlType controlType() {

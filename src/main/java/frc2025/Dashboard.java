@@ -63,7 +63,8 @@ public class Dashboard {
     unjam = new DashboardBoolean(overrides, "Unjam", false);
     rotationOverride = new DashboardNumber(overrides, "Reset Rotation", 0.0);
     submitRotationOverride = new DashboardBoolean(overrides, "Submit Rotation Override", false);
-    useGlobalEstimateForAutoAlign = new DashboardBoolean(overrides, "Global Estimate For AA", false);
+    useGlobalEstimateForAutoAlign =
+        new DashboardBoolean(overrides, "Global Estimate For AA", false);
 
     for (AlgaeLevel level : AlgaeLevel.values()) {
       wantedAlgaeLevel.addOption(level.toString(), level);

@@ -8,7 +8,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import drivers.PhoenixSwerveHelper;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -22,7 +21,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -33,7 +31,6 @@ import frc2025.subsystems.drivetrain.generated.TunerConstants.TunerSwerveDrivetr
 import java.util.function.Supplier;
 import lombok.Getter;
 import util.RunnableUtil.RunOnce;
-import util.AllianceFlipUtil;
 import util.ScreamUtil;
 
 /**
@@ -48,9 +45,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   @Getter private final PhoenixSwerveHelper helper;
 
-  //public final SwerveDrivePoseEstimator globalPoseEstimate;
-  public final SwerveDrivePoseEstimator specializedPoseEstimate;
-
   public Drivetrain(
       SwerveDrivetrainConstants driveTrainConstants,
       double OdometryUpdateFrequency,
@@ -58,13 +52,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     super(driveTrainConstants, OdometryUpdateFrequency, modules);
 
     CommandScheduler.getInstance().registerSubsystem(this);
-
-    /* globalPoseEstimate =
-        new SwerveDrivePoseEstimator(
-            getKinematics(), getHeading(), getState().ModulePositions, getOdometryPose()); */
-    specializedPoseEstimate =
-        new SwerveDrivePoseEstimator(
-            getKinematics(), getHeading(), getState().ModulePositions, getEstimatedPose());
 
     helper =
         new PhoenixSwerveHelper(
@@ -104,7 +91,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       startSimThread();
     }
 
-    //resetRotation(AllianceFlipUtil.getFwdHeading().plus(Rotation2d.k180deg));
+    // resetRotation(AllianceFlipUtil.getFwdHeading().plus(Rotation2d.k180deg));
 
     System.out.println("[Init] Drivetrain initialization complete!");
   }
@@ -132,14 +119,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public Pose2d getEstimatedPose() {
     return getState().Pose;
-  }
-
-  /* public Pose2d getGlobalPoseEstimate() {
-    return globalPoseEstimate.getEstimatedPosition();
-  } */
-
-  public Pose2d getSpecializedPoseEstimate() {
-    return specializedPoseEstimate.getEstimatedPosition();
   }
 
   public Rotation2d getHeading() {
@@ -200,11 +179,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         visionMeasurementStdDevs);
   }
 
-  public void addSpecializedMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds, 
+  /* public void addSpecializedMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds,
   Matrix<N3, N1> visionMeasurementStdDevs){
     Logger.log("Vision/ActiveSpecializedVisionMeasurement", visionRobotPoseMeters);
     specializedPoseEstimate.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
-  }
+  } */
 
   public void stop() {
     setControl(new SwerveRequest.Idle());
@@ -225,8 +204,5 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
     if (getCurrentCommand() != null) {
       Logger.log("Subsystems/Drivetrain/ActiveCommand", getCurrentCommand().getName());
     }
-    // Logger.log("RobotState/EstimatedPose", globalPoseEstimate.getEstimatedPosition());
-    specializedPoseEstimate.updateWithTime(Timer.getFPGATimestamp(), getHeading(), getState().ModulePositions);
-    Logger.log("RobotState/SpecializedPoseEstimate", specializedPoseEstimate.getEstimatedPosition());
   }
 }

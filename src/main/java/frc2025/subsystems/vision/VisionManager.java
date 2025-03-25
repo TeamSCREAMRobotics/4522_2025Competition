@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -20,7 +19,6 @@ import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.OptionalInt;
 import org.photonvision.PhotonCamera;
@@ -34,7 +32,6 @@ import util.AllianceFlipUtil;
 import util.GeomUtil;
 import vision.LimelightHelpers;
 import vision.LimelightHelpers.PoseEstimate;
-import vision.LimelightHelpers.RawFiducial;
 import vision.LimelightVision.Limelight;
 
 public class VisionManager {
@@ -52,7 +49,7 @@ public class VisionManager {
         new Limelight(
             "limelight-reefa",
             new Pose3d(
-               0.257199,
+                0.257199,
                 -0.240415,
                 0.197419,
                 new Rotation3d(0, -Units.degreesToRadians(20.0), Units.degreesToRadians(35))));
@@ -89,7 +86,7 @@ public class VisionManager {
   private final Drivetrain drivetrain;
   private final Limelight[] limelights =
       new Limelight[] {
-        Limelights.REEF_RIGHT, Limelights.REEF_LEFT, Limelights.STATION, //Limelights.CLIMBER
+        Limelights.REEF_RIGHT, Limelights.REEF_LEFT // , Limelights.STATION, //Limelights.CLIMBER
       };
 
   // private final Notifier visionThread;
@@ -99,9 +96,10 @@ public class VisionManager {
   public VisionManager(Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
 
-    LimelightHelpers.SetFiducialIDFiltersOverride(Limelights.REEF_LEFT.name(), FieldConstants.REEF_TAGS);
-    LimelightHelpers.SetFiducialIDFiltersOverride(Limelights.REEF_RIGHT.name(), FieldConstants.REEF_TAGS);
-
+    LimelightHelpers.SetFiducialIDFiltersOverride(
+        Limelights.REEF_LEFT.name(), FieldConstants.REEF_TAGS);
+    LimelightHelpers.SetFiducialIDFiltersOverride(
+        Limelights.REEF_RIGHT.name(), FieldConstants.REEF_TAGS);
 
     /* visionThread =
         new Notifier(
@@ -218,18 +216,18 @@ public class VisionManager {
     }
   }
 
-    private void addSpecializedPoseEstimate(Limelight limelight) {
-     var estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight.name());
+  /* private void addSpecializedPoseEstimate(Limelight limelight) {
+   var estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight.name());
 
-     if(!rejectEstimate(estimate)){
-      double stdFactor = Math.pow(estimate.avgTagDist, 2.2) / (estimate.tagCount * 0.5);
-      double xyStds = VisionConstants.xyStdBaseline * stdFactor * VisionConstants.xyMt2StdFactor;
-      drivetrain.addSpecializedMeasurement(
-          estimate.pose,
-          estimate.timestampSeconds,
-          VecBuilder.fill(xyStds, xyStds, 999999999.0));
-     }
-    }
+   if(!rejectEstimate(estimate)){
+    double stdFactor = Math.pow(estimate.avgTagDist, 2.2) / (estimate.tagCount * 0.5);
+    double xyStds = VisionConstants.xyStdBaseline * stdFactor * VisionConstants.xyMt2StdFactor;
+    drivetrain.addSpecializedMeasurement(
+        estimate.pose,
+        estimate.timestampSeconds,
+        VecBuilder.fill(xyStds, xyStds, 999999999.0));
+   }
+  } */
 
   private boolean rejectEstimate(PoseEstimate estimate) {
     return estimate == null
@@ -245,8 +243,8 @@ public class VisionManager {
       addGlobalPoseEstimate(ll);
     }
 
-    addSpecializedPoseEstimate(Limelights.REEF_LEFT);
-    addSpecializedPoseEstimate(Limelights.REEF_RIGHT);
+    // addSpecializedPoseEstimate(Limelights.REEF_LEFT);
+    // addSpecializedPoseEstimate(Limelights.REEF_RIGHT);
 
     if (Robot.isSimulation() && visionSim != null) {
       visionSim.update(drivetrain.getEstimatedPose());

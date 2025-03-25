@@ -47,16 +47,105 @@ public class AutoAlign extends Command {
   private final double headingTolerance = Units.degreesToRadians(1.0);
 
   private double currentDistance = 0.0;
-  
-    private final double ffMinRadius = 0.1;
-    private final double ffMaxRadius = 0.8;
-  
-    public AutoAlign(RobotContainer container, Supplier<ScoringLocation> location) {
-      this.container = container;
-      this.drivetrain = container.getSubsystems().drivetrain();
-      this.elevator = container.getSubsystems().superstructure().getElevator();
-      this.location = location;
-  
+
+  private final double ffMinRadius = 0.1;
+  private final double ffMaxRadius = 0.8;
+
+  public AutoAlign(RobotContainer container, Supplier<ScoringLocation> location) {
+    this.container = container;
+    this.drivetrain = container.getSubsystems().drivetrain();
+    this.elevator = container.getSubsystems().superstructure().getElevator();
+    this.location = location;
+
+    switch (location.get()) {
+      case LEFT:
+      case RIGHT:
+        targetPose = () -> container.getRobotState().getTargetBranchPoses(location.get());
+        break;
+      case CENTER:
+        targetPose =
+            () ->
+                Pair.of(
+                    container.getRobotState().getTargetAlgaeState().getFirst(),
+                    container.getRobotState().getTargetAlgaeState().getFirst());
+        break;
+      default:
+        targetPose = () -> Pair.of(drivetrain.getEstimatedPose(), drivetrain.getEstimatedPose());
+        break;
+    }
+
+    isAuto = false;
+
+    headingController.enableContinuousInput(-Math.PI, Math.PI);
+
+    addRequirements(drivetrain);
+  }
+
+  public AutoAlign(RobotContainer container, ScoringLocation location) {
+    this.container = container;
+    this.drivetrain = container.getSubsystems().drivetrain();
+    this.elevator = container.getSubsystems().superstructure().getElevator();
+    this.location = () -> location;
+
+    switch (location) {
+      case LEFT:
+      case RIGHT:
+        targetPose = () -> container.getRobotState().getTargetBranchPoses(location);
+        break;
+      case CENTER:
+        targetPose =
+            () ->
+                Pair.of(
+                    container.getRobotState().getTargetAlgaeState().getFirst(),
+                    container.getRobotState().getTargetAlgaeState().getFirst());
+        break;
+      default:
+        targetPose = () -> Pair.of(drivetrain.getEstimatedPose(), drivetrain.getEstimatedPose());
+        break;
+    }
+
+    isAuto = true;
+
+    headingController.enableContinuousInput(-Math.PI, Math.PI);
+
+    addRequirements(drivetrain);
+  }
+
+  @Override
+  public void initialize() {
+    Pose2d currentPose = drivetrain.getEstimatedPose();
+    Twist2d fieldVel = drivetrain.getFieldVelocity();
+    Translation2d linearFieldVel = new Translation2d(fieldVel.dx, fieldVel.dy);
+    driveController.reset(
+        currentPose.getTranslation().getDistance(targetPose.get().getSecond().getTranslation()),
+        Math.min(
+            0.0,
+            -linearFieldVel
+                .rotateBy(
+                    targetPose
+                        .get()
+                        .getSecond()
+                        .getTranslation()
+                        .minus(currentPose.getTranslation())
+                        .getAngle()
+                        .unaryMinus())
+                .getX()));
+    headingController.reset(currentPose.getRotation().getRadians(), fieldVel.dtheta);
+    lastSetpointTranslation = currentPose.getTranslation();
+  }
+
+  @Override
+  public void execute() {
+    if (targetPose == null) {
+      return;
+    }
+    Pose2d currentPose;
+    if (Dashboard.useGlobalEstimateForAutoAlign.get()) {
+      currentPose = drivetrain.getEstimatedPose();
+    } else {
+      currentPose = drivetrain.getEstimatedPose();
+    }
+    if (!isAuto) {
       switch (location.get()) {
         case LEFT:
         case RIGHT:
@@ -70,113 +159,24 @@ public class AutoAlign extends Command {
                       container.getRobotState().getTargetAlgaeState().getFirst());
           break;
         default:
-          targetPose = () -> Pair.of(drivetrain.getSpecializedPoseEstimate(), drivetrain.getSpecializedPoseEstimate());
-          break;
-      }
-  
-      isAuto = false;
-  
-      headingController.enableContinuousInput(-Math.PI, Math.PI);
-  
-      addRequirements(drivetrain);
-    }
-  
-    public AutoAlign(RobotContainer container, ScoringLocation location) {
-      this.container = container;
-      this.drivetrain = container.getSubsystems().drivetrain();
-      this.elevator = container.getSubsystems().superstructure().getElevator();
-      this.location = () -> location;
-  
-      switch (location) {
-        case LEFT:
-        case RIGHT:
-          targetPose = () -> container.getRobotState().getTargetBranchPoses(location);
-          break;
-        case CENTER:
-          targetPose =
-              () ->
-                  Pair.of(
-                      container.getRobotState().getTargetAlgaeState().getFirst(),
-                      container.getRobotState().getTargetAlgaeState().getFirst());
-          break;
-        default:
-          targetPose = () -> Pair.of(drivetrain.getSpecializedPoseEstimate(), drivetrain.getSpecializedPoseEstimate());
-          break;
-      }
-  
-      isAuto = true;
-  
-      headingController.enableContinuousInput(-Math.PI, Math.PI);
-  
-      addRequirements(drivetrain);
-    }
-  
-    @Override
-    public void initialize() {
-      Pose2d currentPose = drivetrain.getSpecializedPoseEstimate();
-      Twist2d fieldVel = drivetrain.getFieldVelocity();
-      Translation2d linearFieldVel = new Translation2d(fieldVel.dx, fieldVel.dy);
-      driveController.reset(
-          currentPose.getTranslation().getDistance(targetPose.get().getSecond().getTranslation()),
-          Math.min(
-              0.0,
-              -linearFieldVel
-                  .rotateBy(
-                      targetPose
-                          .get()
-                          .getSecond()
-                          .getTranslation()
-                          .minus(currentPose.getTranslation())
-                          .getAngle()
-                          .unaryMinus())
-                  .getX()));
-      headingController.reset(currentPose.getRotation().getRadians(), fieldVel.dtheta);
-      lastSetpointTranslation = currentPose.getTranslation();
-    }
-  
-    @Override
-    public void execute() {
-      if(targetPose == null){
-        return;
-      }
-      Pose2d currentPose;
-      if(Dashboard.useGlobalEstimateForAutoAlign.get()){
-        currentPose = drivetrain.getEstimatedPose();
-      } else {
-        currentPose = drivetrain.getSpecializedPoseEstimate();
-      }
-      if(!isAuto){
-      switch (location.get()) {
-        case LEFT:
-        case RIGHT:
-          targetPose = () -> container.getRobotState().getTargetBranchPoses(location.get());
-          break;
-        case CENTER:
-          targetPose =
-              () ->
-                  Pair.of(
-                      container.getRobotState().getTargetAlgaeState().getFirst(),
-                      container.getRobotState().getTargetAlgaeState().getFirst());
-          break;
-        default:
-          targetPose = () -> Pair.of(drivetrain.getSpecializedPoseEstimate(), drivetrain.getSpecializedPoseEstimate());
+          targetPose = () -> Pair.of(drivetrain.getEstimatedPose(), drivetrain.getEstimatedPose());
           break;
       }
     }
-      Pose2d targetPose =
-          this.targetPose
-              .get()
-              .getFirst()
-              .interpolate(
-                  this.targetPose.get().getSecond(),
-                  currentPose
-                          .getTranslation()
-                          .getDistance(this.targetPose.get().getFirst().getTranslation())
-                      * 1.5);
-  
-      driveController.setConstraints(new Constraints(elevator.getDriveScalar(), 4.0));
-  
-      currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
+    Pose2d targetPose =
+        this.targetPose
+            .get()
+            .getFirst()
+            .interpolate(
+                this.targetPose.get().getSecond(),
+                currentPose
+                        .getTranslation()
+                        .getDistance(this.targetPose.get().getFirst().getTranslation())
+                    * 1.5);
+
+    driveController.setConstraints(new Constraints(elevator.getDriveScalar(), 4.0));
+
+    currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
     double ffScalar =
         MathUtil.clamp((currentDistance - ffMinRadius) / (ffMaxRadius - ffMinRadius), 0.0, 1.0);
     driveErrorAbs = currentDistance;
@@ -242,6 +242,14 @@ public class AutoAlign extends Command {
 
   @Override
   public boolean isFinished() {
-      return targetPose == null || (isAuto && currentDistance < driveTolerance);
+    return targetPose == null || (isAuto && currentDistance < driveTolerance);
+  }
+
+  public boolean hasReachedGoal() {
+    return currentDistance < driveTolerance && headingController.atSetpoint();
+  }
+
+  public boolean hasReachedGoal(double distTolerance) {
+    return currentDistance < distTolerance && headingController.atSetpoint();
   }
 }

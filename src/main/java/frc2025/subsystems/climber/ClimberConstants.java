@@ -23,11 +23,12 @@ public class ClimberConstants {
     CONFIGURATION.debugMode = false;
 
     CONFIGURATION.masterConstants =
-    new TalonFXConstants(new CANDevice(12), InvertedValue.Clockwise_Positive); // Right Climber
+        new TalonFXConstants(new CANDevice(12), InvertedValue.Clockwise_Positive); // Right Climber
 
     CONFIGURATION.slaveConstants =
         new TalonFXConstants[] {
-          new TalonFXConstants(new CANDevice(13), InvertedValue.CounterClockwise_Positive) // Left Climber
+          new TalonFXConstants(
+              new CANDevice(13), InvertedValue.CounterClockwise_Positive) // Left Climber
         };
 
     CONFIGURATION.neutralMode = NeutralModeValue.Brake;

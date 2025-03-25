@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import zones.HexagonalPoseArea;
 import zones.RectangularPoseArea;
@@ -50,7 +49,10 @@ public class FieldConstants {
   public static final Pose2d BLUE_BARGE_ALIGN =
       new Pose2d(7.7, FIELD_DIMENSIONS.getY() * /* 0.75 */ 0.65, Rotation2d.kZero);
   public static final Pose2d RED_BARGE_ALIGN =
-      new Pose2d(FIELD_DIMENSIONS.getX() - 7.7, FIELD_DIMENSIONS.getY() * /* 0.25 */ 0.35, Rotation2d.k180deg);
+      new Pose2d(
+          FIELD_DIMENSIONS.getX() - 7.7,
+          FIELD_DIMENSIONS.getY() * /* 0.25 */ 0.35,
+          Rotation2d.k180deg);
 
   public static final Translation2d BLUE_REEF_CENTER =
       new Translation2d(Units.inchesToMeters(176.746), FIELD_DIMENSIONS.getY() / 2.0);
@@ -72,10 +74,11 @@ public class FieldConstants {
   public static final Map<Integer, Pair<Pose2d, AlgaeLevel>> BLUE_ALGAE_LOCATIONS = new HashMap<>();
   public static final Map<Integer, Pair<Pose2d, AlgaeLevel>> RED_ALGAE_LOCATIONS = new HashMap<>();
 
-  public static final int[] ALL_TAGS = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
-  public static final int[] BLUE_REEF_TAGS = new int[]{22, 21, 20, 19, 18, 17};
-  public static final int[] RED_REEF_TAGS = new int[]{11, 10, 9, 8, 7, 6};
-  public static final int[] REEF_TAGS = new int[]{22, 21, 20, 19, 18, 17, 11, 10, 9, 8, 7, 6};
+  public static final int[] ALL_TAGS =
+      new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
+  public static final int[] BLUE_REEF_TAGS = new int[] {22, 21, 20, 19, 18, 17};
+  public static final int[] RED_REEF_TAGS = new int[] {11, 10, 9, 8, 7, 6};
+  public static final int[] REEF_TAGS = new int[] {22, 21, 20, 19, 18, 17, 11, 10, 9, 8, 7, 6};
 
   private static Pair<Integer, Pose2d> getTagPair(int id) {
     return Pair.of(

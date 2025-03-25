@@ -4,7 +4,6 @@
 
 package frc2025;
 
-import drivers.TalonFXSubsystem;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc2025.autonomous.AutoSelector;
 import frc2025.commands.AutoAlign;
+import frc2025.commands.AutoScore;
 import frc2025.commands.ClimbSequence;
 import frc2025.commands.Feed;
 import frc2025.constants.FieldConstants;
@@ -61,7 +61,7 @@ public class RobotContainer {
 
   @Getter private final AutoSelector autoSelector;
 
-  private final Function<SuperstructureState, Supplier<Command>> applyTargetStateFactory =
+  public final Function<SuperstructureState, Supplier<Command>> applyTargetStateFactory =
       (state) -> () -> superstructure.applyTargetState(state);
 
   private final Command autoAlign =
@@ -120,9 +120,10 @@ public class RobotContainer {
                 drivetrain.setControl(
                     drivetrain
                         .getHelper()
-                        .getFacingAngleProfiled(
+                        .getPointingAtProfiled(
                             Controlboard.getTranslation().get(),
-                            robotState.getTargetAlgaeState().getFirst().getRotation(),
+                            AllianceFlipUtil.get(
+                                FieldConstants.BLUE_REEF_CENTER, FieldConstants.RED_REEF_CENTER),
                             DrivetrainConstants.HEADING_CONTROLLER_PROFILED));
               } else {
                 drivetrain.setControl(
@@ -144,26 +145,26 @@ public class RobotContainer {
             }
           });
 
-          private final Command algaeClearFactory =
-          Commands.defer(
-              () ->
-                  Commands.either(
-                      Commands.parallel(
-                          applyTargetStateFactory
-                              .apply(
-                                  robotState.mapAlgaeLevelToState(
-                                      Dashboard.wantedAlgaeLevel.getSelected()))
-                              .get(),
-                          wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)),
-                      Commands.parallel(
-                          new AutoAlign(this, () -> robotState.getTargetScoringLocation()),
-                          applyTargetStateFactory
-                              .apply(robotState.getTargetAlgaeState().getSecond())
-                              .get(),
-                          wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)),
-                      () -> Dashboard.disableAutoFeatures.get() || robotState.getReefZone().isEmpty()),
-              Set.of(
-                  drivetrain, superstructure.getElevator(), superstructure.getWrist(), wristRollers));
+  private final Command algaeClearFactory =
+      Commands.defer(
+          () ->
+              Commands.either(
+                  Commands.parallel(
+                      applyTargetStateFactory
+                          .apply(
+                              robotState.mapAlgaeLevelToState(
+                                  Dashboard.wantedAlgaeLevel.getSelected()))
+                          .get(),
+                      wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)),
+                  Commands.parallel(
+                      new AutoAlign(this, () -> robotState.getTargetScoringLocation()),
+                      applyTargetStateFactory
+                          .apply(robotState.getTargetAlgaeState().getSecond())
+                          .get(),
+                      wristRollers.applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)),
+                  () -> Dashboard.disableAutoFeatures.get() || robotState.getReefZone().isEmpty()),
+          Set.of(
+              drivetrain, superstructure.getElevator(), superstructure.getWrist(), wristRollers));
 
   private ClimbSequence climbSequence = new ClimbSequence(subsystems);
 
@@ -234,32 +235,36 @@ public class RobotContainer {
                                     Controlboard.getTranslation()
                                         .get()
                                         .times(superstructure.getElevator().getDriveScalar() * 0.5),
-                                    AllianceFlipUtil.get(Rotation2d.fromDegrees(45), Rotation2d.fromDegrees(-135)),
+                                    AllianceFlipUtil.get(
+                                        Rotation2d.fromDegrees(45), Rotation2d.fromDegrees(-135)),
                                     DrivetrainConstants.HEADING_CONTROLLER_PROFILED)),
                     applyTargetStateFactory.apply(SuperstructureState.BARGE_NET).get())
                 .beforeStarting(() -> drivetrain.resetHeadingController()));
 
     // Reef scoring/clearing controls
-    Controlboard.goToLevel4()
-        .and(
+    Controlboard.goToLevel4().whileTrue(new AutoScore(this, SuperstructureState.REEF_L4));
+        /* .and(
             () ->
-                (Controlboard.getTranslation().get().getNorm() < 0.25 || Dashboard.disableAutoFeatures.get()))
+                (Controlboard.getTranslation().get().getNorm() < 0.25
+                    || Dashboard.disableAutoFeatures.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L4).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
-        .whileTrue(autoAlign);
+        .whileTrue(autoAlign); */
 
-    Controlboard.goToLevel3()
-        .and(
+    Controlboard.goToLevel3().whileTrue(new AutoScore(this, SuperstructureState.REEF_L3));
+        /* .and(
             () ->
-            (Controlboard.getTranslation().get().getNorm() < 0.25 || Dashboard.disableAutoFeatures.get()))
+                (Controlboard.getTranslation().get().getNorm() < 0.25
+                    || Dashboard.disableAutoFeatures.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L3).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
-        .whileTrue(autoAlign);
+        .whileTrue(autoAlign); */
 
     Controlboard.goToLevel2()
         .and(
             () ->
-            (Controlboard.getTranslation().get().getNorm() < 0.25 || Dashboard.disableAutoFeatures.get()))
+                (Controlboard.getTranslation().get().getNorm() < 0.25
+                    || Dashboard.disableAutoFeatures.get()))
         .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L2).get())
         .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
         .whileTrue(autoAlign);
@@ -275,14 +280,7 @@ public class RobotContainer {
         .onFalse(Commands.runOnce(() -> algaeClearFactory.cancel()));
 
     // Intake controls
-    Controlboard.feed()
-        .and(() -> !WristRollers.hasCoral || Dashboard.disableCoralRequirement.get())
-        .whileTrue(
-            Commands.parallel(
-                new Feed(wristRollers),
-                applyTargetStateFactory.apply(SuperstructureState.FEEDING).get()))
-        .and(() -> !Dashboard.disableAutoFeatures.get())
-        .whileTrue(feedAlign);
+    Controlboard.feed().and(() -> !Dashboard.disableAutoFeatures.get()).whileTrue(feedAlign);
 
     Controlboard.troughFeed()
         .whileTrue(
@@ -343,6 +341,8 @@ public class RobotContainer {
     superstructure
         .getWrist()
         .setDefaultCommand(applyTargetStateFactory.apply(SuperstructureState.FEEDING).get());
+
+    wristRollers.setDefaultCommand(new Feed(wristRollers, Controlboard.feed()));
   }
 
   public void configureManualOverrides() {
@@ -387,18 +387,27 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     new Trigger(() -> Dashboard.disableClimber.get())
+        .whileTrue(Commands.runOnce(() -> climber.emergencyStop()).ignoringDisable(true));
+
+    new Trigger(() -> Dashboard.unjam.get())
         .whileTrue(
+            Commands.defer(
+                () ->
+                    superstructure
+                        .getElevator()
+                        .applyVoltageCommand(() -> 1.25)
+                        .alongWith(wristRollers.applyVoltageCommand(() -> 9.0)),
+                Set.of(superstructure.getElevator(), wristRollers, superstructure.getWrist())));
+
+    new Trigger(() -> Dashboard.submitRotationOverride.get())
+        .onTrue(
             Commands.runOnce(
-                    () ->
-                        climber.emergencyStop())
+                    () -> {
+                      drivetrain.resetRotation(
+                          Rotation2d.fromDegrees(Dashboard.rotationOverride.get()));
+                      Dashboard.submitRotationOverride.set(false);
+                    })
                 .ignoringDisable(true));
-
-    new Trigger(() -> Dashboard.unjam.get()).whileTrue(Commands.defer(() -> superstructure.getElevator().applyVoltageCommand(() -> 1.25).alongWith(wristRollers.applyVoltageCommand(() -> 9.0)), Set.of(superstructure.getElevator(), wristRollers, superstructure.getWrist())));
-
-    new Trigger(() -> Dashboard.submitRotationOverride.get()).onTrue(Commands.runOnce(() -> {
-        drivetrain.resetRotation(Rotation2d.fromDegrees(Dashboard.rotationOverride.get()));
-        Dashboard.submitRotationOverride.set(false);
-    }).ignoringDisable(true));
   }
 
   public Command getAutonomousCommand() {

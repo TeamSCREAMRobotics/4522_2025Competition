@@ -4,7 +4,6 @@
 
 package frc2025;
 
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.hal.AllianceStationID;
@@ -90,7 +89,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledExit() {
     VisionManager.hasEnabled = true;
-    //robotContainer.getSubsystems().climber().setNeutralMode(NeutralModeValue.Brake);
+    // robotContainer.getSubsystems().climber().setNeutralMode(NeutralModeValue.Brake);
   }
 
   @Override

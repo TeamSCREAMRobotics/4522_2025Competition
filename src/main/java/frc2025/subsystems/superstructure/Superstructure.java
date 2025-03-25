@@ -40,6 +40,10 @@ public class Superstructure {
     Logger.log(logPrefix + "CurrentState", getCurrentState());
   }
 
+  public boolean atGoal() {
+    return elevator.atGoal() && wrist.atGoal();
+  }
+
   public Command rezero() {
     return Commands.defer(() -> elevator.rezero(), Set.of(elevator, wrist));
   }
