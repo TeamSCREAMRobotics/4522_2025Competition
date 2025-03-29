@@ -7,6 +7,7 @@ package frc2025;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -24,6 +25,8 @@ import frc2025.subsystems.climber.ClimberConstants;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.drivetrain.DrivetrainConstants;
 import frc2025.subsystems.drivetrain.generated.TunerConstants;
+import frc2025.subsystems.leds.LED;
+import frc2025.subsystems.leds.LEDConstants;
 import frc2025.subsystems.superstructure.Superstructure;
 import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureState;
 import frc2025.subsystems.superstructure.elevator.ElevatorConstants;
@@ -50,6 +53,7 @@ public class RobotContainer {
       new Superstructure(ElevatorConstants.CONFIGURATION, WristConstants.WRIST_CONFIG);
   private static final WristRollers wristRollers = new WristRollers(WristConstants.ROLLERS_CONFIG);
   private static final Climber climber = new Climber(ClimberConstants.CONFIGURATION);
+  private static final LED led = new LED();
 
   @Getter private static final VisionManager visionManager = new VisionManager(drivetrain);
 
@@ -343,6 +347,8 @@ public class RobotContainer {
         .setDefaultCommand(applyTargetStateFactory.apply(SuperstructureState.FEEDING).get());
 
     wristRollers.setDefaultCommand(new Feed(wristRollers, Controlboard.feed()));
+
+    led.setDefaultCommand(led.waveCommand(Color.kBlue, Color.kOrange, LEDConstants.STRIP_LENGTH / 2.0, 1.5).ignoringDisable(true));
   }
 
   public void configureManualOverrides() {
