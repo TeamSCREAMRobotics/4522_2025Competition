@@ -34,7 +34,7 @@ public final class ElevatorConstants {
       MAX_HEIGHT.getInches() / PULLEY_CIRCUMFERENCE.getInches();
   public static final double ENCODER_MIN = 0.0;
 
-  public static final double REDUCTION = 5.3125; // (50.0 / 20.0) * (36.0 / 14.0);
+  public static final double REDUCTION = 3.125;
 
   public static final ElevatorSim SIM =
       new ElevatorSim(
@@ -55,7 +55,7 @@ public final class ElevatorConstants {
     CONFIGURATION.name = "Elevator";
 
     CONFIGURATION.codeEnabled = true;
-    CONFIGURATION.logTelemetry = false;
+    CONFIGURATION.logTelemetry = true;
     CONFIGURATION.debugMode = false;
 
     CONFIGURATION.simConstants =
@@ -68,27 +68,29 @@ public final class ElevatorConstants {
 
     CONFIGURATION.masterConstants =
         new TalonFXConstants(
-            new CANDevice(8, ""),
-            InvertedValue.Clockwise_Positive); // Left as viewed from motor side
+            new CANDevice(8, ""), InvertedValue.CounterClockwise_Positive); // Left Elevator Inside
     CONFIGURATION.slaveConstants =
         new TalonFXConstants[] {
           new TalonFXConstants(
-              new CANDevice(9, ""),
-              InvertedValue.CounterClockwise_Positive), // Right as viewed from motor side
+              new CANDevice(9, ""), InvertedValue.Clockwise_Positive), // Left Elevator Outside
+            new TalonFXConstants(
+                new CANDevice(14, ""), InvertedValue.Clockwise_Positive), // Right Elevator Inside
+            new TalonFXConstants(
+                new CANDevice(15, ""), InvertedValue.CounterClockwise_Positive), // Right Elevator Outside
         };
 
     CONFIGURATION.neutralMode = NeutralModeValue.Brake;
     CONFIGURATION.sensorToMechRatio = REDUCTION;
     CONFIGURATION.enableSupplyCurrentLimit = true;
-    CONFIGURATION.supplyCurrentLimit = 65;
+    CONFIGURATION.supplyCurrentLimit = 55;
     CONFIGURATION.minUnitsLimit = ENCODER_MIN;
     CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
-    CONFIGURATION.cruiseVelocity = 80.0; // 30.0
-    CONFIGURATION.acceleration = 40.0;
+    CONFIGURATION.cruiseVelocity = 60.0; // 30.0
+    CONFIGURATION.acceleration = 50.0;
     CONFIGURATION.slot0 =
-        new ScreamPIDConstants(60.0, 0, 0) // 60.0
+        new ScreamPIDConstants(35.0, 0, 0) // 60.0
             .getSlot0Configs(
-                new FeedforwardConstants(0, 0.0, 0.65, 0, GravityTypeValue.Elevator_Static));
+                new FeedforwardConstants(0, 0.0, 0.3, 0, GravityTypeValue.Elevator_Static));
     CONFIGURATION.positionThreshold = Elevator.heightToRotations(Length.fromInches(0.25)); // 4.0
   }
 }

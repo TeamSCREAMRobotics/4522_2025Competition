@@ -7,6 +7,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.logging.Logger;
 import java.util.function.DoubleSupplier;
 
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+
 public class Climber extends TalonFXSubsystem {
 
   public enum ServoGoal {
@@ -20,8 +23,10 @@ public class Climber extends TalonFXSubsystem {
     }
   }
 
+  public final SparkMax rollers = new SparkMax(1, MotorType.kBrushless);
+
   public final Servo funnelServo = new Servo(9);
-  public final Servo latchServo = new Servo(8);
+  //public final Servo latchServo = new Servo(8);
 
   public static boolean hasClimbed = false;
 
@@ -29,10 +34,10 @@ public class Climber extends TalonFXSubsystem {
     super(config, ClimberGoal.HOME);
 
     funnelServo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
-    latchServo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
+    //latchServo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
 
     funnelServo.set(1);
-    latchServo.set(1);
+    //latchServo.set(1);
 
     resetPosition(0.0);
   }
@@ -89,7 +94,7 @@ public class Climber extends TalonFXSubsystem {
     return Commands.runOnce(() -> setFunnelServo(goal.position));
   }
 
-  public void setLatchServo(ServoGoal goal) {
+  /* public void setLatchServo(ServoGoal goal) {
     setLatchServo(goal.position);
   }
 
@@ -103,6 +108,22 @@ public class Climber extends TalonFXSubsystem {
 
   public Command setLatchServoCommand(ServoGoal goal) {
     return Commands.runOnce(() -> setLatchServo(goal.position));
+  } */
+
+  public void setRollers(double voltage){
+    rollers.setVoltage(voltage);
+  }
+
+  public Command setRollersCommand(DoubleSupplier voltage){
+    return Commands.run(() -> setRollers(voltage.getAsDouble()));
+  }
+
+  public Command enableRollers(){
+    return setRollersCommand(() -> 6.0);
+  }
+
+  public Command disableRollers(){
+    return Commands.runOnce(() -> rollers.stopMotor());
   }
 
   @Override

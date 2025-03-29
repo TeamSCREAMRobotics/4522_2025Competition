@@ -246,23 +246,23 @@ public class RobotContainer {
                 .beforeStarting(() -> drivetrain.resetHeadingController()));
 
     // Reef scoring/clearing controls
-    Controlboard.goToLevel4().whileTrue(new AutoScore(this, SuperstructureState.REEF_L4));
-        /* .and(
-            () ->
-                (Controlboard.getTranslation().get().getNorm() < 0.25
-                    || Dashboard.disableAutoFeatures.get()))
-        .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L4).get())
-        .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
-        .whileTrue(autoAlign); */
+    Controlboard.goToLevel4()//.whileTrue(new AutoScore(this, SuperstructureState.REEF_L4));
+    .and(
+        () ->
+            (Controlboard.getTranslation().get().getNorm() < 0.25
+                || Dashboard.disableAutoFeatures.get()))
+    .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L4).get())
+    .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
+    .whileTrue(autoAlign);
 
-    Controlboard.goToLevel3().whileTrue(new AutoScore(this, SuperstructureState.REEF_L3));
-        /* .and(
-            () ->
-                (Controlboard.getTranslation().get().getNorm() < 0.25
-                    || Dashboard.disableAutoFeatures.get()))
-        .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L3).get())
-        .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
-        .whileTrue(autoAlign); */
+    Controlboard.goToLevel3()//.whileTrue(new AutoScore(this, SuperstructureState.REEF_L3));
+    .and(
+        () ->
+            (Controlboard.getTranslation().get().getNorm() < 0.25
+                || Dashboard.disableAutoFeatures.get()))
+    .whileTrue(applyTargetStateFactory.apply(SuperstructureState.REEF_L3).get())
+    .and(() -> robotState.getReefZone().isPresent() && !Dashboard.disableAutoFeatures.get())
+    .whileTrue(autoAlign);
 
     Controlboard.goToLevel2()
         .and(
@@ -367,7 +367,7 @@ public class RobotContainer {
                     climber.applyVoltageCommand(() -> Dashboard.climberVoltage.get()),
                     wristRollers.applyVoltageCommand(() -> Dashboard.wristRollersVoltage.get()),
                     climber.setManualFunnelServo(() -> Dashboard.funnelServoPosition.get()),
-                    climber.setManualLatchServo(() -> Dashboard.latchServoPosition.get()))
+                    climber.setRollersCommand(() -> Dashboard.climbRollersVoltage.get()))
                 .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
                 .ignoringDisable(true))
         .onFalse(Commands.runOnce(() -> Dashboard.resetManualOverrides()).ignoringDisable(true));

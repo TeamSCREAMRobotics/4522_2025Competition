@@ -10,7 +10,7 @@ import pid.ScreamPIDConstants.FeedforwardConstants;
 
 public class ClimberConstants {
 
-  public static final double REDUCTION = 556.875; // 201.6
+  public static final double REDUCTION = 81;
 
   public static final TalonFXSubsystemConfiguration CONFIGURATION =
       new TalonFXSubsystemConfiguration();
@@ -23,13 +23,7 @@ public class ClimberConstants {
     CONFIGURATION.debugMode = false;
 
     CONFIGURATION.masterConstants =
-        new TalonFXConstants(new CANDevice(12), InvertedValue.Clockwise_Positive); // Right Climber
-
-    CONFIGURATION.slaveConstants =
-        new TalonFXConstants[] {
-          new TalonFXConstants(
-              new CANDevice(13), InvertedValue.CounterClockwise_Positive) // Left Climber
-        };
+        new TalonFXConstants(new CANDevice(12), InvertedValue.CounterClockwise_Positive);
 
     CONFIGURATION.neutralMode = NeutralModeValue.Brake;
     CONFIGURATION.sensorToMechRatio = REDUCTION;
