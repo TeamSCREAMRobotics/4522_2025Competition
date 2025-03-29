@@ -4,6 +4,7 @@
 
 package frc2025.commands;
 
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc2025.RobotContainer.Subsystems;
@@ -29,21 +30,23 @@ public class ClimbSequence extends Command {
   public void initialize() {
     index = -1;
     startTime = Timer.getFPGATimestamp();
-    climber.setFunnelServo(ServoGoal.RETRACT);
+    // climber.setFunnelServo(ServoGoal.RETRACT);
+    climber.applyGoalCommand(ClimberGoal.OUT);
   }
 
   @Override
   public void execute() {
     switch (index) {
       case 0:
-        if (Timer.getFPGATimestamp() - startTime > 3.0) {
-          climber.applyGoal(ClimberGoal.OUT);
-        } else {
-          climber.applyGoal(ClimberGoal.STOW_UNDER_FUNNEL);
-        }
-        if (climber.atGoal(0.01) && climber.getGoal() == ClimberGoal.OUT) {
-          climber.setLatchServo(ServoGoal.RETRACT);
-        }
+        // if (Timer.getFPGATimestamp() - startTime > 3.0) {
+        //   climber.applyGoal(ClimberGoal.OUT);
+        // } else {
+        //   climber.applyGoal(ClimberGoal.STOW_UNDER_FUNNEL);
+        // }
+        // /* if (climber.atGoal(0.01) && climber.getGoal() == ClimberGoal.OUT) {
+        //   climber.setLatchServo(ServoGoal.RETRACT);
+        // } */
+        if (climber.atGoal(0.01)) climber.setFunnelServo(ServoGoal.RETRACT);
         break;
       case 1:
         climber.applyGoal(ClimberGoal.CLIMB);

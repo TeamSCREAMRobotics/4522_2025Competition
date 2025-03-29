@@ -19,7 +19,7 @@ public class Dashboard {
   public static DashboardNumber climberVoltage;
   public static DashboardNumber wristRollersVoltage;
   public static DashboardNumber funnelServoPosition;
-  public static DashboardNumber latchServoPosition;
+  public static DashboardNumber climbRollersVoltage;
   public static DashboardBoolean disableAllVisionUpdates;
   public static DashboardBoolean disableAutoFeatures;
   public static DashboardBoolean zeroElevator;
@@ -51,7 +51,7 @@ public class Dashboard {
     climberVoltage = new DashboardNumber(overrides, "Climber Voltage", 0);
     wristRollersVoltage = new DashboardNumber(overrides, "Rollers Voltage", 0);
     funnelServoPosition = new DashboardNumber(overrides, "Funnel Servo Position", 1);
-    latchServoPosition = new DashboardNumber(overrides, "Latch Servo Position", 1);
+    climbRollersVoltage = new DashboardNumber(overrides, "Climb Rollers Volatage", 0.0);
     disableAllVisionUpdates = new DashboardBoolean(overrides, "Disable Vision Updates", false);
     disableMegatag2 = new DashboardBoolean(overrides, "Disable MegaTag2", false);
     disableAutoFeatures = new DashboardBoolean(overrides, "Disable Auto Features", false);
@@ -80,7 +80,7 @@ public class Dashboard {
     climberVoltage.set(0);
     wristRollersVoltage.set(0);
     funnelServoPosition.set(1);
-    latchServoPosition.set(1);
+    climbRollersVoltage.set(0);
   }
 
   public static void publishPose(Pose2d estimate) {

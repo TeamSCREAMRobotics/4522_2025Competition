@@ -26,7 +26,7 @@ public class AutoScore extends SequentialCommandGroup {
 
     align = new AutoAlign(container, () -> container.getRobotState().getTargetScoringLocation());
     addCommands(
-      new InstantCommand(() -> container.getSubsystems().wristRollers().stop()),
+        new InstantCommand(() -> container.getSubsystems().wristRollers().stop()),
         new ParallelCommandGroup(
             align,
             container.applyTargetStateFactory.apply(level).get(),
