@@ -36,10 +36,6 @@ public class Controlboard {
 
   public static boolean fieldCentric = true;
 
-  static {
-    driveController.povRight().onTrue(Commands.runOnce(() -> fieldCentric = !fieldCentric));
-  }
-
   public static ScoringLocation lastSide = ScoringLocation.RIGHT;
 
   public static Command driverRumbleCommand(Supplier<RumbleType> type, double value, double time) {
@@ -163,10 +159,10 @@ public class Controlboard {
   }
 
   public static Trigger troughFeed() {
-    return driveController.leftTrigger().and(alternateControls());
+    return driveController.povDown();
   }
 
   public static Trigger testButton() {
-    return driveController.povDown();
+    return driveController.povRight();
   }
 }

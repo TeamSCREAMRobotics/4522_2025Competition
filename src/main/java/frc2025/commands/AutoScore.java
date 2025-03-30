@@ -29,15 +29,12 @@ public class AutoScore extends SequentialCommandGroup {
         new InstantCommand(() -> container.getSubsystems().wristRollers().stop()),
         new ParallelCommandGroup(
             align,
-            container.applyTargetStateFactory.apply(level).get(),
+            Commands.sequence(Commands.waitUntil(() -> align.hasReachedGoal(1.0)), container.applyTargetStateFactory.apply(level).get()),
             Commands.sequence(
                 Commands.waitUntil(
                     () ->
-                        (align.hasReachedGoal(0.03)
+                        (align.hasReachedGoal(0.025)
                             && container.getSubsystems().superstructure().atGoal())),
-                container
-                    .getSubsystems()
-                    .wristRollers()
-                    .applyGoalCommand(WristRollersGoal.EJECT_CORAL))));
+                container.getRobotState().getScoreCommand().get())));
   }
 }

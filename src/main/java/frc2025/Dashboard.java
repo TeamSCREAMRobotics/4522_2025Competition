@@ -55,7 +55,7 @@ public class Dashboard {
     disableAllVisionUpdates = new DashboardBoolean(overrides, "Disable Vision Updates", false);
     disableMegatag2 = new DashboardBoolean(overrides, "Disable MegaTag2", false);
     disableAutoFeatures = new DashboardBoolean(overrides, "Disable Auto Features", false);
-    disableCoralRequirement = new DashboardBoolean(overrides, "Disable Coral Requirement", true);
+    disableCoralRequirement = new DashboardBoolean(overrides, "Disable Coral Requirement", false);
     zeroElevator = new DashboardBoolean(overrides, "Zero Elevator", false);
     zeroClimber = new DashboardBoolean(overrides, "Zero Climber", false);
     fieldCentric = new DashboardBoolean(overrides, "Field Centric", true);

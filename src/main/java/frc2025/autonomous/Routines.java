@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc2025.RobotContainer;
 import frc2025.autonomous.auto_commands.DriveUntilAtPose;
 import frc2025.commands.AutoAlign;
+import frc2025.commands.AutoScore;
 import frc2025.commands.Feed;
 import frc2025.constants.FieldConstants;
 import frc2025.controlboard.Controlboard.ScoringLocation;
@@ -176,8 +177,8 @@ public class Routines {
 
     return new SequentialCommandGroup(
         Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
-        currentSequence.getNext().raceWith(new Feed(container)),
-        new Feed(container).andThen(wristRollers.applyGoalCommand(WristRollersGoal.IDLE)));
+        new AutoScore(container, SuperstructureState.REEF_L4)
+    );
   }
 
   public static Command leave(RobotContainer container) {

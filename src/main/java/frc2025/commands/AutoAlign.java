@@ -13,12 +13,14 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc2025.Dashboard;
 import frc2025.RobotContainer;
 import frc2025.controlboard.Controlboard.ScoringLocation;
 import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
+import frc2025.subsystems.leds.LED;
 import frc2025.subsystems.superstructure.elevator.Elevator;
 import java.util.function.Supplier;
 import util.GeomUtil;
@@ -28,6 +30,7 @@ public class AutoAlign extends Command {
   private final RobotContainer container;
   private final Drivetrain drivetrain;
   private final Elevator elevator;
+  private final LED led;
   private Supplier<ScoringLocation> location;
 
   private boolean isAuto = false;
@@ -55,6 +58,7 @@ public class AutoAlign extends Command {
     this.container = container;
     this.drivetrain = container.getSubsystems().drivetrain();
     this.elevator = container.getSubsystems().superstructure().getElevator();
+    this.led = container.getSubsystems().led();
     this.location = location;
 
     switch (location.get()) {
@@ -85,6 +89,7 @@ public class AutoAlign extends Command {
     this.container = container;
     this.drivetrain = container.getSubsystems().drivetrain();
     this.elevator = container.getSubsystems().superstructure().getElevator();
+    this.led = container.getSubsystems().led();
     this.location = () -> location;
 
     switch (location) {
@@ -174,7 +179,7 @@ public class AutoAlign extends Command {
                         .getDistance(this.targetPose.get().getFirst().getTranslation())
                     * 1.5);
 
-    driveController.setConstraints(new Constraints(elevator.getDriveScalar(), 4.0));
+    driveController.setConstraints(new Constraints(elevator.getDriveScalar(), elevator.getAccelScalar()));
 
     currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
     double ffScalar =
@@ -225,6 +230,12 @@ public class AutoAlign extends Command {
                     driveVelocity.getY(),
                     thetaVelocity,
                     currentPose.getRotation())));
+
+    if(driveErrorAbs < 0.2){
+      led.solid(Color.kBlue);
+    } else {
+      led.centerScaledTarget(Color.kYellow, currentDistance, 0.01);
+    }
 
     Logger.log("AutoAlign/TargetPose", targetPose);
     Logger.log(

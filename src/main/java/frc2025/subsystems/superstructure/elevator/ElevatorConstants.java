@@ -73,22 +73,23 @@ public final class ElevatorConstants {
         new TalonFXConstants[] {
           new TalonFXConstants(
               new CANDevice(9, ""), InvertedValue.Clockwise_Positive), // Left Elevator Outside
-            new TalonFXConstants(
-                new CANDevice(14, ""), InvertedValue.Clockwise_Positive), // Right Elevator Inside
-            new TalonFXConstants(
-                new CANDevice(15, ""), InvertedValue.CounterClockwise_Positive), // Right Elevator Outside
+          new TalonFXConstants(
+              new CANDevice(14, ""), InvertedValue.Clockwise_Positive), // Right Elevator Inside
+          new TalonFXConstants(
+              new CANDevice(15, ""),
+              InvertedValue.CounterClockwise_Positive), // Right Elevator Outside
         };
 
     CONFIGURATION.neutralMode = NeutralModeValue.Brake;
     CONFIGURATION.sensorToMechRatio = REDUCTION;
     CONFIGURATION.enableSupplyCurrentLimit = true;
-    CONFIGURATION.supplyCurrentLimit = 55;
+    CONFIGURATION.supplyCurrentLimit = 30;
     CONFIGURATION.minUnitsLimit = ENCODER_MIN;
     CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
     CONFIGURATION.cruiseVelocity = 60.0; // 30.0
-    CONFIGURATION.acceleration = 50.0;
+    CONFIGURATION.acceleration = 40.0;
     CONFIGURATION.slot0 =
-        new ScreamPIDConstants(35.0, 0, 0) // 60.0
+        new ScreamPIDConstants(45.0, 0, 0) // 60.0
             .getSlot0Configs(
                 new FeedforwardConstants(0, 0.0, 0.3, 0, GravityTypeValue.Elevator_Static));
     CONFIGURATION.positionThreshold = Elevator.heightToRotations(Length.fromInches(0.25)); // 4.0

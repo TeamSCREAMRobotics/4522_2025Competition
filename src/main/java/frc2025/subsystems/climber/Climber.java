@@ -1,14 +1,16 @@
 package frc2025.subsystems.climber;
 
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import drivers.TalonFXSubsystem;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.logging.Logger;
-import java.util.function.DoubleSupplier;
 
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 public class Climber extends TalonFXSubsystem {
 
@@ -24,9 +26,10 @@ public class Climber extends TalonFXSubsystem {
   }
 
   public final SparkMax rollers = new SparkMax(1, MotorType.kBrushless);
+  public final DigitalInput cageLimitSwitch = new DigitalInput(5);
 
-  public final Servo funnelServo = new Servo(9);
-  //public final Servo latchServo = new Servo(8);
+  public final Servo funnelServo = new Servo(7);
+  // public final Servo latchServo = new Servo(8);
 
   public static boolean hasClimbed = false;
 
@@ -34,20 +37,20 @@ public class Climber extends TalonFXSubsystem {
     super(config, ClimberGoal.HOME);
 
     funnelServo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
-    //latchServo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
+    // latchServo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
 
     funnelServo.set(1);
-    //latchServo.set(1);
+    // latchServo.set(1);
 
     resetPosition(0.0);
   }
 
   public enum ClimberGoal implements TalonFXSubsystemGoal {
     HOME(0.0),
-    HOLD_FUNNEL(-0.03),
-    STOW_UNDER_FUNNEL(-0.069),
-    OUT(0.345), // 0.335
-    CLIMB(-0.0221); // -0.025
+    // HOLD_FUNNEL(-0.03),
+    // STOW_UNDER_FUNNEL(-0.069),
+    OUT(1.85), // 2.135
+    CLIMB(0.25); // -0.0221
 
     private double targetRotations;
 
@@ -110,25 +113,30 @@ public class Climber extends TalonFXSubsystem {
     return Commands.runOnce(() -> setLatchServo(goal.position));
   } */
 
-  public void setRollers(double voltage){
+  public void setRollers(double voltage) {
     rollers.setVoltage(voltage);
   }
 
-  public Command setRollersCommand(DoubleSupplier voltage){
+  public Command setRollersCommand(DoubleSupplier voltage) {
     return Commands.run(() -> setRollers(voltage.getAsDouble()));
   }
 
-  public Command enableRollers(){
+  public Command enableRollers() {
     return setRollersCommand(() -> 6.0);
   }
 
-  public Command disableRollers(){
+  public Command disableRollers() {
     return Commands.runOnce(() -> rollers.stopMotor());
+  }
+
+  public BooleanSupplier hasCage() {
+    return () -> cageLimitSwitch.get();
   }
 
   @Override
   public void periodic() {
     super.periodic();
     Logger.log(logPrefix + "FunnelServoPos", funnelServo.getPosition());
+    Logger.log(logPrefix + "HasCage", hasCage().getAsBoolean());
   }
 }

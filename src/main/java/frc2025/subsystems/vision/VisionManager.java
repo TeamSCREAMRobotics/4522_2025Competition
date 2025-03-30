@@ -199,7 +199,7 @@ public class VisionManager {
     }
 
     if (shouldUseMt2 && !Dashboard.disableAllVisionUpdates.get()) {
-      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.2) / (mt2Estimate.tagCount * 0.5);
+      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.5) / (mt2Estimate.tagCount * 0.5);
       double xyStds = VisionConstants.xyStdBaseline * stdFactor * VisionConstants.xyMt2StdFactor;
       drivetrain.addVisionMeasurement(
           mt2Estimate.pose,
