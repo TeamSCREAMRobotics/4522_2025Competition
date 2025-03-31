@@ -1,12 +1,7 @@
 package frc2025.subsystems.climber;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
-
-import drivers.TalonFXSubsystem.CANCoderConstants;
 import drivers.TalonFXSubsystem.CANDevice;
 import drivers.TalonFXSubsystem.TalonFXConstants;
 import drivers.TalonFXSubsystem.TalonFXSubsystemConfiguration;
@@ -29,7 +24,7 @@ public class ClimberConstants {
 
     CONFIGURATION.masterConstants =
         new TalonFXConstants(new CANDevice(12), InvertedValue.CounterClockwise_Positive);
-      
+
     // CANcoderConfiguration config = new CANcoderConfiguration();
     // config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.0;
     // config.MagnetSensor.MagnetOffset = 0.0;
@@ -43,8 +38,8 @@ public class ClimberConstants {
     // CONFIGURATION.feedbackRemoteSensorId = 5;
     CONFIGURATION.enableSupplyCurrentLimit = true;
     CONFIGURATION.supplyCurrentLimit = 40;
-    CONFIGURATION.cruiseVelocity = 1.5; // .35
-    CONFIGURATION.acceleration = 1.75; // 0.75
+    CONFIGURATION.cruiseVelocity = 6.0; // .35
+    CONFIGURATION.acceleration = 3.0; // 0.75
     CONFIGURATION.slot0 =
         new ScreamPIDConstants(90.0, 0, 0).getSlot0Configs(new FeedforwardConstants()); // 75
     CONFIGURATION.positionThreshold = 0.005;

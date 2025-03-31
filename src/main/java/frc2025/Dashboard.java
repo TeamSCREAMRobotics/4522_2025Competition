@@ -33,6 +33,7 @@ public class Dashboard {
   public static DashboardNumber rotationOverride;
   public static DashboardBoolean submitRotationOverride;
   public static DashboardBoolean useGlobalEstimateForAutoAlign;
+  public static DashboardBoolean coastClimber;
 
   private static Field2d field = new Field2d();
 
@@ -65,6 +66,7 @@ public class Dashboard {
     submitRotationOverride = new DashboardBoolean(overrides, "Submit Rotation Override", false);
     useGlobalEstimateForAutoAlign =
         new DashboardBoolean(overrides, "Global Estimate For AA", false);
+    coastClimber = new DashboardBoolean(overrides, "Coast Climber", false);
 
     for (AlgaeLevel level : AlgaeLevel.values()) {
       wantedAlgaeLevel.addOption(level.toString(), level);

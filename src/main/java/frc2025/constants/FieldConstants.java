@@ -25,6 +25,8 @@ public class FieldConstants {
     L2;
   }
 
+  public static final Length CORAL_DIAMETER = Length.fromInches(4.5);
+
   public static final Length BRANCH_TO_REEF_EDGE = Length.fromInches(2.111249);
 
   public static final double STATION_X_OFFSET = 0.1;

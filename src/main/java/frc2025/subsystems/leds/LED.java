@@ -80,6 +80,11 @@ public class LED extends SubsystemBase {
     }
   }
 
+  public Color rainbow(double duration) {
+    double x = (1 - ((Timer.getFPGATimestamp() / duration) % 1.0)) * 180.0;
+    return Color.fromHSV((int) x, 255, 255);
+  }
+
   public void wave(Color c1, Color c2, double cycleLength, double duration) {
     double x = (1 - ((Timer.getFPGATimestamp() % duration) / duration)) * 2.0 * Math.PI;
     double xDiffPerLed = (2.0 * Math.PI) / cycleLength;
@@ -129,23 +134,62 @@ public class LED extends SubsystemBase {
   public void centerScaledTarget(Color color, double currentValue, double targetValue) {
     if (targetValue == 0) return;
 
-    int mapped = (int) Math.round(ScreamMath.mapRange(currentValue, 1.0, targetValue, 0, length / 2));
+    int mapped =
+        (int) Math.round(ScreamMath.mapRange(currentValue, 1.0, targetValue, 0, length / 2));
     mapped = MathUtil.clamp(mapped, 0, length / 2);
-    
+
     boolean isOdd = (length % 2) == 1;
 
     for (int i = 0; i < mapped + (isOdd ? 1 : 0); i++) {
-        buffer.setLED(i, color);
+      buffer.setLED(i, color);
     }
-    
+
     for (int i = length - 1; i >= length - mapped; i--) {
-        buffer.setLED(i, color);
+      buffer.setLED(i, color);
     }
-    
+
     for (int i = mapped; i < length - mapped; i++) {
-        buffer.setLED(i, Color.kBlack);
+      buffer.setLED(i, Color.kBlack);
     }
-}
+  }
+
+  public void larson(Color color, double duration) {
+    int trailLength = 3;
+    for (int i = 0; i < length; i++) {
+      buffer.setRGB(i, 0, 0, 0);
+    }
+
+    double currentTime = Timer.getFPGATimestamp();
+    double cycleTime = currentTime % duration;
+    double position;
+
+    if (cycleTime < duration / 2) {
+      position = (cycleTime / (duration / 2)) * (length - 1);
+    } else {
+      position = ((duration - cycleTime) / (duration / 2)) * (length - 1);
+    }
+
+    int trailPixels = (int) (trailLength);
+
+    int mainPos = (int) Math.round(position);
+    if (mainPos >= 0 && mainPos < length) {
+      buffer.setLED(mainPos, color);
+
+      for (int i = 1; i <= trailPixels; i++) {
+        double factor = 0.7 - ((double) i / (trailPixels + 1));
+
+        Color trailColor = new Color(color.red * factor, color.green * factor, color.blue * factor);
+
+        if (mainPos - i >= 0) {
+          buffer.setLED(mainPos - i, trailColor);
+        }
+
+        if (mainPos + i < length) {
+          buffer.setLED(mainPos + i, trailColor);
+        }
+      }
+    }
+  }
 
   public void mapped(double currentValue) {
     int mapped = (int) ScreamMath.mapRange(currentValue, 0, 100, 0, 180);
@@ -153,7 +197,7 @@ public class LED extends SubsystemBase {
     solid(Color.fromHSV(mapped, 255, 255));
   }
 
-  public Color mappedColor(double value){
+  public Color mappedColor(double value) {
     int mapped = (int) ScreamMath.mapRange(value, 0, 100, 0, 180);
     mapped = MathUtil.clamp(mapped, 0, 180);
     return Color.fromHSV(mapped, 255, 255);
@@ -216,5 +260,9 @@ public class LED extends SubsystemBase {
 
   public Command mappedCommand(DoubleSupplier currentValue) {
     return run(() -> mapped(currentValue.getAsDouble())).ignoringDisable(true);
+  }
+
+  public Command larsonCommand(Supplier<Color> color, double duration) {
+    return run(() -> larson(color.get(), duration)).ignoringDisable(true);
   }
 }

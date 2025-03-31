@@ -70,8 +70,11 @@ public class Elevator extends TalonFXSubsystem {
         .beforeStarting(() -> super.goal = goal);
   }
 
-  public double getHeightPercent(){
-    return (MathUtil.clamp(getMeasuredHeight().getInches(), 0, ElevatorConstants.MAX_HEIGHT.getInches()) / ElevatorConstants.MAX_HEIGHT.getInches()) * 100.0;
+  public double getHeightPercent() {
+    return (MathUtil.clamp(
+                getMeasuredHeight().getInches(), 0, ElevatorConstants.MAX_HEIGHT.getInches())
+            / ElevatorConstants.MAX_HEIGHT.getInches())
+        * 100.0;
   }
 
   public Length getMeasuredHeight() {
@@ -96,7 +99,7 @@ public class Elevator extends TalonFXSubsystem {
             getMeasuredHeight().getInches(), 0.0, ElevatorConstants.MAX_HEIGHT.getInches());
 
     return ScreamMath.mapRange(
-        clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 4.2, 1.0);
+        clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 3.9, 1.0);
   }
 
   public double getAccelScalar() {
@@ -105,7 +108,7 @@ public class Elevator extends TalonFXSubsystem {
             getMeasuredHeight().getInches(), 0.0, ElevatorConstants.MAX_HEIGHT.getInches());
 
     return ScreamMath.mapRange(
-        clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 5.25, 3.0);
+        clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 4.2, 3.0);
   }
 
   private double startTime = 0.0;

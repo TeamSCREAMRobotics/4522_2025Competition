@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc2025.logging.Logger;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -26,7 +25,7 @@ public class Climber extends TalonFXSubsystem {
   }
 
   public final SparkMax rollers = new SparkMax(1, MotorType.kBrushless);
-  public final DigitalInput cageLimitSwitch = new DigitalInput(5);
+  public final DigitalInput cageLimitSwitch = new DigitalInput(9);
 
   public final Servo funnelServo = new Servo(7);
   // public final Servo latchServo = new Servo(8);
@@ -130,7 +129,7 @@ public class Climber extends TalonFXSubsystem {
   }
 
   public BooleanSupplier hasCage() {
-    return () -> cageLimitSwitch.get();
+    return () -> !cageLimitSwitch.get();
   }
 
   @Override

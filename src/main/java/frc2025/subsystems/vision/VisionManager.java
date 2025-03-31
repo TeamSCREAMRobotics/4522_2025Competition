@@ -177,13 +177,13 @@ public class VisionManager {
         0);
     PoseEstimate mt2Estimate =
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight.name());
+    PoseEstimate mtEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelight.name());
 
     boolean shouldUseMt1 = !hasEnabled || Dashboard.disableMegatag2.get();
     boolean shouldUseMt2 =
         hasEnabled && !rejectEstimate(mt2Estimate) && !Dashboard.disableMegatag2.get();
 
     if (shouldUseMt1 && !Dashboard.disableAllVisionUpdates.get()) {
-      var mtEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelight.name());
       if (!rejectEstimate(mtEstimate)) {
         double stdFactor = Math.pow(mtEstimate.avgTagDist, 2.5) / (mtEstimate.tagCount * 0.5);
         double xyStds = VisionConstants.xyStdBaseline * stdFactor;
@@ -199,16 +199,19 @@ public class VisionManager {
     }
 
     if (shouldUseMt2 && !Dashboard.disableAllVisionUpdates.get()) {
-      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.5) / (mt2Estimate.tagCount * 0.5);
+      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.65) / (mt2Estimate.tagCount * 0.5);
       double xyStds = VisionConstants.xyStdBaseline * stdFactor * VisionConstants.xyMt2StdFactor;
+      double thetaStds = VisionConstants.thetaStdBaseline * stdFactor;
+      Pose2d combinedPose =
+          new Pose2d(mt2Estimate.pose.getTranslation(), mtEstimate.pose.getRotation());
       drivetrain.addVisionMeasurement(
-          mt2Estimate.pose,
+          combinedPose,
           mt2Estimate.timestampSeconds,
-          VecBuilder.fill(xyStds, xyStds, 999999999.0),
-          true);
-      Logger.log("Vision/" + limelight.name() + "/PoseEstimate", mt2Estimate.pose, 2.5);
+          VecBuilder.fill(xyStds, xyStds, thetaStds),
+          false);
+      Logger.log("Vision/" + limelight.name() + "/PoseEstimate", combinedPose, 1.5);
       Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);
-      Logger.log("Vision/" + limelight.name() + "/ThetaStds", 999999999.0);
+      Logger.log("Vision/" + limelight.name() + "/ThetaStds", thetaStds);
     } else {
       Logger.log("Vision/" + limelight.name() + "/PoseEstimate", Pose2d.kZero);
       Logger.log("Vision/" + limelight.name() + "/XyStds", 0.0);

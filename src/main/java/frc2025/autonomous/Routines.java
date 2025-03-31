@@ -3,7 +3,6 @@ package frc2025.autonomous;
 import drivers.TalonFXSubsystem.TalonFXSubsystemGoal;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -26,6 +25,11 @@ import util.PathSequence;
 
 public class Routines {
   private static PathSequence currentSequence;
+  private static double applyGoal_TimeOut = 0.1;
+  private static double elevatorHeightTolerance =
+      20.0; // Height (in) the elevator should be under before moving again
+  private static double startPath_TimeOut = 0.15;
+
   private static double coralEject_TimeOut = 0.1;
   private static double algaeEject_TimeOut = 0.15;
   private static double intakeAlgae_TimeOut = 1.5;
@@ -174,11 +178,36 @@ public class Routines {
   public static Command test(RobotContainer container) {
     currentSequence = E_D_C;
     WristRollers wristRollers = container.getSubsystems().wristRollers();
+    Elevator elevator = container.getSubsystems().superstructure().getElevator();
 
     return new SequentialCommandGroup(
         Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
-        new AutoScore(container, SuperstructureState.REEF_L4)
-    );
+        currentSequence.getStart().raceWith(new WaitCommand(startPath_TimeOut)),
+        new AutoScore(container, SuperstructureState.REEF_L4, () -> ScoringLocation.LEFT),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(applyGoal_TimeOut),
+        new WaitUntilCommand(
+            () -> elevator.getMeasuredHeight().getInches() < elevatorHeightTolerance),
+        // .until((() -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED)),
+        currentSequence.getNext().raceWith(new Feed(container)),
+        currentSequence.getNext().raceWith(new Feed(container)),
+        new WaitUntilCommand(() -> WristRollers.hasCoral)
+            .raceWith(wristRollers.applyGoalCommand(WristRollersGoal.IDLE)),
+        new AutoScore(container, SuperstructureState.REEF_L4, () -> ScoringLocation.RIGHT),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(applyGoal_TimeOut),
+        new WaitUntilCommand(
+            () -> elevator.getMeasuredHeight().getInches() < elevatorHeightTolerance),
+        // .until((() -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED)),
+        currentSequence.getNext().raceWith(new Feed(container)),
+        currentSequence.getNext().raceWith(new Feed(container)),
+        wristRollers.applyGoalCommand(WristRollersGoal.IDLE).withTimeout(applyGoal_TimeOut),
+        new WaitUntilCommand(() -> WristRollers.hasCoral)
+            .raceWith(wristRollers.applyGoalCommand(WristRollersGoal.IDLE)),
+        new AutoScore(container, SuperstructureState.REEF_L4, () -> ScoringLocation.LEFT),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(applyGoal_TimeOut),
+        new WaitUntilCommand(
+            () -> elevator.getMeasuredHeight().getInches() < elevatorHeightTolerance)
+        // .until((() -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED)),
+        );
   }
 
   public static Command leave(RobotContainer container) {
@@ -195,79 +224,43 @@ public class Routines {
 
     return new SequentialCommandGroup(
         Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
+        currentSequence.getStart().raceWith(new WaitCommand(startPath_TimeOut)),
+        new AutoScore(container, SuperstructureState.REEF_L4, () -> ScoringLocation.LEFT),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(applyGoal_TimeOut),
+        new WaitUntilCommand(
+            () -> elevator.getMeasuredHeight().getInches() < elevatorHeightTolerance),
+        // .until((() -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED)),
+        currentSequence.getNext().raceWith(new Feed(container)),
         currentSequence
-            .getStart()
+            .getNext()
             .raceWith(
-                new SequentialCommandGroup(
-                    new WaitCommand(0.5),
-                    setSuperstructure(container, SuperstructureState.REEF_L4)))
-            .andThen(
-                setSuperstructure(container, SuperstructureState.REEF_L4)
-                    .until(() -> elevator.atGoal())
-                    .alongWith(
-                        new AutoAlign(container, ScoringLocation.LEFT).withTimeout(align_Timeout))),
-        container
-            .getRobotState()
-            .getScoreCommand()
-            .get() // Score on E-L4
-            .withTimeout(coralEject_TimeOut),
-        setSuperstructure(container, SuperstructureState.FEEDING)
-            .withDeadline(
-                new SequentialCommandGroup(
-                    new WaitUntilCommand(
-                        () -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED),
-                    currentSequence.getNext().raceWith(new Feed(container)))),
-        new ParallelRaceGroup(
-            new SequentialCommandGroup(
-                currentSequence
-                    .getNext()
-                    .raceWith(
-                        new SequentialCommandGroup(
-                            new WaitCommand(1.0),
-                            new WaitUntilCommand(() -> WristRollers.hasCoral),
-                            setSuperstructure(container, SuperstructureState.REEF_L4)))
+                new Feed(container)
                     .andThen(
-                        new WaitUntilCommand(() -> WristRollers.hasCoral),
-                        setSuperstructure(container, SuperstructureState.REEF_L4)
-                            .until(() -> elevator.atGoal())
-                            .alongWith(
-                                new AutoAlign(container, ScoringLocation.RIGHT)
-                                    .withTimeout(align_Timeout)))),
-            new Feed(container).andThen(wristRollers.applyGoalCommand(WristRollersGoal.IDLE))),
-        container
-            .getRobotState()
-            .getScoreCommand()
-            .get() // Score on D-L4
-            .withTimeout(coralEject_TimeOut),
-        setSuperstructure(container, SuperstructureState.FEEDING)
-            .withDeadline(
-                new SequentialCommandGroup(
-                    new WaitUntilCommand(
-                        () -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED),
-                    currentSequence.getNext().raceWith(new Feed(container)))),
-        new ParallelRaceGroup(
-            new SequentialCommandGroup(
-                currentSequence
-                    .getNext()
-                    .raceWith(
-                        new SequentialCommandGroup(
-                            new WaitCommand(1.0),
-                            new WaitUntilCommand(() -> WristRollers.hasCoral),
-                            setSuperstructure(container, SuperstructureState.REEF_L4)))
+                        wristRollers
+                            .applyGoalCommand(WristRollersGoal.IDLE)
+                            .withTimeout(applyGoal_TimeOut))),
+        new WaitUntilCommand(() -> WristRollers.hasCoral),
+        new AutoScore(container, SuperstructureState.REEF_L4, () -> ScoringLocation.RIGHT),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(applyGoal_TimeOut),
+        new WaitUntilCommand(
+            () -> elevator.getMeasuredHeight().getInches() < elevatorHeightTolerance),
+        // .until((() -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED)),
+        currentSequence.getNext().raceWith(new Feed(container)),
+        currentSequence
+            .getNext()
+            .raceWith(
+                new Feed(container)
                     .andThen(
-                        new WaitUntilCommand(() -> WristRollers.hasCoral),
-                        setSuperstructure(container, SuperstructureState.REEF_L4)
-                            .until(() -> elevator.atGoal())
-                            .alongWith(
-                                new AutoAlign(container, ScoringLocation.LEFT)
-                                    .withTimeout(align_Timeout)))),
-            new Feed(container).andThen(wristRollers.applyGoalCommand(WristRollersGoal.IDLE))),
-        container
-            .getRobotState()
-            .getScoreCommand()
-            .get() // Score on C-L4
-            .withTimeout(coralEject_TimeOut),
-        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout));
+                        wristRollers
+                            .applyGoalCommand(WristRollersGoal.IDLE)
+                            .withTimeout(applyGoal_TimeOut))),
+        new WaitUntilCommand(() -> WristRollers.hasCoral),
+        new AutoScore(container, SuperstructureState.REEF_L4, () -> ScoringLocation.LEFT),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(applyGoal_TimeOut),
+        new WaitUntilCommand(
+            () -> elevator.getMeasuredHeight().getInches() < elevatorHeightTolerance)
+        // .until((() -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED)),
+        );
   }
 
   /* Middle Starting Side Autos */
@@ -436,80 +429,43 @@ public class Routines {
 
     return new SequentialCommandGroup(
         Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
+        currentSequence.getStart().raceWith(new WaitCommand(startPath_TimeOut)),
+        new AutoScore(container, SuperstructureState.REEF_L4, () -> ScoringLocation.RIGHT),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(applyGoal_TimeOut),
+        new WaitUntilCommand(
+            () -> elevator.getMeasuredHeight().getInches() < elevatorHeightTolerance),
+        // .until((() -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED)),
+        currentSequence.getNext().raceWith(new Feed(container)),
         currentSequence
-            .getStart()
+            .getNext()
             .raceWith(
-                new SequentialCommandGroup(
-                    new WaitCommand(0.5),
-                    setSuperstructure(container, SuperstructureState.REEF_L4)))
-            .andThen(
-                setSuperstructure(container, SuperstructureState.REEF_L4)
-                    .until(() -> elevator.atGoal())
-                    .alongWith(
-                        new AutoAlign(container, ScoringLocation.RIGHT)
-                            .withTimeout(align_Timeout))),
-        container
-            .getRobotState()
-            .getScoreCommand()
-            .get() // Score on J-L4
-            .withTimeout(coralEject_TimeOut),
-        setSuperstructure(container, SuperstructureState.FEEDING)
-            .withDeadline(
-                new SequentialCommandGroup(
-                    new WaitUntilCommand(
-                        () -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED),
-                    currentSequence.getNext().raceWith(new Feed(container)))),
-        new ParallelRaceGroup(
-            new SequentialCommandGroup(
-                currentSequence
-                    .getNext()
-                    .raceWith(
-                        new SequentialCommandGroup(
-                            new WaitCommand(1.0),
-                            new WaitUntilCommand(() -> WristRollers.hasCoral),
-                            setSuperstructure(container, SuperstructureState.REEF_L4)))
+                new Feed(container)
                     .andThen(
-                        new WaitUntilCommand(() -> WristRollers.hasCoral),
-                        setSuperstructure(container, SuperstructureState.REEF_L4)
-                            .until(() -> elevator.atGoal())
-                            .alongWith(
-                                new AutoAlign(container, ScoringLocation.LEFT)
-                                    .withTimeout(align_Timeout)))),
-            new Feed(container).andThen(wristRollers.applyGoalCommand(WristRollersGoal.IDLE))),
-        container
-            .getRobotState()
-            .getScoreCommand()
-            .get() // Score on K-L4
-            .withTimeout(coralEject_TimeOut),
-        setSuperstructure(container, SuperstructureState.FEEDING)
-            .withDeadline(
-                new SequentialCommandGroup(
-                    new WaitUntilCommand(
-                        () -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED),
-                    currentSequence.getNext().raceWith(new Feed(container)))),
-        new ParallelRaceGroup(
-            new SequentialCommandGroup(
-                currentSequence
-                    .getNext()
-                    .raceWith(
-                        new SequentialCommandGroup(
-                            new WaitCommand(1.0),
-                            new WaitUntilCommand(() -> WristRollers.hasCoral),
-                            setSuperstructure(container, SuperstructureState.REEF_L4)))
+                        wristRollers
+                            .applyGoalCommand(WristRollersGoal.IDLE)
+                            .withTimeout(applyGoal_TimeOut))),
+        new WaitUntilCommand(() -> WristRollers.hasCoral),
+        new AutoScore(container, SuperstructureState.REEF_L4, () -> ScoringLocation.LEFT),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(applyGoal_TimeOut),
+        new WaitUntilCommand(
+            () -> elevator.getMeasuredHeight().getInches() < elevatorHeightTolerance),
+        // .until((() -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED)),
+        currentSequence.getNext().raceWith(new Feed(container)),
+        currentSequence
+            .getNext()
+            .raceWith(
+                new Feed(container)
                     .andThen(
-                        new WaitUntilCommand(() -> WristRollers.hasCoral),
-                        setSuperstructure(container, SuperstructureState.REEF_L4)
-                            .until(() -> elevator.atGoal())
-                            .alongWith(
-                                new AutoAlign(container, ScoringLocation.RIGHT)
-                                    .withTimeout(align_Timeout)))),
-            new Feed(container).andThen(wristRollers.applyGoalCommand(WristRollersGoal.IDLE))),
-        container
-            .getRobotState()
-            .getScoreCommand()
-            .get() // Score on L-L4
-            .withTimeout(coralEject_TimeOut),
-        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(elevator_Timeout));
+                        wristRollers
+                            .applyGoalCommand(WristRollersGoal.IDLE)
+                            .withTimeout(applyGoal_TimeOut))),
+        new WaitUntilCommand(() -> WristRollers.hasCoral),
+        new AutoScore(container, SuperstructureState.REEF_L4, () -> ScoringLocation.RIGHT),
+        setSuperstructure(container, SuperstructureState.FEEDING).withTimeout(applyGoal_TimeOut),
+        new WaitUntilCommand(
+            () -> elevator.getMeasuredHeight().getInches() < elevatorHeightTolerance)
+        // .until((() -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED)),
+        );
   }
 
   /* Helper Commands */

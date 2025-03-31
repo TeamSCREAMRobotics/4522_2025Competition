@@ -179,7 +179,8 @@ public class AutoAlign extends Command {
                         .getDistance(this.targetPose.get().getFirst().getTranslation())
                     * 1.5);
 
-    driveController.setConstraints(new Constraints(elevator.getDriveScalar(), elevator.getAccelScalar()));
+    driveController.setConstraints(
+        new Constraints(elevator.getDriveScalar(), elevator.getAccelScalar()));
 
     currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
     double ffScalar =
@@ -231,7 +232,7 @@ public class AutoAlign extends Command {
                     thetaVelocity,
                     currentPose.getRotation())));
 
-    if(driveErrorAbs < 0.2){
+    if (driveErrorAbs < 0.2) {
       led.solid(Color.kBlue);
     } else {
       led.centerScaledTarget(Color.kYellow, currentDistance, 0.01);
