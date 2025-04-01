@@ -245,13 +245,8 @@ public class RobotContainer {
                                         Rotation2d.fromDegrees(25), Rotation2d.fromDegrees(-135)),
                                     DrivetrainConstants.HEADING_CONTROLLER_PROFILED)),
                     applyTargetStateFactory.apply(SuperstructureState.BARGE_NET).get())
-                .beforeStarting(() -> drivetrain.resetHeadingController()))
-        .onFalse(
-            applyTargetStateFactory
-                .apply(SuperstructureState.HOME)
-                .get()
-                .until(() -> superstructure.atGoal(SuperstructureState.HOME))
-                .andThen(superstructure.rezero()));
+                .beforeStarting(() -> drivetrain.resetHeadingController()));
+    // .onFalse(rezero());
 
     // Reef scoring/clearing controls
     Controlboard.goToLevel4()
@@ -261,12 +256,7 @@ public class RobotContainer {
                 applyTargetStateFactory.apply(SuperstructureState.REEF_L4).get(),
                 new AutoScore(this, SuperstructureState.REEF_L4),
                 () -> Dashboard.disableAutoFeatures.get()))
-        .onFalse(
-            applyTargetStateFactory
-                .apply(SuperstructureState.HOME)
-                .get()
-                .until(() -> superstructure.atGoal(SuperstructureState.HOME))
-                .andThen(superstructure.rezero()));
+        .onFalse(rezero().get());
     /* .and(
         () ->
             (Controlboard.getTranslation().get().getNorm() < 0.25
@@ -282,12 +272,7 @@ public class RobotContainer {
                 applyTargetStateFactory.apply(SuperstructureState.REEF_L3).get(),
                 new AutoScore(this, SuperstructureState.REEF_L3),
                 () -> Dashboard.disableAutoFeatures.get()))
-        .onFalse(
-            applyTargetStateFactory
-                .apply(SuperstructureState.HOME)
-                .get()
-                .until(() -> superstructure.atGoal(SuperstructureState.HOME))
-                .andThen(superstructure.rezero()));
+        .onFalse(rezero().get());
     /* .and(
         () ->
             (Controlboard.getTranslation().get().getNorm() < 0.25
@@ -303,12 +288,7 @@ public class RobotContainer {
                 applyTargetStateFactory.apply(SuperstructureState.REEF_L2).get(),
                 new AutoScore(this, SuperstructureState.REEF_L2),
                 () -> Dashboard.disableAutoFeatures.get()))
-        .onFalse(
-            applyTargetStateFactory
-                .apply(SuperstructureState.HOME)
-                .get()
-                .until(() -> superstructure.atGoal(SuperstructureState.HOME))
-                .andThen(superstructure.rezero()));
+        .onFalse(rezero().get());
     /* .and(
         () ->
             (Controlboard.getTranslation().get().getNorm() < 0.25
@@ -326,12 +306,7 @@ public class RobotContainer {
         .and(() -> Controlboard.getTranslation().get().getNorm() < 0.5)
         .whileTrue(algaeClearFactory)
         .onFalse(Commands.runOnce(() -> algaeClearFactory.cancel()))
-        .onFalse(
-            applyTargetStateFactory
-                .apply(SuperstructureState.HOME)
-                .get()
-                .until(() -> superstructure.atGoal(SuperstructureState.HOME))
-                .andThen(superstructure.rezero()));
+        .onFalse(rezero().get());
 
     // Intake controls
     Controlboard.feed()
@@ -384,7 +359,7 @@ public class RobotContainer {
 
     Controlboard.testButton().whileTrue(climber.applyGoalCommand(ClimberGoal.OUT));
 
-    new Trigger(() -> DriverStation.isTeleopEnabled()).onTrue(superstructure.rezero());
+    new Trigger(() -> DriverStation.isTeleopEnabled()).onTrue(rezero().get());
   }
 
   private void configureDefaultCommands() {
@@ -497,6 +472,21 @@ public class RobotContainer {
         .onFalse(
             Commands.runOnce(() -> climber.setNeutralMode(NeutralModeValue.Brake))
                 .ignoringDisable(true));
+  }
+
+  private Supplier<Command> rezero() {
+    return () ->
+        Commands.defer(
+                () ->
+                    applyTargetStateFactory
+                        .apply(SuperstructureState.HOME)
+                        .get()
+                        .until(
+                            () ->
+                                superstructure.getElevator().getMeasuredHeight().getInches() < 0.25)
+                        .andThen(superstructure.rezero()),
+                Set.of(superstructure.getElevator(), superstructure.getWrist()))
+            .withName("Rezero");
   }
 
   public Command getAutonomousCommand() {

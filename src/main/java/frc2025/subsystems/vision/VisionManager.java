@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc2025.Dashboard;
 import frc2025.Robot;
@@ -82,6 +83,11 @@ public class VisionManager {
   private PhotonCameraSim climberSim;
   private PhotonCameraSim[] simCameras;
   private VisionSystemSim visionSim;
+
+  private enum VisionType {
+    MT,
+    MT2;
+  }
 
   private final Drivetrain drivetrain;
   private final Limelight[] limelights =
@@ -175,40 +181,49 @@ public class VisionManager {
         0,
         0,
         0);
-    PoseEstimate mt2Estimate =
-        LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight.name());
+    // PoseEstimate mt2Estimate =
+    // LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight.name());
     PoseEstimate mtEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelight.name());
 
-    boolean shouldUseMt1 = !hasEnabled || Dashboard.disableMegatag2.get();
-    boolean shouldUseMt2 =
-        hasEnabled && !rejectEstimate(mt2Estimate) && !Dashboard.disableMegatag2.get();
+    boolean shouldUseMt1 = true; // !hasEnabled || Dashboard.disableMegatag2.get();
+    /* boolean shouldUseMt2 =
+    hasEnabled && !rejectEstimate(mt2Estimate) && !Dashboard.disableMegatag2.get(); */
 
     if (shouldUseMt1 && !Dashboard.disableAllVisionUpdates.get()) {
       if (!rejectEstimate(mtEstimate)) {
-        double stdFactor = Math.pow(mtEstimate.avgTagDist, 2.5) / (mtEstimate.tagCount * 0.5);
-        double xyStds = VisionConstants.xyStdBaseline * stdFactor;
-        double thetaStds = VisionConstants.thetaStdBaseline * stdFactor;
+        double stdFactor = Math.pow(mtEstimate.avgTagDist, 2.75) / (mtEstimate.tagCount * 0.5);
+        double xyStds =
+            (DriverStation.isDisabled() ? 0.2 : VisionConstants.xyStdBaseline) * stdFactor;
+        double thetaStds =
+            (DriverStation.isDisabled() ? 0.2 : VisionConstants.thetaStdBaseline) * stdFactor;
         drivetrain.addVisionMeasurement(
             mtEstimate.pose,
             mtEstimate.timestampSeconds,
             VecBuilder.fill(xyStds, xyStds, thetaStds),
             false);
+        Logger.log("Vision/" + limelight.name() + "/VisionType", VisionType.MT);
         Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);
         Logger.log("Vision/" + limelight.name() + "/ThetaStds", thetaStds);
+      } else {
+        Logger.log("Vision/" + limelight.name() + "/PoseEstimate", Pose2d.kZero);
+        Logger.log("Vision/" + limelight.name() + "/XyStds", 0.0);
+        Logger.log("Vision/" + limelight.name() + "/ThetaStds", 0.0);
       }
     }
 
-    if (shouldUseMt2 && !Dashboard.disableAllVisionUpdates.get()) {
+    /* if (shouldUseMt2 && !Dashboard.disableAllVisionUpdates.get()) {
       double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.75) / (mt2Estimate.tagCount * 0.5);
       double xyStds = VisionConstants.xyStdBaseline * stdFactor * VisionConstants.xyMt2StdFactor;
       double thetaStds = VisionConstants.thetaStdBaseline * stdFactor;
       Pose2d combinedPose =
           new Pose2d(mt2Estimate.pose.getTranslation(), mtEstimate.pose.getRotation());
       drivetrain.addVisionMeasurement(
-          combinedPose,
+          mt2Estimate.pose,
           mt2Estimate.timestampSeconds,
           VecBuilder.fill(xyStds, xyStds, 999999999999.0),
           true);
+
+        Logger.log("Vision/" + limelight.name() + "/VisionType", VisionType.MT2);
       Logger.log("Vision/" + limelight.name() + "/PoseEstimate", combinedPose, 1.5);
       Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);
       Logger.log("Vision/" + limelight.name() + "/ThetaStds", thetaStds);
@@ -216,21 +231,8 @@ public class VisionManager {
       Logger.log("Vision/" + limelight.name() + "/PoseEstimate", Pose2d.kZero);
       Logger.log("Vision/" + limelight.name() + "/XyStds", 0.0);
       Logger.log("Vision/" + limelight.name() + "/ThetaStds", 0.0);
-    }
+    } */
   }
-
-  /* private void addSpecializedPoseEstimate(Limelight limelight) {
-   var estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight.name());
-
-   if(!rejectEstimate(estimate)){
-    double stdFactor = Math.pow(estimate.avgTagDist, 2.2) / (estimate.tagCount * 0.5);
-    double xyStds = VisionConstants.xyStdBaseline * stdFactor * VisionConstants.xyMt2StdFactor;
-    drivetrain.addSpecializedMeasurement(
-        estimate.pose,
-        estimate.timestampSeconds,
-        VecBuilder.fill(xyStds, xyStds, 999999999.0));
-   }
-  } */
 
   private boolean rejectEstimate(PoseEstimate estimate) {
     return estimate == null
@@ -238,16 +240,13 @@ public class VisionManager {
         || !FieldConstants.FIELD_AREA.contains(estimate.pose)
         || (estimate.tagCount == 1 && estimate.rawFiducials[0].ambiguity > 0.3)
         || (Math.abs(drivetrain.getPigeon2().getAngularVelocityZWorld().getValueAsDouble()) > 540)
-        || (drivetrain.getLinearVelocity().getNorm() > 3.0);
+        || (drivetrain.getLinearVelocity().getNorm() > 3.5);
   }
 
   public void periodic() {
     for (Limelight ll : limelights) {
       addGlobalPoseEstimate(ll);
     }
-
-    // addSpecializedPoseEstimate(Limelights.REEF_LEFT);
-    // addSpecializedPoseEstimate(Limelights.REEF_RIGHT);
 
     if (Robot.isSimulation() && visionSim != null) {
       visionSim.update(drivetrain.getEstimatedPose());

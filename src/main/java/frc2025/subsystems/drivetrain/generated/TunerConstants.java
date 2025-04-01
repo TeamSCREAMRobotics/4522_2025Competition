@@ -106,11 +106,11 @@ public class TunerConstants {
     DRIVE_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
     DRIVE_CONFIG.CurrentLimits.StatorCurrentLimit = 80;
     DRIVE_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
-    DRIVE_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 35;
-    DRIVE_CONFIG.CurrentLimits.SupplyCurrentLimit = 42;
+    DRIVE_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 30;
+    DRIVE_CONFIG.CurrentLimits.SupplyCurrentLimit = 40;
     DRIVE_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 0.5;
 
-    DRIVE_CONFIG.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;
+    DRIVE_CONFIG.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.15;
   }
 
   private static final TalonFXConfiguration STEER_CONFIG = new TalonFXConfiguration();

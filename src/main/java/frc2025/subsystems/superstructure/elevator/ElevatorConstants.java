@@ -89,11 +89,11 @@ public final class ElevatorConstants {
     CONFIGURATION.minUnitsLimit = ENCODER_MIN;
     CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
     CONFIGURATION.cruiseVelocity = 60.0; // 30.0
-    CONFIGURATION.acceleration = 45.0;
+    CONFIGURATION.acceleration = 35.0;
     CONFIGURATION.slot0 =
         new ScreamPIDConstants(45.0, 0, 0) // 60.0
             .getSlot0Configs(
                 new FeedforwardConstants(0, 0.0, 0.3, 0, GravityTypeValue.Elevator_Static));
-    CONFIGURATION.positionThreshold = Elevator.heightToRotations(Length.fromInches(0.25)); // 4.0
+    CONFIGURATION.positionThreshold = Elevator.heightToRotations(Length.fromInches(0.2)); // 4.0
   }
 }

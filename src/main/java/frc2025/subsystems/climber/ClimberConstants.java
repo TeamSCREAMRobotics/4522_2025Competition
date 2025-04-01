@@ -5,6 +5,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+
 import drivers.TalonFXSubsystem.CANCoderConstants;
 import drivers.TalonFXSubsystem.CANDevice;
 import drivers.TalonFXSubsystem.TalonFXConstants;
@@ -30,17 +31,19 @@ public class ClimberConstants {
         new TalonFXConstants(new CANDevice(12), InvertedValue.CounterClockwise_Positive);
 
     CANcoderConfiguration config = new CANcoderConfiguration();
-    config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.125;
-    config.MagnetSensor.MagnetOffset = -0.9833984375 + 1.0;
+    config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.75;
+    config.MagnetSensor.MagnetOffset = 0.016845703125;
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    CONFIGURATION.cancoderConstants = new CANCoderConstants(new CANDevice(5), config);
+    CONFIGURATION.cancoderConstants =
+        new CANCoderConstants(new CANDevice(5), config);
 
     CONFIGURATION.neutralMode = NeutralModeValue.Brake;
-    // CONFIGURATION.sensorToMechRatio = REDUCTION;
+    CONFIGURATION.sensorToMechRatio = 1.0;
 
-    // CONFIGURATION.rotorToSensorRatio = REDUCTION;
+    CONFIGURATION.rotorToSensorRatio = REDUCTION;
     CONFIGURATION.feedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     CONFIGURATION.feedbackRemoteSensorId = 5;
+    // CONFIGURATION.feedbackRotorOffset = 0.016845703125;
 
     CONFIGURATION.enableSupplyCurrentLimit = true;
     CONFIGURATION.supplyCurrentLimit = 40;

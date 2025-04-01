@@ -25,7 +25,7 @@ public class Dashboard {
   public static DashboardBoolean zeroElevator;
   public static DashboardBoolean fieldCentric;
   public static DashboardBoolean disableCoralRequirement;
-  public static DashboardBoolean disableMegatag2;
+  // public static DashboardBoolean disableMegatag2;
   public static DashboardBoolean zeroClimber;
   public static SendableChooser<AlgaeLevel> wantedAlgaeLevel = new SendableChooser<>();
   public static DashboardBoolean disableClimber;
@@ -54,7 +54,7 @@ public class Dashboard {
     funnelServoPosition = new DashboardNumber(overrides, "Funnel Servo Position", 1);
     climbRollersVoltage = new DashboardNumber(overrides, "Climb Rollers Volatage", 0.0);
     disableAllVisionUpdates = new DashboardBoolean(overrides, "Disable Vision Updates", false);
-    disableMegatag2 = new DashboardBoolean(overrides, "Disable MegaTag2", false);
+    // disableMegatag2 = new DashboardBoolean(overrides, "Disable MegaTag2", false);
     disableAutoFeatures = new DashboardBoolean(overrides, "Disable Auto Features", false);
     disableCoralRequirement = new DashboardBoolean(overrides, "Disable Coral Requirement", false);
     zeroElevator = new DashboardBoolean(overrides, "Zero Elevator", false);
