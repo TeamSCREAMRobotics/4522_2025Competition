@@ -242,10 +242,16 @@ public class RobotContainer {
                                         .get()
                                         .times(superstructure.getElevator().getDriveScalar() * 0.5),
                                     AllianceFlipUtil.get(
-                                        Rotation2d.fromDegrees(45), Rotation2d.fromDegrees(-135)),
+                                        Rotation2d.fromDegrees(25), Rotation2d.fromDegrees(-135)),
                                     DrivetrainConstants.HEADING_CONTROLLER_PROFILED)),
                     applyTargetStateFactory.apply(SuperstructureState.BARGE_NET).get())
-                .beforeStarting(() -> drivetrain.resetHeadingController()));
+                .beforeStarting(() -> drivetrain.resetHeadingController()))
+        .onFalse(
+            applyTargetStateFactory
+                .apply(SuperstructureState.HOME)
+                .get()
+                .until(() -> superstructure.atGoal(SuperstructureState.HOME))
+                .andThen(superstructure.rezero()));
 
     // Reef scoring/clearing controls
     Controlboard.goToLevel4()
@@ -254,7 +260,13 @@ public class RobotContainer {
             Commands.either(
                 applyTargetStateFactory.apply(SuperstructureState.REEF_L4).get(),
                 new AutoScore(this, SuperstructureState.REEF_L4),
-                () -> Dashboard.disableAutoFeatures.get()));
+                () -> Dashboard.disableAutoFeatures.get()))
+        .onFalse(
+            applyTargetStateFactory
+                .apply(SuperstructureState.HOME)
+                .get()
+                .until(() -> superstructure.atGoal(SuperstructureState.HOME))
+                .andThen(superstructure.rezero()));
     /* .and(
         () ->
             (Controlboard.getTranslation().get().getNorm() < 0.25
@@ -269,7 +281,13 @@ public class RobotContainer {
             Commands.either(
                 applyTargetStateFactory.apply(SuperstructureState.REEF_L3).get(),
                 new AutoScore(this, SuperstructureState.REEF_L3),
-                () -> Dashboard.disableAutoFeatures.get()));
+                () -> Dashboard.disableAutoFeatures.get()))
+        .onFalse(
+            applyTargetStateFactory
+                .apply(SuperstructureState.HOME)
+                .get()
+                .until(() -> superstructure.atGoal(SuperstructureState.HOME))
+                .andThen(superstructure.rezero()));
     /* .and(
         () ->
             (Controlboard.getTranslation().get().getNorm() < 0.25
@@ -284,7 +302,13 @@ public class RobotContainer {
             Commands.either(
                 applyTargetStateFactory.apply(SuperstructureState.REEF_L2).get(),
                 new AutoScore(this, SuperstructureState.REEF_L2),
-                () -> Dashboard.disableAutoFeatures.get()));
+                () -> Dashboard.disableAutoFeatures.get()))
+        .onFalse(
+            applyTargetStateFactory
+                .apply(SuperstructureState.HOME)
+                .get()
+                .until(() -> superstructure.atGoal(SuperstructureState.HOME))
+                .andThen(superstructure.rezero()));
     /* .and(
         () ->
             (Controlboard.getTranslation().get().getNorm() < 0.25
@@ -301,7 +325,13 @@ public class RobotContainer {
     Controlboard.goToAlgaeClear()
         .and(() -> Controlboard.getTranslation().get().getNorm() < 0.5)
         .whileTrue(algaeClearFactory)
-        .onFalse(Commands.runOnce(() -> algaeClearFactory.cancel()));
+        .onFalse(Commands.runOnce(() -> algaeClearFactory.cancel()))
+        .onFalse(
+            applyTargetStateFactory
+                .apply(SuperstructureState.HOME)
+                .get()
+                .until(() -> superstructure.atGoal(SuperstructureState.HOME))
+                .andThen(superstructure.rezero()));
 
     // Intake controls
     Controlboard.feed()
@@ -353,6 +383,8 @@ public class RobotContainer {
     // Controlboard.climb().whileTrue(climber.setFunnelServoCommand(ServoGoal.RETRACT)).whileFalse(climber.setFunnelServoCommand(ServoGoal.EXTEND));
 
     Controlboard.testButton().whileTrue(climber.applyGoalCommand(ClimberGoal.OUT));
+
+    new Trigger(() -> DriverStation.isTeleopEnabled()).onTrue(superstructure.rezero());
   }
 
   private void configureDefaultCommands() {
@@ -375,17 +407,23 @@ public class RobotContainer {
 
     led.setDefaultCommand(
         led.run(
-            () -> {
-              if (DriverStation.isDisabled()) {
-                led.larson(led.rainbow(5.0), 1.25);
-              } else {
-                led.wave(
-                    Color.kBlack,
-                    WristRollers.hasCoral ? new Color(0.1, 0.0, 0.0) : new Color(0.0, 1.0, 0.0),
-                    0.1,
-                    1.25);
-              }
-            }).ignoringDisable(true));
+                () -> {
+                  if (DriverStation.isDisabled()) {
+                    led.larson(
+                        () ->
+                            (AllianceFlipUtil.shouldFlip().getAsBoolean()
+                                ? Color.kGreen
+                                : Color.kBlue),
+                        1.25);
+                  } else {
+                    led.wave(
+                        Color.kBlack,
+                        WristRollers.hasCoral ? new Color(0.1, 0.0, 0.0) : new Color(0.0, 1.0, 0.0),
+                        0.1,
+                        1.25);
+                  }
+                })
+            .ignoringDisable(true));
   }
 
   public void configureManualOverrides() {

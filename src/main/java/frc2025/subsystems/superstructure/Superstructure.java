@@ -1,6 +1,7 @@
 package frc2025.subsystems.superstructure;
 
 import drivers.TalonFXSubsystem.TalonFXSubsystemConfiguration;
+import drivers.TalonFXSubsystem.TalonFXSubsystemGoal;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -40,8 +41,10 @@ public class Superstructure {
     Logger.log(logPrefix + "CurrentState", getCurrentState());
   }
 
-  public boolean atGoal() {
-    return elevator.atGoal() && wrist.atGoal();
+  public boolean atGoal(SuperstructureState wanted) {
+    return (elevator.atGoal() && wrist.atGoal())
+        && (elevator.getGoal() == (TalonFXSubsystemGoal) wanted.elevatorGoal
+            && wrist.getGoal() == (TalonFXSubsystemGoal) wanted.wristGoal);
   }
 
   public Command rezero() {

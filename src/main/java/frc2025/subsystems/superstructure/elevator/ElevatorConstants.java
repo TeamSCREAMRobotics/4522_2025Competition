@@ -68,11 +68,12 @@ public final class ElevatorConstants {
 
     CONFIGURATION.masterConstants =
         new TalonFXConstants(
-            new CANDevice(8, ""), InvertedValue.CounterClockwise_Positive); // Left Elevator Inside
+            new CANDevice(9, ""), InvertedValue.Clockwise_Positive); // Left Elevator Inside
     CONFIGURATION.slaveConstants =
         new TalonFXConstants[] {
           new TalonFXConstants(
-              new CANDevice(9, ""), InvertedValue.Clockwise_Positive), // Left Elevator Outside
+              new CANDevice(8, ""),
+              InvertedValue.CounterClockwise_Positive), // Left Elevator Outside
           new TalonFXConstants(
               new CANDevice(14, ""), InvertedValue.Clockwise_Positive), // Right Elevator Inside
           new TalonFXConstants(
@@ -83,7 +84,8 @@ public final class ElevatorConstants {
     CONFIGURATION.neutralMode = NeutralModeValue.Brake;
     CONFIGURATION.sensorToMechRatio = REDUCTION;
     CONFIGURATION.enableSupplyCurrentLimit = true;
-    CONFIGURATION.supplyCurrentLimit = 30;
+    CONFIGURATION.supplyCurrentLimit = 37;
+    CONFIGURATION.statorCurrentLimit = 80;
     CONFIGURATION.minUnitsLimit = ENCODER_MIN;
     CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
     CONFIGURATION.cruiseVelocity = 60.0; // 30.0

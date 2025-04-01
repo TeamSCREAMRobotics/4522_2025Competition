@@ -25,9 +25,9 @@ public class Climber extends TalonFXSubsystem {
   }
 
   public final SparkMax rollers = new SparkMax(1, MotorType.kBrushless);
-  public final DigitalInput cageLimitSwitch = new DigitalInput(9);
+  public final DigitalInput cageLimitSwitch = new DigitalInput(8);
 
-  public final Servo funnelServo = new Servo(7);
+  public final Servo funnelServo = new Servo(8);
   // public final Servo latchServo = new Servo(8);
 
   public static boolean hasClimbed = false;
@@ -45,11 +45,11 @@ public class Climber extends TalonFXSubsystem {
   }
 
   public enum ClimberGoal implements TalonFXSubsystemGoal {
-    HOME(0.0),
+    HOME(0.044),
     // HOLD_FUNNEL(-0.03),
     // STOW_UNDER_FUNNEL(-0.069),
-    OUT(1.85), // 2.135
-    CLIMB(0.25); // -0.0221
+    OUT(.275),
+    CLIMB(0.025);
 
     private double targetRotations;
 

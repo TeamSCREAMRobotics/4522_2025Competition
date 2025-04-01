@@ -199,7 +199,7 @@ public class VisionManager {
     }
 
     if (shouldUseMt2 && !Dashboard.disableAllVisionUpdates.get()) {
-      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.65) / (mt2Estimate.tagCount * 0.5);
+      double stdFactor = Math.pow(mt2Estimate.avgTagDist, 2.75) / (mt2Estimate.tagCount * 0.5);
       double xyStds = VisionConstants.xyStdBaseline * stdFactor * VisionConstants.xyMt2StdFactor;
       double thetaStds = VisionConstants.thetaStdBaseline * stdFactor;
       Pose2d combinedPose =
@@ -207,8 +207,8 @@ public class VisionManager {
       drivetrain.addVisionMeasurement(
           combinedPose,
           mt2Estimate.timestampSeconds,
-          VecBuilder.fill(xyStds, xyStds, thetaStds),
-          false);
+          VecBuilder.fill(xyStds, xyStds, 999999999999.0),
+          true);
       Logger.log("Vision/" + limelight.name() + "/PoseEstimate", combinedPose, 1.5);
       Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);
       Logger.log("Vision/" + limelight.name() + "/ThetaStds", thetaStds);

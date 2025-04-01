@@ -120,8 +120,8 @@ public class Elevator extends TalonFXSubsystem {
             .withDeadline(
                 new WaitUntilCommand(
                     () ->
-                        ((Timer.getFPGATimestamp() - startTime) > 1.0)
-                            && master.getSupplyCurrent().getValueAsDouble() > 15.0)),
+                        ((Timer.getFPGATimestamp() - startTime) > 0.5)
+                            && master.getSupplyCurrent().getValueAsDouble() > 17.0)),
         new InstantCommand(() -> resetPosition(0.0)));
   }
 

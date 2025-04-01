@@ -106,8 +106,8 @@ public class TunerConstants {
     DRIVE_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
     DRIVE_CONFIG.CurrentLimits.StatorCurrentLimit = 80;
     DRIVE_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
-    DRIVE_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 45;
-    DRIVE_CONFIG.CurrentLimits.SupplyCurrentLimit = 50;
+    DRIVE_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 35;
+    DRIVE_CONFIG.CurrentLimits.SupplyCurrentLimit = 42;
     DRIVE_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 0.5;
 
     DRIVE_CONFIG.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;
@@ -175,25 +175,25 @@ public class TunerConstants {
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       MODULE_0 =
           CONSTANT_FACTORY.createModuleConstants(
-              0, 1, 0, -0.409912109375, 0, 0, false, STEER_INVERTED, false);
+              0, 1, 0, -0.412841796875, 0, 0, false, STEER_INVERTED, false);
 
   private static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       MODULE_1 =
           CONSTANT_FACTORY.createModuleConstants(
-              2, 3, 1, 0.019775390625, 0, 0, true, STEER_INVERTED, false);
+              2, 3, 1, 0.015625, 0, 0, true, STEER_INVERTED, false);
 
   private static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       MODULE_2 =
           CONSTANT_FACTORY.createModuleConstants(
-              4, 5, 2, 0.368408203125, 0, 0, false, STEER_INVERTED, false);
+              4, 5, 2, 0.370361328125, 0, 0, false, STEER_INVERTED, false);
 
   private static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
       MODULE_3 =
           CONSTANT_FACTORY.createModuleConstants(
-              6, 7, 3, -0.29736328125, 0, 0, true, STEER_INVERTED, false);
+              6, 7, 3, -0.29443359375, 0, 0, true, STEER_INVERTED, false);
 
   private static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>

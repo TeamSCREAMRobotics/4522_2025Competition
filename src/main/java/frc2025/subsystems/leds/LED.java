@@ -153,8 +153,9 @@ public class LED extends SubsystemBase {
     }
   }
 
-  public void larson(Color color, double duration) {
+  public void larson(Supplier<Color> color, double duration) {
     int trailLength = 3;
+    Color c = color.get();
     for (int i = 0; i < length; i++) {
       buffer.setRGB(i, 0, 0, 0);
     }
@@ -173,12 +174,12 @@ public class LED extends SubsystemBase {
 
     int mainPos = (int) Math.round(position);
     if (mainPos >= 0 && mainPos < length) {
-      buffer.setLED(mainPos, color);
+      buffer.setLED(mainPos, c);
 
       for (int i = 1; i <= trailPixels; i++) {
         double factor = 0.7 - ((double) i / (trailPixels + 1));
 
-        Color trailColor = new Color(color.red * factor, color.green * factor, color.blue * factor);
+        Color trailColor = new Color(c.red * factor, c.green * factor, c.blue * factor);
 
         if (mainPos - i >= 0) {
           buffer.setLED(mainPos - i, trailColor);
@@ -263,6 +264,6 @@ public class LED extends SubsystemBase {
   }
 
   public Command larsonCommand(Supplier<Color> color, double duration) {
-    return run(() -> larson(color.get(), duration)).ignoringDisable(true);
+    return run(() -> larson(color, duration)).ignoringDisable(true);
   }
 }

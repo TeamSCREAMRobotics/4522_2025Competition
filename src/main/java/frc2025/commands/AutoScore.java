@@ -35,8 +35,8 @@ public class AutoScore extends SequentialCommandGroup {
             Commands.sequence(
                 Commands.waitUntil(
                     () ->
-                        (align.hasReachedGoal(0.025)
-                            && container.getSubsystems().superstructure().atGoal())),
+                        (align.hasReachedGoal(0.0175)
+                            && container.getSubsystems().superstructure().atGoal(level))),
                 container
                     .getSubsystems()
                     .wristRollers()

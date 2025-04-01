@@ -172,9 +172,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       boolean rejectHeading) {
     Logger.log("Vision/ActiveGlobalVisionMeasurement", visionRobotPoseMeters);
     super.addVisionMeasurement(
-        !rejectHeading
-            ? visionRobotPoseMeters
-            : new Pose2d(visionRobotPoseMeters.getTranslation(), getHeading()),
+        rejectHeading
+            ? new Pose2d(visionRobotPoseMeters.getTranslation(), getHeading())
+            : visionRobotPoseMeters,
         Utils.fpgaToCurrentTime(timestampSeconds),
         visionMeasurementStdDevs);
   }
@@ -190,6 +190,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public void logTelemetry(SwerveDriveState state) {
+    Logger.log("Subsystems/Drivetrain/RawHeading", getPigeon2().getYaw().getValueAsDouble());
     Logger.log("RobotState/EstimatedPose", state.Pose);
     Logger.log(
         "Subsystems/Drivetrain/ActiveRequest", getSwerveRequest().getClass().getSimpleName());

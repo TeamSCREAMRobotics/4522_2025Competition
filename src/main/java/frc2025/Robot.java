@@ -4,6 +4,7 @@
 
 package frc2025;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.hal.AllianceStationID;
@@ -44,6 +45,8 @@ public class Robot extends TimedRobot {
             .withNtPublish(true)
             .withLogEntryQueueCapacity(2000));
     Logger.setEnabled(true);
+
+    SignalLogger.enableAutoLogging(false);
 
     CommandScheduler.getInstance().onCommandInitialize((command) -> allCommands.add(command));
     CommandScheduler.getInstance().onCommandFinish((command) -> allCommands.remove(command));
