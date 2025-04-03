@@ -11,6 +11,7 @@ import frc2025.constants.FieldConstants.AlgaeLevel;
 public class Dashboard {
 
   private static final String overrides = "Overrides";
+  private static final String vision = "Vision";
 
   public static DashboardBoolean manualMode;
   public static DashboardBoolean resetVoltage;
@@ -34,6 +35,8 @@ public class Dashboard {
   public static DashboardBoolean submitRotationOverride;
   public static DashboardBoolean useGlobalEstimateForAutoAlign;
   public static DashboardBoolean coastClimber;
+  public static DashboardBoolean coastElevator;
+  public static DashboardBoolean disableAmbiguityRejection;
 
   private static Field2d field = new Field2d();
 
@@ -53,7 +56,7 @@ public class Dashboard {
     wristRollersVoltage = new DashboardNumber(overrides, "Rollers Voltage", 0);
     funnelServoPosition = new DashboardNumber(overrides, "Funnel Servo Position", 1);
     climbRollersVoltage = new DashboardNumber(overrides, "Climb Rollers Volatage", 0.0);
-    disableAllVisionUpdates = new DashboardBoolean(overrides, "Disable Vision Updates", false);
+    disableAllVisionUpdates = new DashboardBoolean(vision, "Disable Vision Updates", false);
     // disableMegatag2 = new DashboardBoolean(overrides, "Disable MegaTag2", false);
     disableAutoFeatures = new DashboardBoolean(overrides, "Disable Auto Features", false);
     disableCoralRequirement = new DashboardBoolean(overrides, "Disable Coral Requirement", false);
@@ -65,8 +68,10 @@ public class Dashboard {
     rotationOverride = new DashboardNumber(overrides, "Reset Rotation", 0.0);
     submitRotationOverride = new DashboardBoolean(overrides, "Submit Rotation Override", false);
     useGlobalEstimateForAutoAlign =
-        new DashboardBoolean(overrides, "Global Estimate For AA", false);
+        new DashboardBoolean(vision, "Global Estimate For AA", false);
     coastClimber = new DashboardBoolean(overrides, "Coast Climber", false);
+    coastElevator = new DashboardBoolean(overrides, "Coast Elevator", false);
+    disableAmbiguityRejection = new DashboardBoolean(vision, "Disable Ambiguity Rejection", false);
 
     for (AlgaeLevel level : AlgaeLevel.values()) {
       wantedAlgaeLevel.addOption(level.toString(), level);

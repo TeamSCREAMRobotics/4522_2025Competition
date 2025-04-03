@@ -85,6 +85,9 @@ public class VisionManager {
   private VisionSystemSim visionSim;
 
   private enum VisionType {
+    REJECTED_INVALID,
+    REJECTED_AMBIGUITY,
+    REJECTED_MOVEMENT,
     MT,
     MT2;
   }
@@ -190,7 +193,7 @@ public class VisionManager {
     hasEnabled && !rejectEstimate(mt2Estimate) && !Dashboard.disableMegatag2.get(); */
 
     if (shouldUseMt1 && !Dashboard.disableAllVisionUpdates.get()) {
-      if (!rejectEstimate(mtEstimate)) {
+      if (!rejectEstimate(mtEstimate, limelight)) {
         double stdFactor = Math.pow(mtEstimate.avgTagDist, 2.75) / (mtEstimate.tagCount * 0.5);
         double xyStds =
             (DriverStation.isDisabled() ? 0.2 : VisionConstants.xyStdBaseline) * stdFactor;
@@ -201,6 +204,7 @@ public class VisionManager {
             mtEstimate.timestampSeconds,
             VecBuilder.fill(xyStds, xyStds, thetaStds),
             false);
+        Logger.log("Vision/" + limelight.name() + "/PoseEstimate", mtEstimate.pose);
         Logger.log("Vision/" + limelight.name() + "/VisionType", VisionType.MT);
         Logger.log("Vision/" + limelight.name() + "/XyStds", xyStds);
         Logger.log("Vision/" + limelight.name() + "/ThetaStds", thetaStds);
@@ -234,13 +238,26 @@ public class VisionManager {
     } */
   }
 
-  private boolean rejectEstimate(PoseEstimate estimate) {
-    return estimate == null
+  private boolean rejectEstimate(PoseEstimate estimate, Limelight limelight) {
+    if(estimate == null || estimate.tagCount == 0 || !FieldConstants.FIELD_AREA.contains(estimate.pose)){
+      Logger.log("Vision/" + limelight.name() + "/VisionType", VisionType.REJECTED_INVALID);
+      return true;
+    } else if((estimate.tagCount == 1 && estimate.rawFiducials[0].ambiguity > 0.3) && !Dashboard.disableAmbiguityRejection.get()){
+      Logger.log("Vision/" + limelight.name() + "/VisionType", VisionType.REJECTED_AMBIGUITY);
+      return true;
+    } else if((Math.abs(drivetrain.getPigeon2().getAngularVelocityZWorld().getValueAsDouble()) > 540)
+    || (drivetrain.getLinearVelocity().getNorm() > 3.5)){
+      Logger.log("Vision/" + limelight.name() + "/VisionType", VisionType.REJECTED_MOVEMENT);
+      return true;
+    } else {
+      return false;
+    }
+    /* return estimate == null
         || estimate.tagCount == 0
         || !FieldConstants.FIELD_AREA.contains(estimate.pose)
         || (estimate.tagCount == 1 && estimate.rawFiducials[0].ambiguity > 0.3)
         || (Math.abs(drivetrain.getPigeon2().getAngularVelocityZWorld().getValueAsDouble()) > 540)
-        || (drivetrain.getLinearVelocity().getNorm() > 3.5);
+        || (drivetrain.getLinearVelocity().getNorm() > 3.5); */
   }
 
   public void periodic() {

@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.14,
+        "y": 6.25
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.549023395614832,
+        "y": 6.23910215286615
+      },
+      "isLocked": false,
+      "linkedName": "Non-Processor_Push_Starting"
+    },
+    {
+      "anchor": {
+        "x": 7.43,
+        "y": 6.25
+      },
+      "prevControl": {
+        "x": 6.9068292096260056,
+        "y": 6.265412577452551
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": "Push",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": false
+}

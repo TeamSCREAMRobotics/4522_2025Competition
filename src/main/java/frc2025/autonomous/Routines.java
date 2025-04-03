@@ -22,6 +22,9 @@ import frc2025.subsystems.superstructure.wrist.WristRollers;
 import frc2025.subsystems.superstructure.wrist.WristRollers.WristRollersGoal;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
+
+import com.pathplanner.lib.config.RobotConfig;
+
 import util.AllianceFlipUtil;
 import util.PathSequence;
 
@@ -51,6 +54,25 @@ public class Routines {
 
   /* Test Auto Sequences */
   private static final PathSequence leave = new PathSequence("Leave");
+
+  /* Push Auto Sequences */
+  private static final PathSequence push_E_D_C = 
+  new PathSequence(
+      "Processor_Push",
+      "Processor-Starting_To_E",
+      "E_To_Processor-Station",
+      "Processor-Station_To_D",
+      "D_To_Processor-Station",
+      "Processor-Station_To_C");
+  private static final PathSequence push_J_K_L = 
+    new PathSequence(
+      "Non-Processor_Push",
+      "Non-Processor-Starting_To_J",
+      "J_To_Non-Processor-Station",
+      "Non-Processor-Station_To_K",
+      "K_To_Non-Processor-Station",
+      "Non-Processor-Station_To_L"
+    );
 
   /* Processor Starting Side Sequences */
   private static final PathSequence E_D_C_B_1 =
@@ -192,6 +214,28 @@ public class Routines {
     currentSequence = leave;
 
     return new SequentialCommandGroup(currentSequence.getStart());
+  }
+
+  public static Command processor_Push(RobotContainer container) {
+    currentSequence = push_E_D_C;
+    WristRollers wristRollers = container.getSubsystems().wristRollers();
+
+    return new SequentialCommandGroup(
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
+        currentSequence.getStart(),
+        processor_Side_E_D_C(container)
+    );
+  }
+  
+  public static Command nonProcessor_Push(RobotContainer container) {
+    currentSequence = push_J_K_L;
+    WristRollers wristRollers = container.getSubsystems().wristRollers();
+
+    return new SequentialCommandGroup(
+        Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
+        currentSequence.getStart(),
+        nonProcessor_Side_J_K_L(container)
+    );
   }
 
   /* Processor Starting Side Autos */

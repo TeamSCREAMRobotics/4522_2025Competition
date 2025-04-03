@@ -91,6 +91,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       startSimThread();
     }
 
+    getPigeon2().getYaw().setUpdateFrequency(200.0);
+
     // resetRotation(AllianceFlipUtil.getFwdHeading().plus(Rotation2d.k180deg));
 
     System.out.println("[Init] Drivetrain initialization complete!");
