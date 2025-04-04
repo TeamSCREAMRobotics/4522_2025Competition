@@ -111,7 +111,12 @@ public class Elevator extends TalonFXSubsystem {
   public Command rezero() {
     return applyVoltageCommand(() -> -2.0)
         .withTimeout(0.25)
-        .andThen(new InstantCommand(() -> resetPosition(0.0)))
+        .finallyDo((interrupted) -> {
+          if(!interrupted){
+            resetPosition(0.0);
+          }
+        })
+        //.andThen(new InstantCommand(() -> resetPosition(0.0)))
         .withName("Rezero");
   }
 
