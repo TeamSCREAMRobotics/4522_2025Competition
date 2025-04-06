@@ -84,8 +84,8 @@ public final class ElevatorConstants {
     CONFIGURATION.neutralMode = NeutralModeValue.Brake;
     CONFIGURATION.sensorToMechRatio = REDUCTION;
     CONFIGURATION.enableSupplyCurrentLimit = true;
-    CONFIGURATION.supplyCurrentLimit = 37;
-    CONFIGURATION.statorCurrentLimit = 80;
+    CONFIGURATION.supplyCurrentLimit = 37; // 37
+    CONFIGURATION.statorCurrentLimit = 80; // 80
     CONFIGURATION.minUnitsLimit = ENCODER_MIN;
     CONFIGURATION.maxUnitsLimit = ENCODER_MAX;
     CONFIGURATION.cruiseVelocity = 60.0; // 30.0

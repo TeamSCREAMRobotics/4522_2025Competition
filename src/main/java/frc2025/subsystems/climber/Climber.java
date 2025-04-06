@@ -43,11 +43,11 @@ public class Climber extends TalonFXSubsystem {
   }
 
   public enum ClimberGoal implements TalonFXSubsystemGoal {
-    HOME(-1.0 + 0.044),
+    HOME(0.044),
     // HOLD_FUNNEL(-0.03),
     // STOW_UNDER_FUNNEL(-0.069),
-    OUT(-1.0 + .275),
-    CLIMB(-1.0 + 0.025);
+    OUT(.275),
+    CLIMB(0.025);
 
     private double targetRotations;
 

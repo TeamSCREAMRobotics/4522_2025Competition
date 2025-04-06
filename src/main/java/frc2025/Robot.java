@@ -46,7 +46,7 @@ public class Robot extends TimedRobot {
             .withLogEntryQueueCapacity(2000));
     Logger.setEnabled(true);
 
-    SignalLogger.enableAutoLogging(false);
+    SignalLogger.enableAutoLogging(true);
 
     CommandScheduler.getInstance().onCommandInitialize((command) -> allCommands.add(command));
     CommandScheduler.getInstance().onCommandFinish((command) -> allCommands.remove(command));
