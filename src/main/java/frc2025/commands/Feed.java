@@ -59,13 +59,12 @@ public class Feed extends Command {
     }
   }
 
-  /* @Override
+  @Override
   public void end(boolean interrupted) {
-    rollers.applyGoal(WristRollersGoal.IDLE);
-    if (!interrupted) {
+    if (Robot.isSimulation()) {
       WristRollers.hasCoral = true;
     }
-  } */
+  }
 
   @Override
   public boolean isFinished() {

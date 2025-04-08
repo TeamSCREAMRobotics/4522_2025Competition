@@ -239,25 +239,29 @@ public class VisionManager {
   }
 
   private boolean rejectEstimate(PoseEstimate estimate, Limelight limelight) {
-    if(estimate == null || estimate.tagCount == 0 || !FieldConstants.FIELD_AREA.contains(estimate.pose)){
+    if (estimate == null
+        || estimate.tagCount == 0
+        || !FieldConstants.FIELD_AREA.contains(estimate.pose)) {
       Logger.log("Vision/" + limelight.name() + "/VisionType", VisionType.REJECTED_INVALID);
       return true;
-    } else if((estimate.tagCount == 1 && estimate.rawFiducials[0].ambiguity > 0.3) && !Dashboard.disableAmbiguityRejection.get()){
+    } else if ((estimate.tagCount == 1 && estimate.rawFiducials[0].ambiguity > 0.3)
+        && !Dashboard.disableAmbiguityRejection.get()) {
       Logger.log("Vision/" + limelight.name() + "/VisionType", VisionType.REJECTED_AMBIGUITY);
       return true;
-    } else if((Math.abs(drivetrain.getPigeon2().getAngularVelocityZWorld().getValueAsDouble()) > 540)
-    || (drivetrain.getLinearVelocity().getNorm() > 3.5)){
+    } else if ((Math.abs(drivetrain.getPigeon2().getAngularVelocityZWorld().getValueAsDouble())
+            > 540)
+        || (drivetrain.getLinearVelocity().getNorm() > 3.5)) {
       Logger.log("Vision/" + limelight.name() + "/VisionType", VisionType.REJECTED_MOVEMENT);
       return true;
     } else {
       return false;
     }
     /* return estimate == null
-        || estimate.tagCount == 0
-        || !FieldConstants.FIELD_AREA.contains(estimate.pose)
-        || (estimate.tagCount == 1 && estimate.rawFiducials[0].ambiguity > 0.3)
-        || (Math.abs(drivetrain.getPigeon2().getAngularVelocityZWorld().getValueAsDouble()) > 540)
-        || (drivetrain.getLinearVelocity().getNorm() > 3.5); */
+    || estimate.tagCount == 0
+    || !FieldConstants.FIELD_AREA.contains(estimate.pose)
+    || (estimate.tagCount == 1 && estimate.rawFiducials[0].ambiguity > 0.3)
+    || (Math.abs(drivetrain.getPigeon2().getAngularVelocityZWorld().getValueAsDouble()) > 540)
+    || (drivetrain.getLinearVelocity().getNorm() > 3.5); */
   }
 
   public void periodic() {

@@ -3,15 +3,19 @@ package frc2025.autonomous;
 import drivers.TalonFXSubsystem.TalonFXSubsystemGoal;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc2025.RobotContainer;
+import frc2025.autonomous.auto_commands.AutoAlign2;
+import frc2025.autonomous.auto_commands.AutoScore2;
 import frc2025.autonomous.auto_commands.DriveUntilAtPose;
 import frc2025.commands.AutoAlign;
 import frc2025.commands.AutoScore;
 import frc2025.commands.Feed;
 import frc2025.constants.FieldConstants;
+import frc2025.constants.FieldConstants.ReefLocation;
 import frc2025.controlboard.Controlboard.ScoringLocation;
 import frc2025.subsystems.superstructure.SuperstructureConstants.SuperstructureState;
 import frc2025.subsystems.superstructure.elevator.Elevator;
@@ -22,9 +26,6 @@ import frc2025.subsystems.superstructure.wrist.WristRollers;
 import frc2025.subsystems.superstructure.wrist.WristRollers.WristRollersGoal;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
-
-import com.pathplanner.lib.config.RobotConfig;
-
 import util.AllianceFlipUtil;
 import util.PathSequence;
 
@@ -33,6 +34,7 @@ public class Routines {
   private static double applyGoal_TimeOut = 0.1;
   private static double elevatorHeightTolerance =
       20.0; // Height (in) the elevator should be under before moving again
+  private static double highElevatorHeightTolerance = 50.0;
   private static double startPath_TimeOut = 0.15;
 
   private static double coralEject_TimeOut = 0.1;
@@ -56,23 +58,22 @@ public class Routines {
   private static final PathSequence leave = new PathSequence("Leave");
 
   /* Push Auto Sequences */
-  private static final PathSequence push_E_D_C = 
-  new PathSequence(
-      "Processor_Push",
-      "Processor-Starting_To_E",
-      "E_To_Processor-Station",
-      "Processor-Station_To_D",
-      "D_To_Processor-Station",
-      "Processor-Station_To_C");
-  private static final PathSequence push_J_K_L = 
-    new PathSequence(
-      "Non-Processor_Push",
-      "Non-Processor-Starting_To_J",
-      "J_To_Non-Processor-Station",
-      "Non-Processor-Station_To_K",
-      "K_To_Non-Processor-Station",
-      "Non-Processor-Station_To_L"
-    );
+  private static final PathSequence push_E_D_C =
+      new PathSequence(
+          "Processor_Push",
+          "Processor-Starting_To_E",
+          "E_To_Processor-Station",
+          "Processor-Station_To_D",
+          "D_To_Processor-Station",
+          "Processor-Station_To_C");
+  private static final PathSequence push_J_K_L =
+      new PathSequence(
+          "Non-Processor_Push",
+          "Non-Processor-Starting_To_J",
+          "J_To_Non-Processor-Station",
+          "Non-Processor-Station_To_K",
+          "K_To_Non-Processor-Station",
+          "Non-Processor-Station_To_L");
 
   /* Processor Starting Side Sequences */
   private static final PathSequence E_D_C_B_1 =
@@ -199,6 +200,36 @@ public class Routines {
     return currentSequence;
   }
 
+  public static Command test4(RobotContainer container) {
+    Elevator elevator = container.getSubsystems().superstructure().getElevator();
+
+    return new SequentialCommandGroup(
+        // Piece 1 -> Feed
+        new AutoScore2(container, SuperstructureState.REEF_L4, ReefLocation.F),
+        setSuperstructure(container, SuperstructureState.FEEDING)
+            .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance),
+        new ParallelCommandGroup(
+            new Feed(container),
+            new AutoAlign2(container, FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, true),
+            new AutoScore2(container, SuperstructureState.REEF_L4, ReefLocation.D)),
+        setSuperstructure(container, SuperstructureState.FEEDING)
+            .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance),
+        new ParallelCommandGroup(
+            new Feed(container),
+            new AutoAlign2(container, FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, true),
+            new AutoScore2(container, SuperstructureState.REEF_L4, ReefLocation.C)),
+        setSuperstructure(container, SuperstructureState.FEEDING)
+            .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance),
+        new ParallelCommandGroup(
+            new Feed(container),
+            new AutoAlign2(container, FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, true),
+            new AutoScore2(container, SuperstructureState.REEF_L4, ReefLocation.E)),
+        setSuperstructure(container, SuperstructureState.FEEDING)
+            .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance),
+        new AutoAlign2(container, FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, true)
+            .alongWith(new Feed(container)));
+  }
+
   /* Testing Autos */
   public static Command test(RobotContainer container) {
     currentSequence = E_D_C;
@@ -223,10 +254,9 @@ public class Routines {
     return new SequentialCommandGroup(
         Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
         currentSequence.getStart(),
-        processor_Side_E_D_C(container)
-    );
+        processor_Side_E_D_C(container));
   }
-  
+
   public static Command nonProcessor_Push(RobotContainer container) {
     currentSequence = push_J_K_L;
     WristRollers wristRollers = container.getSubsystems().wristRollers();
@@ -234,8 +264,7 @@ public class Routines {
     return new SequentialCommandGroup(
         Commands.runOnce(() -> wristRollers.applyGoal(WristRollersGoal.HOLD), wristRollers),
         currentSequence.getStart(),
-        nonProcessor_Side_J_K_L(container)
-    );
+        nonProcessor_Side_J_K_L(container));
   }
 
   /* Processor Starting Side Autos */

@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import java.util.HashMap;
 import java.util.Map;
+import util.AllianceFlipUtil;
 import zones.HexagonalPoseArea;
 import zones.RectangularPoseArea;
 
@@ -23,6 +24,27 @@ public class FieldConstants {
   public enum AlgaeLevel {
     L1,
     L2;
+  }
+
+  public enum ReefLocation {
+    A(0),
+    B(1),
+    C(2),
+    D(3),
+    E(4),
+    F(5),
+    G(6),
+    H(7),
+    I(8),
+    J(9),
+    K(10),
+    L(11);
+
+    public final int id;
+
+    private ReefLocation(int id) {
+      this.id = id;
+    }
   }
 
   public static final Length CORAL_DIAMETER = Length.fromInches(4.5);
@@ -173,6 +195,16 @@ public class FieldConstants {
                   RED_REEF_CENTER.plus(SCORE_LOCATION_2.plus(PRE_REEF_OFFSET).rotateBy(rotation)),
                   poseRotation)));
     }
+  }
+
+  public static Pose2d getReefLocation(ReefLocation location) {
+    int pairIndex = location.id / 2;
+    boolean isFirst = location.id % 2 == 0;
+
+    Pair<Pose2d, Pose2d> pair =
+        AllianceFlipUtil.get(BLUE_REEF_LOCATIONS, RED_REEF_LOCATIONS).get(pairIndex);
+
+    return isFirst ? pair.getFirst() : pair.getSecond();
   }
 
   private static AlgaeLevel getAlgaeLevel(int zone) {

@@ -246,7 +246,7 @@ public class RobotContainer {
                                     DrivetrainConstants.HEADING_CONTROLLER_PROFILED)),
                     applyTargetStateFactory.apply(SuperstructureState.BARGE_NET).get())
                 .beforeStarting(() -> drivetrain.resetHeadingController()))
-    .onFalse(rezero().get());
+        .onFalse(rezero().get());
 
     // Reef scoring/clearing controls
     Controlboard.goToLevel4()
@@ -473,13 +473,15 @@ public class RobotContainer {
             Commands.runOnce(() -> climber.setNeutralMode(NeutralModeValue.Brake))
                 .ignoringDisable(true));
 
-                new Trigger(() -> Dashboard.coastElevator.get())
-                .onTrue(
-                    Commands.runOnce(() -> superstructure.getElevator().setNeutralMode(NeutralModeValue.Coast))
-                        .ignoringDisable(true))
-                .onFalse(
-                    Commands.runOnce(() -> superstructure.getElevator().setNeutralMode(NeutralModeValue.Brake))
-                        .ignoringDisable(true));
+    new Trigger(() -> Dashboard.coastElevator.get())
+        .onTrue(
+            Commands.runOnce(
+                    () -> superstructure.getElevator().setNeutralMode(NeutralModeValue.Coast))
+                .ignoringDisable(true))
+        .onFalse(
+            Commands.runOnce(
+                    () -> superstructure.getElevator().setNeutralMode(NeutralModeValue.Brake))
+                .ignoringDisable(true));
   }
 
   private Supplier<Command> rezero() {

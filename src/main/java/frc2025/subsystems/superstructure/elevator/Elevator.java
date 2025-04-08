@@ -4,7 +4,6 @@ import data.Length;
 import drivers.TalonFXSubsystem;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc2025.logging.Logger;
 import java.util.function.DoubleSupplier;
 import math.Conversions;
@@ -31,9 +30,11 @@ public class Elevator extends TalonFXSubsystem {
     BARGE(Length.fromInches(70.203)),
     MAX(ElevatorConstants.MAX_HEIGHT);
 
+    public Length height;
     public DoubleSupplier targetRotations;
 
     private ElevatorGoal(Length targetHeight) {
+      this.height = targetHeight;
       this.targetRotations =
           () ->
               Conversions.linearDistanceToRotations(
@@ -105,18 +106,19 @@ public class Elevator extends TalonFXSubsystem {
             getMeasuredHeight().getInches(), 0.0, ElevatorConstants.MAX_HEIGHT.getInches());
 
     return ScreamMath.mapRange(
-        clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 4.2, 3.0);
+        clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 5.0, 3.0);
   }
 
   public Command rezero() {
     return applyVoltageCommand(() -> -2.0)
         .withTimeout(0.25)
-        .finallyDo((interrupted) -> {
-          if(!interrupted){
-            resetPosition(0.0);
-          }
-        })
-        //.andThen(new InstantCommand(() -> resetPosition(0.0)))
+        .finallyDo(
+            (interrupted) -> {
+              if (!interrupted) {
+                resetPosition(0.0);
+              }
+            })
+        // .andThen(new InstantCommand(() -> resetPosition(0.0)))
         .withName("Rezero");
   }
 

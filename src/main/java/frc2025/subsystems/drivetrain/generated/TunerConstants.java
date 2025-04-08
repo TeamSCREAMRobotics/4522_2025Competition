@@ -106,7 +106,7 @@ public class TunerConstants {
     DRIVE_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
     DRIVE_CONFIG.CurrentLimits.StatorCurrentLimit = 80;
     DRIVE_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
-    DRIVE_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 30;
+    DRIVE_CONFIG.CurrentLimits.SupplyCurrentLowerLimit = 40;
     DRIVE_CONFIG.CurrentLimits.SupplyCurrentLimit = 40;
     DRIVE_CONFIG.CurrentLimits.SupplyCurrentLowerTime = 0.5;
 

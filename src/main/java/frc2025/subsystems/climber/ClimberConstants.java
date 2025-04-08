@@ -5,7 +5,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-
 import drivers.TalonFXSubsystem.CANCoderConstants;
 import drivers.TalonFXSubsystem.CANDevice;
 import drivers.TalonFXSubsystem.TalonFXConstants;
@@ -34,8 +33,7 @@ public class ClimberConstants {
     config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.75;
     config.MagnetSensor.MagnetOffset = 0.016845703125;
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    CONFIGURATION.cancoderConstants =
-        new CANCoderConstants(new CANDevice(5), config);
+    CONFIGURATION.cancoderConstants = new CANCoderConstants(new CANDevice(5), config);
 
     CONFIGURATION.neutralMode = NeutralModeValue.Brake;
     CONFIGURATION.sensorToMechRatio = 1.0;

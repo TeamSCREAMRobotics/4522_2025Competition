@@ -12,6 +12,7 @@ public class Dashboard {
 
   private static final String overrides = "Overrides";
   private static final String vision = "Vision";
+  private static final String tuning = "Tuning";
 
   public static DashboardBoolean manualMode;
   public static DashboardBoolean resetVoltage;
@@ -37,6 +38,8 @@ public class Dashboard {
   public static DashboardBoolean coastClimber;
   public static DashboardBoolean coastElevator;
   public static DashboardBoolean disableAmbiguityRejection;
+
+  public static DashboardNumber autoScoreDistance;
 
   private static Field2d field = new Field2d();
 
@@ -67,11 +70,12 @@ public class Dashboard {
     unjam = new DashboardBoolean(overrides, "Unjam", false);
     rotationOverride = new DashboardNumber(overrides, "Reset Rotation", 0.0);
     submitRotationOverride = new DashboardBoolean(overrides, "Submit Rotation Override", false);
-    useGlobalEstimateForAutoAlign =
-        new DashboardBoolean(vision, "Global Estimate For AA", false);
+    useGlobalEstimateForAutoAlign = new DashboardBoolean(vision, "Global Estimate For AA", false);
     coastClimber = new DashboardBoolean(overrides, "Coast Climber", false);
     coastElevator = new DashboardBoolean(overrides, "Coast Elevator", false);
     disableAmbiguityRejection = new DashboardBoolean(vision, "Disable Ambiguity Rejection", false);
+
+    autoScoreDistance = new DashboardNumber(tuning, "Auto Score Distance", 0.04);
 
     for (AlgaeLevel level : AlgaeLevel.values()) {
       wantedAlgaeLevel.addOption(level.toString(), level);
