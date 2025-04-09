@@ -21,6 +21,7 @@ import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.Drivetrain;
 import frc2025.subsystems.leds.LED;
 import frc2025.subsystems.superstructure.elevator.Elevator;
+import java.util.function.Supplier;
 import util.GeomUtil;
 
 public class AutoAlign2 extends Command {
@@ -37,13 +38,13 @@ public class AutoAlign2 extends Command {
   private final ProfiledPIDController headingController =
       new ProfiledPIDController(9.5, 0, 0, new Constraints(Units.degreesToRadians(360.0), 8.0));
 
-  private Pose2d targetPose;
+  private Supplier<Pose2d> targetPose;
 
   private Translation2d lastSetpointTranslation = new Translation2d();
   private double driveErrorAbs = 0.0;
   private double headingErrorAbs = 0.0;
 
-  private final double driveTolerance = 0.06;
+  private final double driveTolerance = 0.01;
   private final double headingTolerance = Units.degreesToRadians(1.0);
 
   private double currentDistance = 0.0;
@@ -63,6 +64,7 @@ public class AutoAlign2 extends Command {
     headingController.enableContinuousInput(-Math.PI, Math.PI);
 
     addRequirements(drivetrain);
+    setName("AutoAlign2");
   }
 
   public AutoAlign2(RobotContainer container, Pose2d pose, boolean shouldEnd) {
@@ -70,13 +72,14 @@ public class AutoAlign2 extends Command {
     this.drivetrain = container.getSubsystems().drivetrain();
     this.elevator = container.getSubsystems().superstructure().getElevator();
     this.led = container.getSubsystems().led();
-    targetPose = pose;
+    targetPose = () -> pose;
 
     this.shouldEnd = shouldEnd;
 
     headingController.enableContinuousInput(-Math.PI, Math.PI);
 
     addRequirements(drivetrain);
+    setName("AutoAlign2");
   }
 
   @Override
@@ -85,12 +88,13 @@ public class AutoAlign2 extends Command {
     Twist2d fieldVel = drivetrain.getFieldVelocity();
     Translation2d linearFieldVel = new Translation2d(fieldVel.dx, fieldVel.dy);
     driveController.reset(
-        currentPose.getTranslation().getDistance(targetPose.getTranslation()),
+        currentPose.getTranslation().getDistance(targetPose.get().getTranslation()),
         Math.min(
             0.0,
             -linearFieldVel
                 .rotateBy(
                     targetPose
+                        .get()
                         .getTranslation()
                         .minus(currentPose.getTranslation())
                         .getAngle()
@@ -106,6 +110,7 @@ public class AutoAlign2 extends Command {
       return;
     }
     Pose2d currentPose = drivetrain.getEstimatedPose();
+    Pose2d targetPose = this.targetPose.get();
 
     driveController.setConstraints(
         new Constraints(elevator.getDriveScalar(), elevator.getAccelScalar()));

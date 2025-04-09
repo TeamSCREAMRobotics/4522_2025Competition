@@ -205,26 +205,29 @@ public class Routines {
 
     return new SequentialCommandGroup(
         // Piece 1 -> Feed
-        new AutoScore2(container, SuperstructureState.REEF_L4, ReefLocation.F),
-        setSuperstructure(container, SuperstructureState.FEEDING)
+        new AutoScore2(container, SuperstructureState.REEF_L4, ReefLocation.E),
+        instantSetSuperstructure(container, SuperstructureState.FEEDING),
+        // .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance),
+        new ParallelCommandGroup(
+            new Feed(container),
+            new SequentialCommandGroup(
+                new AutoAlign2(container, FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, true),
+                new AutoScore2(container, SuperstructureState.REEF_L4, ReefLocation.D))),
+        instantSetSuperstructure(container, SuperstructureState.FEEDING)
             .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance),
         new ParallelCommandGroup(
             new Feed(container),
-            new AutoAlign2(container, FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, true),
-            new AutoScore2(container, SuperstructureState.REEF_L4, ReefLocation.D)),
-        setSuperstructure(container, SuperstructureState.FEEDING)
+            new SequentialCommandGroup(
+                new AutoAlign2(container, FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, true),
+                new AutoScore2(container, SuperstructureState.REEF_L4, ReefLocation.C))),
+        instantSetSuperstructure(container, SuperstructureState.FEEDING)
             .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance),
         new ParallelCommandGroup(
             new Feed(container),
-            new AutoAlign2(container, FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, true),
-            new AutoScore2(container, SuperstructureState.REEF_L4, ReefLocation.C)),
-        setSuperstructure(container, SuperstructureState.FEEDING)
-            .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance),
-        new ParallelCommandGroup(
-            new Feed(container),
-            new AutoAlign2(container, FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, true),
-            new AutoScore2(container, SuperstructureState.REEF_L4, ReefLocation.E)),
-        setSuperstructure(container, SuperstructureState.FEEDING)
+            new SequentialCommandGroup(
+                new AutoAlign2(container, FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, true),
+                new AutoScore2(container, SuperstructureState.REEF_L4, ReefLocation.B))),
+        instantSetSuperstructure(container, SuperstructureState.FEEDING)
             .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance),
         new AutoAlign2(container, FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, true)
             .alongWith(new Feed(container)));
@@ -494,5 +497,10 @@ public class Routines {
   public static final Command setSuperstructure(
       RobotContainer container, SuperstructureState goalState) {
     return applyTargetStateFactory.apply(goalState, container).get();
+  }
+
+  public static final Command instantSetSuperstructure(
+      RobotContainer container, SuperstructureState goalState) {
+    return applyTargetStateFactory.apply(goalState, container).get().withTimeout(0.1);
   }
 }

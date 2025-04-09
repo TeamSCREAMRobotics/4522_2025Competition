@@ -68,7 +68,7 @@ public class Feed extends Command {
 
   @Override
   public boolean isFinished() {
-    return (WristRollers.hasCoral && isAuto) || Robot.isSimulation();
+    return (WristRollers.hasCoral && isAuto) || (Robot.isSimulation() && isAuto);
     // return (!rollers.acquiredCoral() && hasSeenPiece) || Robot.isSimulation();
   }
 

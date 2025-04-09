@@ -24,8 +24,7 @@ public class AutoScore2 extends SequentialCommandGroup {
     addRequirements(
         container.getSubsystems().drivetrain(),
         container.getSubsystems().superstructure().getElevator(),
-        container.getSubsystems().superstructure().getWrist(),
-        container.getSubsystems().wristRollers());
+        container.getSubsystems().superstructure().getWrist());
 
     align = new AutoAlign2(container, location, false);
     addCommands(
@@ -36,10 +35,12 @@ public class AutoScore2 extends SequentialCommandGroup {
                     () ->
                         (align.hasReachedGoal(Dashboard.autoScoreDistance.get())
                             && container.getSubsystems().superstructure().atGoal(level))),
-                container
-                    .getSubsystems()
-                    .wristRollers()
-                    .applyGoalCommand(WristRollersGoal.EJECT_CORAL)
+                Commands.run(
+                        () ->
+                            container
+                                .getSubsystems()
+                                .wristRollers()
+                                .applyGoal(WristRollersGoal.EJECT_CORAL))
                     .withTimeout(0.2)
                     .finallyDo(() -> WristRollers.resetBeam())),
             align,

@@ -189,6 +189,7 @@ public class RobotContainer {
     autoSelector = new AutoSelector(this);
 
     if (Robot.isSimulation()) {
+      configureSimulationOverrides();
       drivetrain.resetPose(
           AllianceFlipUtil.get(
               Pose2d.kZero, new Pose2d(FieldConstants.FIELD_DIMENSIONS, Rotation2d.k180deg)));
@@ -482,6 +483,12 @@ public class RobotContainer {
             Commands.runOnce(
                     () -> superstructure.getElevator().setNeutralMode(NeutralModeValue.Brake))
                 .ignoringDisable(true));
+  }
+
+  public void configureSimulationOverrides() {
+    new Trigger(() -> Dashboard.Sim.hasCoral.get())
+        .onTrue(Commands.runOnce(() -> WristRollers.hasCoral = true).ignoringDisable(true))
+        .onFalse(Commands.runOnce(() -> WristRollers.hasCoral = false).ignoringDisable(true));
   }
 
   private Supplier<Command> rezero() {

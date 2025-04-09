@@ -177,7 +177,7 @@ public class AutoAlign extends Command {
                 currentPose
                         .getTranslation()
                         .getDistance(this.targetPose.get().getFirst().getTranslation())
-                    * 1.5);
+                    * 0.5);
 
     driveController.setConstraints(
         new Constraints(elevator.getDriveScalar(), elevator.getAccelScalar()));

@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import util.AllianceFlipUtil;
 import zones.HexagonalPoseArea;
 import zones.RectangularPoseArea;
@@ -92,6 +93,9 @@ public class FieldConstants {
 
   public static final Map<Integer, Pair<Pose2d, Pose2d>> BLUE_REEF_LOCATIONS = new HashMap<>();
   public static final Map<Integer, Pair<Pose2d, Pose2d>> RED_REEF_LOCATIONS = new HashMap<>();
+
+  public static final Map<Integer, Pair<Pose2d, Pose2d>> BLUE_REEF_LOCATIONS_FLIPPED =
+      new HashMap<>();
   public static final Map<Integer, Pair<Pose2d, Pose2d>> RED_REEF_LOCATIONS_FLIPPED =
       new HashMap<>();
 
@@ -185,26 +189,30 @@ public class FieldConstants {
       Rotation2d rotation = Rotation2d.fromDegrees((i * 60) + 180);
       Rotation2d poseRotation = Rotation2d.fromDegrees((i * 60));
 
+      BLUE_REEF_LOCATIONS_FLIPPED.put(
+          i,
+          new Pair<>(
+              new Pose2d(BLUE_REEF_CENTER.plus(SCORE_LOCATION_1.rotateBy(rotation)), poseRotation),
+              new Pose2d(
+                  BLUE_REEF_CENTER.plus(SCORE_LOCATION_2.rotateBy(rotation)), poseRotation)));
+
       RED_REEF_LOCATIONS_FLIPPED.put(
           i,
           new Pair<>(
-              new Pose2d(
-                  RED_REEF_CENTER.plus(SCORE_LOCATION_1.plus(PRE_REEF_OFFSET).rotateBy(rotation)),
-                  poseRotation),
-              new Pose2d(
-                  RED_REEF_CENTER.plus(SCORE_LOCATION_2.plus(PRE_REEF_OFFSET).rotateBy(rotation)),
-                  poseRotation)));
+              new Pose2d(RED_REEF_CENTER.plus(SCORE_LOCATION_1.rotateBy(rotation)), poseRotation),
+              new Pose2d(RED_REEF_CENTER.plus(SCORE_LOCATION_2.rotateBy(rotation)), poseRotation)));
     }
   }
 
-  public static Pose2d getReefLocation(ReefLocation location) {
+  public static Supplier<Pose2d> getReefLocation(ReefLocation location) {
     int pairIndex = location.id / 2;
     boolean isFirst = location.id % 2 == 0;
 
-    Pair<Pose2d, Pose2d> pair =
-        AllianceFlipUtil.get(BLUE_REEF_LOCATIONS, RED_REEF_LOCATIONS).get(pairIndex);
-
-    return isFirst ? pair.getFirst() : pair.getSecond();
+    return () -> {
+      Pair<Pose2d, Pose2d> pair =
+          AllianceFlipUtil.get(BLUE_REEF_LOCATIONS_FLIPPED, RED_REEF_LOCATIONS).get(pairIndex);
+      return isFirst ? pair.getSecond() : pair.getFirst();
+    };
   }
 
   private static AlgaeLevel getAlgaeLevel(int zone) {
