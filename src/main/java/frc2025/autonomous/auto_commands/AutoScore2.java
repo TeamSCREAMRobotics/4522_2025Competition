@@ -4,6 +4,8 @@
 
 package frc2025.autonomous.auto_commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -20,13 +22,13 @@ public class AutoScore2 extends SequentialCommandGroup {
 
   private AutoAlign2 align;
 
-  public AutoScore2(RobotContainer container, SuperstructureState level, ReefLocation location) {
+  public AutoScore2(RobotContainer container, SuperstructureState level, Supplier<ReefLocation> location, double rotationWait) {
     addRequirements(
         container.getSubsystems().drivetrain(),
         container.getSubsystems().superstructure().getElevator(),
         container.getSubsystems().superstructure().getWrist());
 
-    align = new AutoAlign2(container, location, false);
+    align = new AutoAlign2(container, location.get(), false, rotationWait);
     addCommands(
         new InstantCommand(() -> container.getSubsystems().wristRollers().stop()),
         new ParallelDeadlineGroup(
@@ -45,7 +47,7 @@ public class AutoScore2 extends SequentialCommandGroup {
                     .finallyDo(() -> WristRollers.resetBeam())),
             align,
             Commands.sequence(
-                Commands.waitUntil(() -> align.hasReachedGoal(1.6) && WristRollers.hasCoral),
+                Commands.waitUntil(() -> align.hasReachedGoal(1.2) && WristRollers.hasCoral),
                 container.applyTargetStateFactory.apply(level).get())));
   }
 }

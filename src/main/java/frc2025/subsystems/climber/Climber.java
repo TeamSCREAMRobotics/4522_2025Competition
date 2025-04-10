@@ -1,6 +1,7 @@
 package frc2025.subsystems.climber;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkMax;
 import drivers.TalonFXSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -24,7 +25,7 @@ public class Climber extends TalonFXSubsystem {
     }
   }
 
-  public final SparkMax rollers = new SparkMax(1, MotorType.kBrushless);
+  public final TalonFX rollers = new TalonFX(16);
   public final DigitalInput cageLimitSwitch = new DigitalInput(8);
 
   public final Servo funnelServo = new Servo(8);
@@ -47,7 +48,7 @@ public class Climber extends TalonFXSubsystem {
     // HOLD_FUNNEL(-0.03),
     // STOW_UNDER_FUNNEL(-0.069),
     OUT(.275),
-    CLIMB(0.025);
+    CLIMB(0.035); // 0.025 (gas shock moved - can't pull that far 4/9)
 
     private double targetRotations;
 

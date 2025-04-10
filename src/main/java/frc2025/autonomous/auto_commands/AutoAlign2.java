@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc2025.RobotContainer;
@@ -44,7 +45,7 @@ public class AutoAlign2 extends Command {
   private double driveErrorAbs = 0.0;
   private double headingErrorAbs = 0.0;
 
-  private final double driveTolerance = 0.01;
+  private double driveTolerance = 0.01;
   private final double headingTolerance = Units.degreesToRadians(1.0);
 
   private double currentDistance = 0.0;
@@ -52,12 +53,16 @@ public class AutoAlign2 extends Command {
   private final double ffMinRadius = 0.1;
   private final double ffMaxRadius = 0.4;
 
-  public AutoAlign2(RobotContainer container, ReefLocation location, boolean shouldEnd) {
+  private Timer rotateTimer = new Timer();
+  private double rotationWait = 0.5;
+
+  public AutoAlign2(RobotContainer container, ReefLocation location, boolean shouldEnd, double rotationWait) {
     this.container = container;
     this.drivetrain = container.getSubsystems().drivetrain();
     this.elevator = container.getSubsystems().superstructure().getElevator();
     this.led = container.getSubsystems().led();
     targetPose = FieldConstants.getReefLocation(location);
+    this.rotationWait = rotationWait;
 
     this.shouldEnd = shouldEnd;
 
@@ -82,8 +87,15 @@ public class AutoAlign2 extends Command {
     setName("AutoAlign2");
   }
 
+  public AutoAlign2(RobotContainer container, Pose2d pose, boolean shouldEnd, double driveTolerance) {
+    this(container, pose, shouldEnd);
+    this.driveTolerance = driveTolerance;
+  }
+
   @Override
   public void initialize() {
+    rotateTimer.reset();
+    rotateTimer.start();
     Pose2d currentPose = drivetrain.getEstimatedPose();
     Twist2d fieldVel = drivetrain.getFieldVelocity();
     Translation2d linearFieldVel = new Translation2d(fieldVel.dx, fieldVel.dy);
@@ -138,10 +150,13 @@ public class AutoAlign2 extends Command {
                 GeomUtil.translationToTransform(driveController.getSetpoint().position, 0.0))
             .getTranslation();
 
-    double thetaVelocity =
+    double thetaVelocity = rotateTimer.get() > rotationWait ?
         headingController.getSetpoint().velocity * ffScalar
             + headingController.calculate(
-                currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+                currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians()) :
+        headingController.getSetpoint().velocity * ffScalar
+            + headingController.calculate(
+                currentPose.getRotation().getRadians(), currentPose.getRotation().getRadians());
     headingErrorAbs =
         Math.abs(currentPose.getRotation().minus(targetPose.getRotation()).getRadians());
     if (headingErrorAbs < headingTolerance) {
@@ -178,6 +193,7 @@ public class AutoAlign2 extends Command {
   @Override
   public void end(boolean interrupted) {
     drivetrain.stop();
+    rotateTimer.stop();
   }
 
   @Override

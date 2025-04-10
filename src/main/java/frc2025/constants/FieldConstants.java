@@ -52,8 +52,8 @@ public class FieldConstants {
 
   public static final Length BRANCH_TO_REEF_EDGE = Length.fromInches(2.111249);
 
-  public static final double STATION_X_OFFSET = 0.1;
-  public static final double STATION_Y_OFFSET = 0.1;
+  public static final double STATION_X_OFFSET = -0.1; //0.1
+  public static final double STATION_Y_OFFSET = -0.1; //0.1
 
   public static final Pose2d BLUE_PROCESSOR_FEEDER_ALIGN =
       new Pose2d(1.544 - STATION_X_OFFSET, 0.734 - STATION_Y_OFFSET, Rotation2d.fromDegrees(54.0));
@@ -64,7 +64,7 @@ public class FieldConstants {
           Rotation2d.fromDegrees(54.0 + 180.0));
 
   public static final Pose2d BLUE_NONPROCESSOR_FEEDER_ALIGN =
-      new Pose2d(1.544 - STATION_X_OFFSET, 7.293 + STATION_Y_OFFSET, Rotation2d.fromDegrees(54.0));
+      new Pose2d(1.544 - STATION_X_OFFSET, 7.293 + STATION_Y_OFFSET, Rotation2d.fromDegrees(-54.0));
   public static final Pose2d RED_NONPROCESSOR_FEEDER_ALIGN =
       new Pose2d(
           FIELD_DIMENSIONS.getX() - 1.544 + STATION_X_OFFSET,

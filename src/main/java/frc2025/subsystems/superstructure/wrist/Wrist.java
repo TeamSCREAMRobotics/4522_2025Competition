@@ -13,7 +13,7 @@ public class Wrist extends TalonFXSubsystem {
 
   public enum WristGoal implements TalonFXSubsystemGoal {
     STOW(Rotation2d.fromDegrees(90.0)),
-    INTAKE(Rotation2d.fromDegrees(25.0)),
+    INTAKE(Rotation2d.fromDegrees(28.0)), // 25.0
     CLEAR_ALGAE(Rotation2d.fromDegrees(62.64)),
     TROUGH_FEED(Rotation2d.fromDegrees(81.0)),
     TROUGH(Rotation2d.fromDegrees(74.0));

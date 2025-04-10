@@ -64,6 +64,9 @@ public class Feed extends Command {
     if (Robot.isSimulation()) {
       WristRollers.hasCoral = true;
     }
+    if(isAuto){
+      rollers.stop();
+    }
   }
 
   @Override

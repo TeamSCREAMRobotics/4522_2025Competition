@@ -37,7 +37,7 @@ public class ClimbSequence extends Command {
       case 0:
         climber.applyGoal(ClimberGoal.OUT);
         climber.setFunnelServo(ServoGoal.RETRACT);
-        climber.setRollers(3.5);
+        climber.setRollers(6.0);
         if (climber.hasCage().getAsBoolean()) {
           led.solid(Color.kRed);
         } else {

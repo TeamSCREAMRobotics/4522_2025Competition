@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import drivers.PhoenixSwerveHelper;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -44,6 +46,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private RunOnce operatorPerspectiveApplier = new RunOnce();
 
   @Getter private final PhoenixSwerveHelper helper;
+
+  private final SwerveDrivePoseEstimator poseEstimator;
 
   public Drivetrain(
       SwerveDrivetrainConstants driveTrainConstants,
@@ -91,7 +95,9 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       startSimThread();
     }
 
-    getPigeon2().getYaw().setUpdateFrequency(200.0);
+    poseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getState().RawHeading, getState().ModulePositions, Pose2d.kZero);
+
+    //getPigeon2().getYaw().setUpdateFrequency(200.0);
 
     // resetRotation(AllianceFlipUtil.getFwdHeading().plus(Rotation2d.k180deg));
 
@@ -120,7 +126,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public Pose2d getEstimatedPose() {
-    return getState().Pose;
+    return poseEstimator.getEstimatedPosition();//getState().Pose;
   }
 
   public Rotation2d getHeading() {
@@ -173,11 +179,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       Matrix<N3, N1> visionMeasurementStdDevs,
       boolean rejectHeading) {
     Logger.log("Vision/ActiveGlobalVisionMeasurement", visionRobotPoseMeters);
-    super.addVisionMeasurement(
+    poseEstimator.addVisionMeasurement(
         rejectHeading
             ? new Pose2d(visionRobotPoseMeters.getTranslation(), getHeading())
             : visionRobotPoseMeters,
-        Utils.fpgaToCurrentTime(timestampSeconds),
+        timestampSeconds,
         visionMeasurementStdDevs);
   }
 
@@ -193,7 +199,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   public void logTelemetry(SwerveDriveState state) {
     Logger.log("Subsystems/Drivetrain/RawHeading", getPigeon2().getYaw().getValueAsDouble());
-    Logger.log("RobotState/EstimatedPose", state.Pose);
+    Logger.log("RobotState/EstimatedPose", getEstimatedPose());
     Logger.log(
         "Subsystems/Drivetrain/ActiveRequest", getSwerveRequest().getClass().getSimpleName());
     Logger.log("Subsystems/Drivetrain/MeasuredStates", state.ModuleStates);
@@ -204,6 +210,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   @Override
   public void periodic() {
+    poseEstimator.updateWithTime(Timer.getFPGATimestamp(), getState().RawHeading, getState().ModulePositions);
     if (getCurrentCommand() != null) {
       Logger.log("Subsystems/Drivetrain/ActiveCommand", getCurrentCommand().getName());
     }

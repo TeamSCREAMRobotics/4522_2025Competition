@@ -106,7 +106,7 @@ public class Elevator extends TalonFXSubsystem {
             getMeasuredHeight().getInches(), 0.0, ElevatorConstants.MAX_HEIGHT.getInches());
 
     return ScreamMath.mapRange(
-        clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 5.0, 3.0);
+        clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 4.5, 3.0);
   }
 
   public Command rezero() {

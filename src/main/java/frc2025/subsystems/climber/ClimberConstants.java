@@ -45,8 +45,8 @@ public class ClimberConstants {
 
     CONFIGURATION.enableSupplyCurrentLimit = true;
     CONFIGURATION.supplyCurrentLimit = 40;
-    CONFIGURATION.cruiseVelocity = 8.0; // .35
-    CONFIGURATION.acceleration = 4.0; // 0.75
+    CONFIGURATION.cruiseVelocity = 15.0; // 8.0
+    CONFIGURATION.acceleration = 10.0; // 4.0
     CONFIGURATION.slot0 =
         new ScreamPIDConstants(90.0, 0, 0).getSlot0Configs(new FeedforwardConstants()); // 75
     CONFIGURATION.positionThreshold = 0.005;
