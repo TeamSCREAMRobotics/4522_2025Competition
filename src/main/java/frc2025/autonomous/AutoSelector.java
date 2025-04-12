@@ -24,7 +24,7 @@ public class AutoSelector {
     NONPROCESSOR_J_A_L_K(container -> Routines.nonProcessor_J_A_L_K(container)),
     MID_G_E_F(container -> Routines.mid_G_E_F(container)),
     MID_G_4_5(container -> Routines.mid_G_4_5(container, false)),
-    MID_G_4_5_STEAL(container -> Routines.mid_G_4_5(container, true));
+    FLINT_N_STEAL(container -> Routines.mid_G_4_5(container, true));
 
     private final Function<RobotContainer, Command> factory;
 

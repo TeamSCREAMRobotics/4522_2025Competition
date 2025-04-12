@@ -78,6 +78,10 @@ public class FieldConstants {
           FIELD_DIMENSIONS.getX() - /* 7.7 */ 7.5,
           FIELD_DIMENSIONS.getY() * /* 0.25 */ 0.35,
           Rotation2d.k180deg);
+  public static final Pose2d BLUE_BARGE_ALIGN_FLIPPED =
+      new Pose2d(/* 7.7 */ 10.25, FIELD_DIMENSIONS.getY() * /* 0.75 */ 0.65, Rotation2d.k180deg);
+  public static final Pose2d RED_BARGE_ALIGN_FLIPPED =
+      new Pose2d(FIELD_DIMENSIONS.getX() - 10.25, FIELD_DIMENSIONS.getY() * 0.35, Rotation2d.kZero);
 
   public static final Translation2d BLUE_REEF_CENTER =
       new Translation2d(Units.inchesToMeters(176.746), FIELD_DIMENSIONS.getY() / 2.0);
@@ -101,6 +105,7 @@ public class FieldConstants {
 
   public static final Map<Integer, Pair<Pose2d, AlgaeLevel>> BLUE_ALGAE_LOCATIONS = new HashMap<>();
   public static final Map<Integer, Pair<Pose2d, AlgaeLevel>> RED_ALGAE_LOCATIONS = new HashMap<>();
+  public static final Map<Integer, Pair<Pose2d, AlgaeLevel>> RED_ALGAE_LOCATIONS_FLIPPED = new HashMap<>();
 
   public static final int[] ALL_TAGS =
       new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
@@ -201,6 +206,11 @@ public class FieldConstants {
           new Pair<>(
               new Pose2d(RED_REEF_CENTER.plus(SCORE_LOCATION_1.rotateBy(rotation)), poseRotation),
               new Pose2d(RED_REEF_CENTER.plus(SCORE_LOCATION_2.rotateBy(rotation)), poseRotation)));
+
+              RED_ALGAE_LOCATIONS_FLIPPED.put(i,
+              Pair.of(
+                  new Pose2d(RED_REEF_CENTER.plus(ALGAE_LOCATION.rotateBy(rotation)), poseRotation),
+                  getAlgaeLevel(i + 1)));
     }
   }
 

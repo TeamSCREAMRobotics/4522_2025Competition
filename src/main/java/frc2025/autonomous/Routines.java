@@ -277,7 +277,9 @@ public class Routines {
 
   public static Command test(RobotContainer container) {
 
-    return new SequentialCommandGroup();
+    return new SequentialCommandGroup(
+        grabAlgae(container, SuperstructureState.REEF_ALGAE_L2, intakeAlgae_TimeOut)
+    );
   }
 
   public static Command processor_E_B_C_D(RobotContainer container) {
@@ -370,24 +372,23 @@ public class Routines {
         new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(0), 0.1),
         instantSetSuperstructure(container, SuperstructureState.FEEDING)
             .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance),
-        new ParallelCommandGroup(
-            new Feed(container),
+        new ParallelDeadlineGroup(
+            // new Feed(container),
             new SequentialCommandGroup(
                 new AutoAlign2(container, feederAlliance_Pose, true, feederAlignTolerance),
-                new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(1), 0.1))),
+                new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(1), 0.1)
+                    .withDeadline(endAutoScore())),
+                new Feed(container)),
         instantSetSuperstructure(container, SuperstructureState.FEEDING)
             .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance),
-        new ParallelCommandGroup(
-            new Feed(container),
+        new ParallelDeadlineGroup(
+            // new Feed(container),
             new SequentialCommandGroup(
                 new AutoAlign2(container, feederAlliance_Pose, true, feederAlignTolerance),
                 new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(2), 0.1)
-                    .withDeadline(
-                        new SequentialCommandGroup(
-                            new WaitCommand(2.0),
-                            new WaitUntilCommand(() -> !WristRollers.hasCoral
-                        ))))),
-        grabAlgae(container, SuperstructureState.REEF_ALGAE_L1),
+                    .withDeadline(endAutoScore())),
+                new Feed(container)),
+        grabAlgae(container, SuperstructureState.REEF_ALGAE_L1, intakeAlgae_TimeOut),
         // setSuperstructure(container, SuperstructureState.FEEDING)
         //     .until(() -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED),
         new AutoAlign2(
@@ -400,11 +401,12 @@ public class Routines {
                 feederAlignTolerance)
             .withTimeout(0.75),
         wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE).withTimeout(0.1),
-        new ParallelCommandGroup(
-            new Feed(container),
+        new ParallelDeadlineGroup(
+            // new Feed(container),
             new SequentialCommandGroup(
                 new AutoAlign2(container, feederAlliance_Pose, true, feederAlignTolerance),
-                new AutoScore2(container, SuperstructureState.REEF_L3, scoreSequence.get(3), 0.1))),
+                new AutoScore2(container, SuperstructureState.REEF_L3, scoreSequence.get(3), 0.1)
+                    .withDeadline(endAutoScore()))),
         instantSetSuperstructure(container, SuperstructureState.FEEDING)
             .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance)
         );
@@ -422,20 +424,24 @@ public class Routines {
         setSuperstructure(container, SuperstructureState.FEEDING)
             .until(() -> elevator.getMeasuredHeight().getInches() < elevatorHeightTolerance),
         facePaths.getIndex(1),
-        new ParallelCommandGroup(
-            new Feed(container),
+        new ParallelDeadlineGroup(
+            // new Feed(container),
             new SequentialCommandGroup(
                 new AutoAlign2(container, feederAlliance_Pose, true, feederAlignTolerance),
                 stationPaths.getIndex(0),
-                new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(1), 0.1))),
+                new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(1), 0.1)
+                    .withDeadline(endAutoScore())),
+                new Feed(container)),
         setSuperstructure(container, SuperstructureState.FEEDING)
             .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance),
-        new ParallelCommandGroup(
-            new Feed(container),
+        new ParallelDeadlineGroup(
+            // new Feed(container),
             new SequentialCommandGroup(
                 new AutoAlign2(container, feederAlliance_Pose, true, feederAlignTolerance),
                 stationPaths.getIndex(0),
-                new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(2), 0.1))),
+                new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(2), 0.1)
+                    .withDeadline(endAutoScore())),
+                new Feed(container)),
         instantSetSuperstructure(container, SuperstructureState.FEEDING)
             .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance)
     );
@@ -446,10 +452,12 @@ public class Routines {
     WristRollers wristRollers = container.getSubsystems().wristRollers();
     bargeAlliance_Pose =
         AllianceFlipUtil.get(FieldConstants.BLUE_BARGE_ALIGN, FieldConstants.RED_BARGE_ALIGN);
+    Pose2d bargeAlliance_Pose_Opp =
+    AllianceFlipUtil.get(FieldConstants.BLUE_BARGE_ALIGN_FLIPPED, FieldConstants.RED_BARGE_ALIGN_FLIPPED);
     
     return new SequentialCommandGroup(
         new AutoScore2(container, SuperstructureState.REEF_L4, () -> ReefLocation.G, 0.1),
-        grabAlgae(container, SuperstructureState.REEF_ALGAE_L1),
+        grabAlgae(container, SuperstructureState.REEF_ALGAE_L1, intakeAlgae_TimeOut),
         setSuperstructure(container, SuperstructureState.FEEDING)
             .until(() -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED),
         new AutoAlign2(container, bargeAlliance_Pose, true)
@@ -463,7 +471,7 @@ public class Routines {
             .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance),
         new AutoScore2(container, SuperstructureState.REEF_L2, () -> ReefLocation.I, 0.1)
             .withTimeout(1.0),
-        grabAlgae(container, SuperstructureState.REEF_ALGAE_L2),
+        grabAlgae(container, SuperstructureState.REEF_ALGAE_L2, intakeAlgae_TimeOut),
         new AutoAlign2(container, bargeAlliance_Pose, true)
             .alongWith(instantSetSuperstructure(container, SuperstructureState.REEF_ALGAE_L1))
         .andThen(
@@ -478,8 +486,9 @@ public class Routines {
             .until(() -> elevator.getMeasuredHeight().getInches() < 30.0),
         new ConditionalCommand(
         new SequentialCommandGroup(
-            stealPaths.getIndex(0)
-            // grabAlgae(container, SuperstructureState.REEF_ALGAE_L2)
+            stealPaths.getIndex(0),
+            grabAlgae(container, SuperstructureState.REEF_ALGAE_L2, 0.5),
+            new AutoAlign2(container, bargeAlliance_Pose_Opp, true)
         ),
         new InstantCommand(),
         () -> steal)
@@ -758,7 +767,7 @@ public class Routines {
     );
   }
 
-  public static final Command grabAlgae(RobotContainer container, SuperstructureState goalState) {
+  public static final Command grabAlgae(RobotContainer container, SuperstructureState goalState, double grabTimeout) {
     Elevator elevator = container.getSubsystems().superstructure().getElevator();
     Wrist wrist = container.getSubsystems().superstructure().getWrist();
     WristRollers wristRollers = container.getSubsystems().wristRollers();
@@ -774,7 +783,7 @@ public class Routines {
                     .andThen(
                         wristRollers
                             .applyGoalCommand(WristRollersGoal.INTAKE_ALGAE)
-                            .withTimeout(intakeAlgae_TimeOut)
+                            .withTimeout(grabTimeout)
                             .andThen(
                                 wristRollers
                                     .applyGoalCommand(WristRollersGoal.IDLE_AUTO)

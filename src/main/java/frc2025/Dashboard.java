@@ -75,7 +75,7 @@ public class Dashboard {
     coastElevator = new DashboardBoolean(overrides, "Coast Elevator", false);
     disableAmbiguityRejection = new DashboardBoolean(vision, "Disable Ambiguity Rejection", false);
 
-    autoScoreDistance = new DashboardNumber(tuning, "Auto Score Distance", 0.04);
+    autoScoreDistance = new DashboardNumber(tuning, "Auto Score Distance", 0.03);
 
     for (AlgaeLevel level : AlgaeLevel.values()) {
       wantedAlgaeLevel.addOption(level.toString(), level);

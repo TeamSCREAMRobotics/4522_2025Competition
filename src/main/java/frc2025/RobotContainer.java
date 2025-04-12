@@ -243,7 +243,7 @@ public class RobotContainer {
                                         .get()
                                         .times(superstructure.getElevator().getDriveScalar() * 0.5),
                                     AllianceFlipUtil.get(
-                                        Rotation2d.fromDegrees(25), Rotation2d.fromDegrees(-135)),
+                                        Rotation2d.fromDegrees(drivetrain.onBlueSide() ? 25 : 155), Rotation2d.fromDegrees(drivetrain.onBlueSide() ? -25 : -135)),
                                     DrivetrainConstants.HEADING_CONTROLLER_PROFILED)),
                     applyTargetStateFactory.apply(SuperstructureState.BARGE_NET).get())
                 .beforeStarting(() -> drivetrain.resetHeadingController()))
@@ -501,7 +501,7 @@ public class RobotContainer {
                         .until(
                             () ->
                                 superstructure.getElevator().getMeasuredHeight().getInches() < 0.25)
-                        .andThen(superstructure.rezero()),
+                        .andThen(superstructure.quickRezero()),
                 Set.of(superstructure.getElevator(), superstructure.getWrist()))
             .withName("Rezero");
   }

@@ -194,7 +194,7 @@ public class VisionManager {
 
     if (shouldUseMt1 && !Dashboard.disableAllVisionUpdates.get()) {
       if (!rejectEstimate(mtEstimate, limelight)) {
-        double stdFactor = Math.pow(mtEstimate.avgTagDist, 2.75) / (mtEstimate.tagCount * 0.5);
+        double stdFactor = Math.pow(mtEstimate.avgTagDist, 2.4) / (mtEstimate.tagCount * 0.5);
         double xyStds =
             (DriverStation.isDisabled() ? 0.2 : VisionConstants.xyStdBaseline) * stdFactor;
         double thetaStds =

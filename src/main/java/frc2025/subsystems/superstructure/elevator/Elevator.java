@@ -3,7 +3,11 @@ package frc2025.subsystems.superstructure.elevator;
 import data.Length;
 import drivers.TalonFXSubsystem;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc2025.logging.Logger;
 import java.util.function.DoubleSupplier;
 import math.Conversions;
@@ -109,7 +113,21 @@ public class Elevator extends TalonFXSubsystem {
         clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 4.3, 3.0);
   }
 
-  public Command rezero() {
+  private double startTime = 0.0;
+
+  public Command rezero(){
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+        applyVoltageCommand(() -> -2.0)
+            .withDeadline(
+                new WaitUntilCommand(
+                    () ->
+                        ((Timer.getFPGATimestamp() - startTime) > 0.5)
+                            && master.getSupplyCurrent().getValueAsDouble() > 17.0)),
+        new InstantCommand(() -> resetPosition(0.0)));
+  }
+
+  public Command quickRezero() {
     return applyVoltageCommand(() -> -2.0)
         .withTimeout(0.25)
         .finallyDo(

@@ -17,6 +17,8 @@ import frc2025.subsystems.superstructure.wrist.Wrist.WristGoal;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+
+import data.Length;
 import lombok.Getter;
 
 public class Superstructure {
@@ -47,8 +49,12 @@ public class Superstructure {
             && wrist.getGoal() == (TalonFXSubsystemGoal) wanted.wristGoal);
   }
 
-  public Command rezero() {
+  public Command rezero(){
     return Commands.defer(() -> elevator.rezero(), Set.of(elevator, wrist));
+  }
+
+  public Command quickRezero() {
+    return Commands.defer(() -> elevator.quickRezero(), Set.of(elevator, wrist));
   }
 
   public Command applyTargetState(SuperstructureState state) {
@@ -71,7 +77,7 @@ public class Superstructure {
                       elevator.applyGoalCommand(state.elevatorGoal),
                       new RunCommand(
                           () -> {
-                            if (elevator.atGoal()) {
+                            if (elevator.atGoal(Elevator.heightToRotations(Length.fromInches(6.0)))) {
                               wrist.applyGoal(state.wristGoal);
                             } else {
                               wrist.applyGoal(WristGoal.STOW);

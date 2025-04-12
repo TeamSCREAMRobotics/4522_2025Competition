@@ -108,9 +108,8 @@ public class RobotState {
   }
 
   public Pair<Pose2d, SuperstructureState> getTargetAlgaeState() {
-    var pair =
-        AllianceFlipUtil.get(
-                FieldConstants.BLUE_ALGAE_LOCATIONS, FieldConstants.RED_ALGAE_LOCATIONS)
+    var pair = (drivetrain.getEstimatedPose().getX() < FieldConstants.FIELD_DIMENSIONS.getX() / 2.0 ?
+                FieldConstants.BLUE_ALGAE_LOCATIONS : FieldConstants.RED_ALGAE_LOCATIONS)
             .get(getReefZone().getAsInt());
     return Pair.of(pair.getFirst(), mapAlgaeLevelToState(pair.getSecond()));
   }
@@ -122,7 +121,7 @@ public class RobotState {
   }
 
   public OptionalInt getReefZone() {
-    return AllianceFlipUtil.get(FieldConstants.BLUE_REEF, FieldConstants.RED_REEF)
+    return (drivetrain.getEstimatedPose().getX() < FieldConstants.FIELD_DIMENSIONS.getX() / 2.0 ? FieldConstants.BLUE_REEF : FieldConstants.RED_REEF)
         .contains(drivetrain.getEstimatedPose().getTranslation());
   }
 

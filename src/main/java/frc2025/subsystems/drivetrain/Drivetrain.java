@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc2025.Robot;
 import frc2025.constants.Constants;
+import frc2025.constants.FieldConstants;
 import frc2025.logging.Logger;
 import frc2025.subsystems.drivetrain.generated.TunerConstants.TunerSwerveDrivetrain;
 import java.util.function.Supplier;
@@ -157,6 +158,10 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
         getLinearVelocity().getX(),
         getLinearVelocity().getY(),
         getState().Speeds.omegaRadiansPerSecond);
+  }
+
+  public boolean onBlueSide(){
+    return getEstimatedPose().getX() < FieldConstants.FIELD_DIMENSIONS.getX() / 2.0;
   }
 
   @Override
