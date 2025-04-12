@@ -56,7 +56,8 @@ public class AutoAlign2 extends Command {
   private Timer rotateTimer = new Timer();
   private double rotationWait = 0.5;
 
-  public AutoAlign2(RobotContainer container, ReefLocation location, boolean shouldEnd, double rotationWait) {
+  public AutoAlign2(
+      RobotContainer container, ReefLocation location, boolean shouldEnd, double rotationWait) {
     this.container = container;
     this.drivetrain = container.getSubsystems().drivetrain();
     this.elevator = container.getSubsystems().superstructure().getElevator();
@@ -87,7 +88,8 @@ public class AutoAlign2 extends Command {
     setName("AutoAlign2");
   }
 
-  public AutoAlign2(RobotContainer container, Pose2d pose, boolean shouldEnd, double driveTolerance) {
+  public AutoAlign2(
+      RobotContainer container, Pose2d pose, boolean shouldEnd, double driveTolerance) {
     this(container, pose, shouldEnd);
     this.driveTolerance = driveTolerance;
   }
@@ -150,13 +152,14 @@ public class AutoAlign2 extends Command {
                 GeomUtil.translationToTransform(driveController.getSetpoint().position, 0.0))
             .getTranslation();
 
-    double thetaVelocity = rotateTimer.get() > rotationWait ?
-        headingController.getSetpoint().velocity * ffScalar
-            + headingController.calculate(
-                currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians()) :
-        headingController.getSetpoint().velocity * ffScalar
-            + headingController.calculate(
-                currentPose.getRotation().getRadians(), currentPose.getRotation().getRadians());
+    double thetaVelocity =
+        rotateTimer.get() > rotationWait
+            ? headingController.getSetpoint().velocity * ffScalar
+                + headingController.calculate(
+                    currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians())
+            : headingController.getSetpoint().velocity * ffScalar
+                + headingController.calculate(
+                    currentPose.getRotation().getRadians(), currentPose.getRotation().getRadians());
     headingErrorAbs =
         Math.abs(currentPose.getRotation().minus(targetPose.getRotation()).getRadians());
     if (headingErrorAbs < headingTolerance) {

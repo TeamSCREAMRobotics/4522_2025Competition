@@ -1,8 +1,6 @@
 package frc2025.subsystems.climber;
 
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.spark.SparkMax;
 import drivers.TalonFXSubsystem;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;

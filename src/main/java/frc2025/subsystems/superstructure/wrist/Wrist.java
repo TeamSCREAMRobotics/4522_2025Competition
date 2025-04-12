@@ -16,7 +16,7 @@ public class Wrist extends TalonFXSubsystem {
     INTAKE(Rotation2d.fromDegrees(28.0)), // 25.0
     CLEAR_ALGAE(Rotation2d.fromDegrees(62.64)),
     TROUGH_FEED(Rotation2d.fromDegrees(81.0)),
-    TROUGH(Rotation2d.fromDegrees(74.0));
+    TROUGH(Rotation2d.fromDegrees(74.0)); // 74.0
 
     public final DoubleSupplier target;
 

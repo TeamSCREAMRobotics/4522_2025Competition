@@ -52,7 +52,7 @@ public class AutoAlign extends Command {
   private double currentDistance = 0.0;
 
   private final double ffMinRadius = 0.1;
-  private final double ffMaxRadius = 0.4;
+  private final double ffMaxRadius = 0.6;
 
   public AutoAlign(RobotContainer container, Supplier<ScoringLocation> location) {
     this.container = container;

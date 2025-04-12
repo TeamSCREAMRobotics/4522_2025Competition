@@ -55,7 +55,7 @@ public final class ElevatorConstants {
     CONFIGURATION.name = "Elevator";
 
     CONFIGURATION.codeEnabled = true;
-    CONFIGURATION.logTelemetry = true;
+    CONFIGURATION.logTelemetry = false;
     CONFIGURATION.debugMode = false;
 
     CONFIGURATION.simConstants =

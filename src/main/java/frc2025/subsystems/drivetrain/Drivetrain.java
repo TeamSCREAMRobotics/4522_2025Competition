@@ -47,8 +47,6 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   @Getter private final PhoenixSwerveHelper helper;
 
-  private final SwerveDrivePoseEstimator poseEstimator;
-
   public Drivetrain(
       SwerveDrivetrainConstants driveTrainConstants,
       double OdometryUpdateFrequency,
@@ -95,9 +93,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       startSimThread();
     }
 
-    poseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getState().RawHeading, getState().ModulePositions, Pose2d.kZero);
-
-    //getPigeon2().getYaw().setUpdateFrequency(200.0);
+    // getPigeon2().getYaw().setUpdateFrequency(200.0);
 
     // resetRotation(AllianceFlipUtil.getFwdHeading().plus(Rotation2d.k180deg));
 
@@ -126,7 +122,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
   }
 
   public Pose2d getEstimatedPose() {
-    return poseEstimator.getEstimatedPosition();//getState().Pose;
+    return getState().Pose;
   }
 
   public Rotation2d getHeading() {
@@ -179,11 +175,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
       Matrix<N3, N1> visionMeasurementStdDevs,
       boolean rejectHeading) {
     Logger.log("Vision/ActiveGlobalVisionMeasurement", visionRobotPoseMeters);
-    poseEstimator.addVisionMeasurement(
+    super.addVisionMeasurement(
         rejectHeading
             ? new Pose2d(visionRobotPoseMeters.getTranslation(), getHeading())
             : visionRobotPoseMeters,
-        timestampSeconds,
+        Utils.fpgaToCurrentTime(timestampSeconds),
         visionMeasurementStdDevs);
   }
 
@@ -210,7 +206,8 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
   @Override
   public void periodic() {
-    poseEstimator.updateWithTime(Timer.getFPGATimestamp(), getState().RawHeading, getState().ModulePositions);
+    //poseEstimator.updateWithTime(
+    //    Timer.getFPGATimestamp(), getState().RawHeading, getState().ModulePositions);
     if (getCurrentCommand() != null) {
       Logger.log("Subsystems/Drivetrain/ActiveCommand", getCurrentCommand().getName());
     }

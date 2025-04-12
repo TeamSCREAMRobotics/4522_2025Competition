@@ -21,7 +21,7 @@ public class Elevator extends TalonFXSubsystem {
     HOME(Length.kZero),
     FEED(Length.kZero),
     TROUGH_FEED(Length.fromInches(13.0)),
-    TROUGH(Length.fromInches(2.0)),
+    TROUGH(Length.fromInches(2.0)), // 2.0
     L2(Length.fromInches(24.5)),
     L3(Length.fromInches(40.5)),
     L4(Length.fromInches(64.8)),
@@ -106,7 +106,7 @@ public class Elevator extends TalonFXSubsystem {
             getMeasuredHeight().getInches(), 0.0, ElevatorConstants.MAX_HEIGHT.getInches());
 
     return ScreamMath.mapRange(
-        clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 4.5, 3.0);
+        clampedHeight, 0.0, ElevatorConstants.MAX_HEIGHT.getInches(), 4.3, 3.0);
   }
 
   public Command rezero() {

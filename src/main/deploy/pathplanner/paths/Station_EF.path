@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.13,
-        "y": 2.886
+        "x": 4.237926136363637,
+        "y": 1.5869460227272725
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.988831967213113,
-        "y": 2.868186475409835
+        "x": 4.58958061170467,
+        "y": 1.7704731694937195
       },
       "isLocked": false,
-      "linkedName": "Algae_3"
+      "linkedName": "Station_EF"
     },
     {
       "anchor": {
-        "x": 7.145,
-        "y": 5.415
+        "x": 4.816278409090909,
+        "y": 1.8761221590909098
       },
       "prevControl": {
-        "x": 6.892930327868852,
-        "y": 4.990010245901639
+        "x": 4.479607757054428,
+        "y": 1.7001718177446474
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BargeScore1"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.75,
+    "maxVelocity": 3.8,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "Algae_Score",
+  "folder": "Coral_Face",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 119.99999999999999
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

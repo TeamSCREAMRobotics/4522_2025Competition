@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.13,
-        "y": 2.886
+        "x": 4.975823863636363,
+        "y": 2.604048295454545
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.988831967213113,
-        "y": 2.868186475409835
+        "x": 4.77717095782078,
+        "y": 2.201439951748845
       },
       "isLocked": false,
-      "linkedName": "Algae_3"
+      "linkedName": "Face_EF"
     },
     {
       "anchor": {
-        "x": 7.145,
-        "y": 5.415
+        "x": 4.766420454540469,
+        "y": 2.3547585227322587
       },
       "prevControl": {
-        "x": 6.892930327868852,
-        "y": 4.990010245901639
+        "x": 4.876356154396054,
+        "y": 2.9764536646907604
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BargeScore1"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "Algae_Score",
+  "folder": "Coral_Face",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 119.99999999999999
