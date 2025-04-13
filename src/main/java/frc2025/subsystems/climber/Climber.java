@@ -42,11 +42,11 @@ public class Climber extends TalonFXSubsystem {
   }
 
   public enum ClimberGoal implements TalonFXSubsystemGoal {
-    HOME(0.044),
+    HOME(0.034),
     // HOLD_FUNNEL(-0.03),
     // STOW_UNDER_FUNNEL(-0.069),
-    OUT(.275),
-    CLIMB(0.035); // 0.025 (gas shock moved - can't pull that far 4/9)
+    OUT(.255),
+    CLIMB(0.015);
 
     private double targetRotations;
 

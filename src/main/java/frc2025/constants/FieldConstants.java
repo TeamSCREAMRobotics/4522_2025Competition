@@ -52,8 +52,8 @@ public class FieldConstants {
 
   public static final Length BRANCH_TO_REEF_EDGE = Length.fromInches(2.111249);
 
-  public static final double STATION_X_OFFSET = -0.1; // 0.1
-  public static final double STATION_Y_OFFSET = -0.1; // 0.1
+  public static final double STATION_X_OFFSET = -0.1; // -0.1
+  public static final double STATION_Y_OFFSET = -0.1; // -0.1
 
   public static final Pose2d BLUE_PROCESSOR_FEEDER_ALIGN =
       new Pose2d(1.544 - STATION_X_OFFSET, 0.734 - STATION_Y_OFFSET, Rotation2d.fromDegrees(54.0));
@@ -68,7 +68,7 @@ public class FieldConstants {
   public static final Pose2d RED_NONPROCESSOR_FEEDER_ALIGN =
       new Pose2d(
           FIELD_DIMENSIONS.getX() - 1.544 + STATION_X_OFFSET,
-          FIELD_DIMENSIONS.getY() - 0.734 - STATION_Y_OFFSET,
+          0.734 - STATION_Y_OFFSET,
           Rotation2d.fromDegrees(-54.0 + 180.0));
 
   public static final Pose2d BLUE_BARGE_ALIGN =
@@ -105,7 +105,8 @@ public class FieldConstants {
 
   public static final Map<Integer, Pair<Pose2d, AlgaeLevel>> BLUE_ALGAE_LOCATIONS = new HashMap<>();
   public static final Map<Integer, Pair<Pose2d, AlgaeLevel>> RED_ALGAE_LOCATIONS = new HashMap<>();
-  public static final Map<Integer, Pair<Pose2d, AlgaeLevel>> RED_ALGAE_LOCATIONS_FLIPPED = new HashMap<>();
+  public static final Map<Integer, Pair<Pose2d, AlgaeLevel>> RED_ALGAE_LOCATIONS_FLIPPED =
+      new HashMap<>();
 
   public static final int[] ALL_TAGS =
       new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22};
@@ -207,10 +208,11 @@ public class FieldConstants {
               new Pose2d(RED_REEF_CENTER.plus(SCORE_LOCATION_1.rotateBy(rotation)), poseRotation),
               new Pose2d(RED_REEF_CENTER.plus(SCORE_LOCATION_2.rotateBy(rotation)), poseRotation)));
 
-              RED_ALGAE_LOCATIONS_FLIPPED.put(i,
-              Pair.of(
-                  new Pose2d(RED_REEF_CENTER.plus(ALGAE_LOCATION.rotateBy(rotation)), poseRotation),
-                  getAlgaeLevel(i + 1)));
+      RED_ALGAE_LOCATIONS_FLIPPED.put(
+          i,
+          Pair.of(
+              new Pose2d(RED_REEF_CENTER.plus(ALGAE_LOCATION.rotateBy(rotation)), poseRotation),
+              getAlgaeLevel(i + 1)));
     }
   }
 

@@ -31,7 +31,7 @@ public class ClimberConstants {
 
     CANcoderConfiguration config = new CANcoderConfiguration();
     config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.75;
-    config.MagnetSensor.MagnetOffset = 0.016845703125;
+    config.MagnetSensor.MagnetOffset = 0.008056640625;
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     CONFIGURATION.cancoderConstants = new CANCoderConstants(new CANDevice(5), config);
 
@@ -48,7 +48,7 @@ public class ClimberConstants {
     CONFIGURATION.cruiseVelocity = 15.0; // 8.0
     CONFIGURATION.acceleration = 10.0; // 4.0
     CONFIGURATION.slot0 =
-        new ScreamPIDConstants(90.0, 0, 0).getSlot0Configs(new FeedforwardConstants()); // 75
+        new ScreamPIDConstants(140.0, 0, 0).getSlot0Configs(new FeedforwardConstants()); // 120
     CONFIGURATION.positionThreshold = 0.005;
   }
 }

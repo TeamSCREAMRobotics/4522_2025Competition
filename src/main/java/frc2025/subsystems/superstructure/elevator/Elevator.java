@@ -115,7 +115,7 @@ public class Elevator extends TalonFXSubsystem {
 
   private double startTime = 0.0;
 
-  public Command rezero(){
+  public Command rezero() {
     return new SequentialCommandGroup(
         new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
         applyVoltageCommand(() -> -2.0)

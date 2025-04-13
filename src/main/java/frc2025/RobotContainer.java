@@ -243,7 +243,9 @@ public class RobotContainer {
                                         .get()
                                         .times(superstructure.getElevator().getDriveScalar() * 0.5),
                                     AllianceFlipUtil.get(
-                                        Rotation2d.fromDegrees(drivetrain.onBlueSide() ? 25 : 155), Rotation2d.fromDegrees(drivetrain.onBlueSide() ? -25 : -135)),
+                                        Rotation2d.fromDegrees(drivetrain.onBlueSide() ? 25 : 155),
+                                        Rotation2d.fromDegrees(
+                                            drivetrain.onBlueSide() ? -25 : -135)),
                                     DrivetrainConstants.HEADING_CONTROLLER_PROFILED)),
                     applyTargetStateFactory.apply(SuperstructureState.BARGE_NET).get())
                 .beforeStarting(() -> drivetrain.resetHeadingController()))
