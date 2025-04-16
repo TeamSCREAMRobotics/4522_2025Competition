@@ -49,7 +49,7 @@ public class Routines {
   private static double elevator_Timeout = 0.20;
   private static double align_Timeout = 3.5;
 
-  private static double feederAlignTolerance = 0.05;
+  private static double feederAlignTolerance = 0.08;
 
   private static final BiFunction<SuperstructureState, RobotContainer, Supplier<Command>>
       applyTargetStateFactory =
