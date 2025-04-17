@@ -267,8 +267,10 @@ public class Routines {
 
   public static Command test(RobotContainer container) {
 
-    return new SequentialCommandGroup(
-        grabAlgae(container, SuperstructureState.REEF_ALGAE_L2, intakeAlgae_TimeOut));
+    return Commands.runOnce(() -> WristRollers.hasCoral = false).andThen(new Feed(container).andThen(Commands.print("test")));
+
+    /* return new SequentialCommandGroup(
+        grabAlgae(container, SuperstructureState.REEF_ALGAE_L2, intakeAlgae_TimeOut)); */
   }
 
   public static Command processor_E_B_C_D(RobotContainer container) {

@@ -17,6 +17,7 @@ public class Feed extends Command {
   private final LED led;
 
   private boolean hasSeenPiece = false;
+  private boolean hasNotSeenPiece = false;
 
   private BooleanSupplier intaking;
   private boolean isAuto = false;
@@ -40,6 +41,7 @@ public class Feed extends Command {
     if (!WristRollers.hasCoral || Dashboard.disableCoralRequirement.get()) {
       hasSeenPiece = false;
     }
+    hasNotSeenPiece = false;
   }
 
   @Override
@@ -50,6 +52,7 @@ public class Feed extends Command {
       if (!hasSeenPiece && rollers.hasCoral().getAsBoolean()) {
         hasSeenPiece = true;
       } else if (hasSeenPiece && !rollers.hasCoral().getAsBoolean()) {
+        hasNotSeenPiece = true;
         led.strobeCommand(Color.kDarkRed, 0.1).withTimeout(0.75).schedule();
         rollers.applyGoal(WristRollersGoal.IDLE);
         WristRollers.hasCoral = true;
@@ -71,7 +74,7 @@ public class Feed extends Command {
 
   @Override
   public boolean isFinished() {
-    return (WristRollers.hasCoral && isAuto) || (Robot.isSimulation() && isAuto);
+    return (hasSeenPiece && hasNotSeenPiece && WristRollers.acquiredCoral() && isAuto) || (Robot.isSimulation() && isAuto);
     // return (!rollers.acquiredCoral() && hasSeenPiece) || Robot.isSimulation();
   }
 

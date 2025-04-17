@@ -343,8 +343,7 @@ public class RobotContainer {
                                 .getHelper()
                                 .getFacingAngleProfiled(
                                     Controlboard.getTranslation().get(),
-                                    AllianceFlipUtil.get(
-                                        Rotation2d.kCW_90deg, Rotation2d.kCCW_90deg),
+                                    Rotation2d.fromDegrees(drivetrain.onBlueSide() ? -90.0 : 90),
                                     DrivetrainConstants.HEADING_CONTROLLER_PROFILED))
                     .beforeStarting(() -> drivetrain.resetHeadingController()),
                 applyTargetStateFactory.apply(SuperstructureState.PROCESSOR).get()));
