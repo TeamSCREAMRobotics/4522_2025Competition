@@ -61,10 +61,12 @@ public class Routines {
   private static ArrayList<Supplier<ReefLocation>> scoreSequence;
   private static final ArrayList<Supplier<ReefLocation>> processor_E_B_C_D =
       new ArrayList<Supplier<ReefLocation>>();
-  private static final ArrayList<Supplier<ReefLocation>> processor_E_C_D_D =
+  private static final ArrayList<Supplier<ReefLocation>> processor_E_C_D_2 =
       new ArrayList<Supplier<ReefLocation>>();
   private static final ArrayList<Supplier<ReefLocation>> nonProcessor_J_A_L_K =
       new ArrayList<Supplier<ReefLocation>>();
+    private static final ArrayList<Supplier<ReefLocation>> nonProcessor_J_L_K_6 =
+        new ArrayList<Supplier<ReefLocation>>();
   private static final ArrayList<Supplier<ReefLocation>> nonProcessor_J_L_K_K =
       new ArrayList<Supplier<ReefLocation>>();
   private static final ArrayList<Supplier<ReefLocation>> midProcessor_G_E_F =
@@ -78,15 +80,18 @@ public class Routines {
     processor_E_B_C_D.add(() -> ReefLocation.C);
     processor_E_B_C_D.add(() -> ReefLocation.D);
 
-    processor_E_C_D_D.add(() -> ReefLocation.E);
-    processor_E_C_D_D.add(() -> ReefLocation.C);
-    processor_E_C_D_D.add(() -> ReefLocation.D);
-    processor_E_C_D_D.add(() -> ReefLocation.D);
+    processor_E_C_D_2.add(() -> ReefLocation.E);
+    processor_E_C_D_2.add(() -> ReefLocation.C);
+    processor_E_C_D_2.add(() -> ReefLocation.D);
 
     nonProcessor_J_A_L_K.add(() -> ReefLocation.J);
     nonProcessor_J_A_L_K.add(() -> ReefLocation.A);
     nonProcessor_J_A_L_K.add(() -> ReefLocation.L);
     nonProcessor_J_A_L_K.add(() -> ReefLocation.K);
+
+    nonProcessor_J_L_K_6.add(() -> ReefLocation.J);
+    nonProcessor_J_L_K_6.add(() -> ReefLocation.L);
+    nonProcessor_J_L_K_6.add(() -> ReefLocation.K);
 
     nonProcessor_J_L_K_K.add(() -> ReefLocation.J);
     nonProcessor_J_L_K_K.add(() -> ReefLocation.L);
@@ -109,11 +114,11 @@ public class Routines {
 
   /* Face Auto Paths */
   // Paths are labeled from the location you are coming from
-  private static final PathSequence facePaths = new PathSequence("Face_EF", "Face_GH");
+  private static final PathSequence facePaths = new PathSequence("Face_EF", "Face_GH", "Algae_Off_CD", "Algae_Off_KL");
 
   private static final PathSequence stationPaths = new PathSequence("Station_EF", "Station_GH");
 
-  private static final PathSequence stealPaths = new PathSequence("Steal_3");
+  private static final PathSequence stealPaths = new PathSequence("Steal_3", "Leave_Line");
 
   /* Test Auto Sequences */
   private static final PathSequence leave = new PathSequence("Leave");
@@ -350,23 +355,22 @@ public class Routines {
             new Feed(container)));
   }
 
-  public static Command processor_E_C_D_D(RobotContainer container) {
-    scoreSequence = processor_E_C_D_D;
+  public static Command processor_E_C_D_2(RobotContainer container) {
+    scoreSequence = processor_E_C_D_2;
     Elevator elevator = container.getSubsystems().superstructure().getElevator();
-    WristRollers wristRollers = container.getSubsystems().wristRollers();
     feederAlliance_Pose =
         AllianceFlipUtil.get(
             FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, FieldConstants.RED_PROCESSOR_FEEDER_ALIGN);
 
     return new SequentialCommandGroup(
         new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(0), 0.1),
-        instantSetSuperstructure(container, SuperstructureState.FEEDING)
-            .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance_L4),
+        instantSetSuperstructure(container, SuperstructureState.FEEDING),
+        new WaitUntilCommand(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance_L4),
         new ParallelDeadlineGroup(
             // new Feed(container),
             new SequentialCommandGroup(
                 new AutoAlign2(container, feederAlliance_Pose, true, feederAlignTolerance),
-                new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(1), 0.1)
+                new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(1), 0.5)
                     .withDeadline(endAutoScore())),
             new Feed(container)),
         instantSetSuperstructure(container, SuperstructureState.FEEDING)
@@ -375,30 +379,46 @@ public class Routines {
             // new Feed(container),
             new SequentialCommandGroup(
                 new AutoAlign2(container, feederAlliance_Pose, true, feederAlignTolerance),
-                new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(2), 0.1)
+                new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(2), 0.5)
                     .withDeadline(endAutoScore())),
             new Feed(container)),
         grabAlgae(container, SuperstructureState.REEF_ALGAE_L1, intakeAlgae_TimeOut),
-        // setSuperstructure(container, SuperstructureState.FEEDING)
-        //     .until(() -> elevator.getGoal() == (TalonFXSubsystemGoal) ElevatorGoal.FEED),
-        new AutoAlign2(
-                container,
-                new Pose2d(
-                    feederAlliance_Pose.getTranslation(),
-                    AllianceFlipUtil.get(
-                        Rotation2d.fromDegrees(0.0 + 40.0), Rotation2d.fromDegrees(180.0 - 40.0))),
-                true,
-                feederAlignTolerance)
-            .withTimeout(0.75),
-        wristRollers.applyGoalCommand(WristRollersGoal.EJECT_ALGAE).withTimeout(0.1),
+        facePaths.getIndex(2),
+        instantSetSuperstructure(container, SuperstructureState.FEEDING)
+    );
+  }
+
+  public static Command nonProcessor_J_L_K_6(RobotContainer container) {
+    scoreSequence = nonProcessor_J_L_K_6;
+    Elevator elevator = container.getSubsystems().superstructure().getElevator();
+    feederAlliance_Pose =
+        AllianceFlipUtil.get(
+            FieldConstants.BLUE_PROCESSOR_FEEDER_ALIGN, FieldConstants.RED_PROCESSOR_FEEDER_ALIGN);
+
+    return new SequentialCommandGroup(
+        new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(0), 0.1),
+        instantSetSuperstructure(container, SuperstructureState.FEEDING),
+        new WaitUntilCommand(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance_L4),
         new ParallelDeadlineGroup(
             // new Feed(container),
             new SequentialCommandGroup(
                 new AutoAlign2(container, feederAlliance_Pose, true, feederAlignTolerance),
-                new AutoScore2(container, SuperstructureState.REEF_L3, scoreSequence.get(3), 0.1)
-                    .withDeadline(endAutoScore()))),
+                new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(1), 0.5)
+                    .withDeadline(endAutoScore())),
+            new Feed(container)),
         instantSetSuperstructure(container, SuperstructureState.FEEDING)
-            .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance_L4));
+            .until(() -> elevator.getMeasuredHeight().getInches() < highElevatorHeightTolerance_L4),
+        new ParallelDeadlineGroup(
+            // new Feed(container),
+            new SequentialCommandGroup(
+                new AutoAlign2(container, feederAlliance_Pose, true, feederAlignTolerance),
+                new AutoScore2(container, SuperstructureState.REEF_L4, scoreSequence.get(2), 0.5)
+                    .withDeadline(endAutoScore())),
+            new Feed(container)),
+        grabAlgae(container, SuperstructureState.REEF_ALGAE_L1, intakeAlgae_TimeOut),
+        facePaths.getIndex(3),
+        instantSetSuperstructure(container, SuperstructureState.FEEDING)
+    );
   }
 
   public static Command mid_G_E_F(RobotContainer container) {
@@ -482,7 +502,7 @@ public class Routines {
                 new AutoAlign2(container, bargeAlliance_Pose_Opp, true)
                     .alongWith(instantSetSuperstructure(container, SuperstructureState.FEEDING))
             ),
-            new InstantCommand(),
+            stealPaths.getIndex(1),
             () -> steal));
   }
 

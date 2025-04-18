@@ -67,7 +67,7 @@ public class Superstructure {
                   new ParallelCommandGroup(
                       wrist.applyGoalCommand(WristGoal.STOW),
                       new SequentialCommandGroup(
-                          new WaitUntilCommand(() -> wrist.atGoal()),
+                          new WaitUntilCommand(() -> (wrist.atGoal() && wrist.getGoal() == (TalonFXSubsystemGoal) WristGoal.STOW)),
                           elevator.applyGoalCommand(state.elevatorGoal)));
               break;
             default:

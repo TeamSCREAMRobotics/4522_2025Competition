@@ -2,7 +2,10 @@ package frc2025.subsystems.superstructure.wrist;
 
 import drivers.TalonFXSubsystem;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc2025.logging.Logger;
+
 import java.util.function.DoubleSupplier;
 
 public class Wrist extends TalonFXSubsystem {
@@ -14,7 +17,7 @@ public class Wrist extends TalonFXSubsystem {
   public enum WristGoal implements TalonFXSubsystemGoal {
     STOW(Rotation2d.fromDegrees(90.0)),
     INTAKE(Rotation2d.fromDegrees(28.0)), // 25.0
-    CLEAR_ALGAE(Rotation2d.fromDegrees(62.64)),
+    CLEAR_ALGAE(Rotation2d.fromDegrees(61.0)), //62.64
     TROUGH_FEED(Rotation2d.fromDegrees(81.0)),
     TROUGH(Rotation2d.fromDegrees(74.0)); // 74.0
 
@@ -58,5 +61,7 @@ public class Wrist extends TalonFXSubsystem {
   @Override
   public void periodic() {
     super.periodic();
+    Logger.log(logPrefix + "MeasuredDeg", getAngle().getDegrees());
+    Logger.log(logPrefix + "SetpointDeg", Units.rotationsToDegrees(getSetpoint()));
   }
 }

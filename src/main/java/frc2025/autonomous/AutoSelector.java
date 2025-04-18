@@ -14,15 +14,16 @@ public class AutoSelector {
     TEST(container -> Routines.test(container)),
     LEAVE(container -> Routines.leave(container)),
     // Oklahoma Autos
-    /* PROCESSOR_EDC(container -> Routines.processor_Side_E_D_C(container)),
-    NONPROCESSOR_JKL(container -> Routines.nonProcessor_Side_J_K_L(container)),
-    MID_G_4N(container -> Routines.middle_Side_G_4N(container)),
+    // PROCESSOR_EDC(container -> Routines.processor_Side_E_D_C(container)),
+    // NONPROCESSOR_JKL(container -> Routines.nonProcessor_Side_J_K_L(container)),
+    /* MID_G_4N(container -> Routines.middle_Side_G_4N(container)),
     MID_H_4N(container -> Routines.middle_Side_H_4N(container)),
     PROCESSOR_PUSH(container -> Routines.processor_Push(container)),
     NONPROCESSOR_PUSH(container -> Routines.processor_Push(container)), */
     PROCESSOR_E_B_C_D(container -> Routines.processor_E_B_C_D(container)),
-    // PROCESSOR_E_C_D_D(container -> Routines.processor_E_C_D_D(container)),
     NONPROCESSOR_J_A_L_K(container -> Routines.nonProcessor_J_A_L_K(container)),
+    PROCESSOR_E_C_D_2(container -> Routines.processor_E_C_D_2(container)),
+    NONPROCESSOR_J_L_K_6(container -> Routines.nonProcessor_J_L_K_6(container)),
     // MID_G_E_F(container -> Routines.mid_G_E_F(container)),
     MID_G_4_5(container -> Routines.mid_G_4_5(container, false)),
     FLINT_N_STEAL(container -> Routines.mid_G_4_5(container, true));
